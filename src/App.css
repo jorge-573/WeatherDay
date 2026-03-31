@@ -1,42 +1,54 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
+.app {
+  min-height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: background-image 0.7s ease-in-out;
+}
+
+.app__overlay {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
   padding: 2rem;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.app__content {
   text-align: center;
+  width: min(700px, 92vw);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(8px);
+  background: rgba(14, 26, 46, 0.35);
+  box-shadow: 0 12px 38px rgba(0, 0, 0, 0.25);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app__label {
+  margin: 0;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  opacity: 0.8;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.app__title {
+  margin: 0.4rem 0 0;
+  font-size: clamp(2rem, 8vw, 3.6rem);
+  line-height: 1.05;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.app__note {
+  margin: 0.85rem 0 0;
+  font-size: 1rem;
+  opacity: 0.9;
 }
 
-.card {
-  padding: 2em;
+.app--day .app__overlay {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.read-the-docs {
-  color: #888;
+.app--day .app__content {
+  color: #0f3550;
+  background: rgba(235, 250, 255, 0.55);
 }

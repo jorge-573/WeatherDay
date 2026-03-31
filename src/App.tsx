@@ -1,34 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useMemo, useState } from 'react'
+import dayBackground from './assets/backgrounds/day.png'
+import nightBackground from './assets/backgrounds/night.png'
+import sunriseSunsetBackground from './assets/backgrounds/sunrise-sunset.png'
 import './App.css'
 
+type TimeOfDay = 'night' | 'day' | 'sunrise-sunset'
+
+const BACKGROUNDS_BY_TIME: Record<TimeOfDay, string> = {
+  night: nightBackground,
+  day: dayBackground,
+  'sunrise-sunset': sunriseSunsetBackground,
+}
+
+function getTimeOfDay(now: Date): TimeOfDay {
+  const hour = now.getHours()
+
+  if ((hour >= 6 && hour < 9) || (hour >= 18 && hour < 21)) {
+    return 'sunrise-sunset'
+  }
+
+  if (true) {
+    return 'day'
+  }
+
+  return 'night'
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(() => getTimeOfDay(new Date()))
+
+  useEffect(() => {
+    const updateTimeOfDay = () => {
+      setTimeOfDay(getTimeOfDay(new Date()))
+    }
+
+    updateTimeOfDay()
+    const timer = window.setInterval(updateTimeOfDay, 60_000)
+
+    return () => {
+      window.clearInterval(timer)
+    }
+  }, [])
+
+  // This will be replaced by weather-specific backgrounds later.
+  const weatherBackgroundOverride: string | null = null
+
+  const activeBackground = useMemo(() => {
+    return weatherBackgroundOverride ?? BACKGROUNDS_BY_TIME[timeOfDay]
+  }, [timeOfDay, weatherBackgroundOverride])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <main
+      className={`app app--${timeOfDay}`}
+      style={{ backgroundImage: `url(${activeBackground})` }}
+    >
+      <div className="app__overlay">
+        <div className="app__content">
+          <p className="app__label">Current background</p>
+          <h1 className="app__title">{timeOfDay.replace('-', ' / ')}</h1>
+          <p className="app__note">
+            Background changes automatically by local time.
+            <br />
+            Weather-based background logic can now be plugged into the placeholder in `App.tsx`.
+          </p>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </main>
   )
 }
 
