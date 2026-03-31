@@ -11,7 +11,7 @@ export function getTimeOfDay(now: Date): TimeOfDay {
     return 'sunset'
   }
 
-  if (false) {
+  if (hour >= 9 && hour < 18) {
     return 'day'
   }
 
