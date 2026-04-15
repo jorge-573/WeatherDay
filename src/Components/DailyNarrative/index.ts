@@ -1,0 +1,1 @@
+export { DailyNarrative } from './DailyNarrative'
