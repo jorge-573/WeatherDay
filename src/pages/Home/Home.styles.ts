@@ -9,13 +9,9 @@ export const Page = styled.div`
 
 export const Main = styled.main`
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr) 320px;
   gap: 1rem;
   min-height: 0;
-
-  @media (max-width: 1220px) {
-    grid-template-columns: 175px minmax(0, 1fr);
-  }
 
   @media (max-width: 980px) {
     grid-template-columns: 1fr;
@@ -33,7 +29,7 @@ export const RightColumn = styled.aside`
   gap: 1rem;
   align-content: start;
 
-  @media (max-width: 1220px) {
+  @media (max-width: 980px) {
     grid-column: 1 / -1;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

@@ -1,23 +1,19 @@
-import type { TimeOfDay } from '../../types/timeOfDay'
-import { Link, Links, Note, Wrapper } from './AppFooter.styles'
-
-type AppFooterProps = {
-  timeOfDay: TimeOfDay
-}
+import { Brand, Copyright, Link, Links, Wrapper } from './AppFooter.styles'
 
 const footerLinks = ['Privacy Policy', 'Terms of Service', 'Contact', 'API Access']
 
-export function AppFooter({ timeOfDay }: AppFooterProps) {
+export function AppFooter() {
   return (
-    <Wrapper $timeOfDay={timeOfDay}>
+    <Wrapper>
       <Links>
         {footerLinks.map((entry) => (
-          <Link key={entry} href="#" $timeOfDay={timeOfDay}>
+          <Link key={entry} href="#">
             {entry}
           </Link>
         ))}
       </Links>
-      <Note>Atmospheric Precision | Demo weather skeleton</Note>
+      <Brand>WeatherDay</Brand>
+      <Copyright>© 2024 WeatherDay. Data provided by Ethereal Observer Labs.</Copyright>
     </Wrapper>
   )
 }
