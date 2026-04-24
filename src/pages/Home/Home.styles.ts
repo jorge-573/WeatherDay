@@ -1,17 +1,24 @@
 import styled from 'styled-components'
 
 export const Page = styled.div`
-  min-height: 100%;
+  min-height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  gap: 1rem;
 `
 
 export const Main = styled.main`
+  width: 100%;
+  max-width: 1760px;
+  margin: 0 auto;
+  padding: 1.25rem clamp(1rem, 2.6vw, 2.25rem);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 1.1rem;
   min-height: 0;
+
+  @media (max-width: 1220px) {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
 
   @media (max-width: 980px) {
     grid-template-columns: 1fr;
