@@ -1,8 +1,8 @@
-import { Brand, Copyright, Link, Links, Wrapper } from './AppFooter.styles'
+import { Brand, Copyright, Link, Links, Wrapper } from './Footer.styles'
 
 const footerLinks = ['Privacy Policy', 'Terms of Service', 'Contact', 'API Access']
 
-export function AppFooter() {
+export function Footer() {
   return (
     <Wrapper>
       <Links>

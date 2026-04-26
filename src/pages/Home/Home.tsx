@@ -1,4 +1,4 @@
-import { AppFooter } from '../../Components/AppFooter'
+import { Footer } from '../../Components/Footer'
 import { CurrentWeather } from '../../Components/CurrentWeather'
 import { DailyForecast } from '../../Components/DailyForecast'
 import { DailyNarrative } from '../../Components/DailyNarrative'
@@ -30,7 +30,7 @@ export function Home({ timeOfDay }: HomeProps) {
         </RightColumn>
       </Main>
 
-      <AppFooter />
+      <Footer />
     </Page>
   )
 }
