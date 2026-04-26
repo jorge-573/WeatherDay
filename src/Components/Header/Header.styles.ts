@@ -25,7 +25,8 @@ export const Brand = styled.div`
   font-size: clamp(1.05rem, 1.2vw, 1.2rem);
   font-weight: 700;
   letter-spacing: 0.01em;
-  color: #5dcfff;
+  color: rgba(235, 244, 255, 0.94);
+
 `
 
 export const Nav = styled.nav`
