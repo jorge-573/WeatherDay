@@ -8,6 +8,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #root {
@@ -17,4 +23,5 @@ body,
 body {
   margin: 0;
   min-width: 320px;
+  background-color: #09121b;
 }
