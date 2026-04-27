@@ -1,10 +1,10 @@
 import type { TimeOfDay } from '../../types/timeOfDay'
 import { LocationIcon, SettingsIcon } from '../Icons'
 import { SearchBar } from '../SearchBar'
+import { IconButton } from '../shared/IconButton'
 import {
   Actions,
   Brand,
-  IconButton,
   Link,
   Nav,
   Wrapper,
