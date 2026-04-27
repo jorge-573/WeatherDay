@@ -5,7 +5,8 @@ import { GlassPanel, type TimeProps } from '../shared/panel'
 export const Wrapper = styled(GlassPanel)<TimeProps>`
   padding: 1.25rem;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(200px, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
   min-height: 230px;
   overflow: hidden;
 
@@ -19,7 +20,7 @@ export const Summary = styled.div`
   flex-direction: column;
   justify-content: space-between;
   gap: 0.8rem;
-  padding-right: 0.8rem;
+  padding-right: 0.4rem;
 `
 
 export const City = styled.p`
@@ -37,8 +38,26 @@ export const Temperature = styled.p`
 
 export const Condition = styled.p`
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 600;
+`
+
+export const CurrentStateRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+`
+
+export const ConditionIconWrap = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #5dcfff;
+`
+
+export const ConditionText = styled.div`
+  display: grid;
+  gap: 0.2rem;
 `
 
 export const MetaRow = styled.div`
@@ -56,15 +75,42 @@ export const MetaTag = styled.span<TimeProps>`
   background: rgba(255, 255, 255, 0.18);
 `
 
-export const Visual = styled.div<TimeProps>`
-  border-radius: 18px;
-  border: 1px solid ${({ $timeOfDay }) => getCardTheme($timeOfDay).panelBorder};
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.05));
+type VisualProps = TimeProps & {
+  $backgroundImage?: string
+}
+
+export const Visual = styled.div<VisualProps>`
+  position: relative;
+  margin: -1.25rem -1.25rem -1.25rem 0;
+  overflow: hidden;
   display: grid;
   place-items: center;
   text-align: center;
   padding: 1rem;
   color: ${({ $timeOfDay }) => getCardTheme($timeOfDay).textPrimary};
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: ${({ $backgroundImage }) => ($backgroundImage ? `url(${$backgroundImage})` : 'none')};
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.60;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, rgba(3, 10, 18, 0.1), rgba(3, 10, 18, 0.25));
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 `
 
 export const Title = styled.h2`
