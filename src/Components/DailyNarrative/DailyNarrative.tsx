@@ -1,9 +1,10 @@
-import { Divider, Paragraph, Title, Wrapper } from './DailyNarrative.styles'
+import { Paragraph, SectionTitle } from '../shared/typography'
+import { Divider, Wrapper } from './DailyNarrative.styles'
 
 export function DailyNarrative() {
   return (
     <Wrapper>
-      <Title>Daily Narrative</Title>
+      <SectionTitle>Daily Narrative</SectionTitle>
       <Paragraph>
         Today: Increasing clouds through the afternoon with a peak temperature near 76 and light winds from the
         northwest.

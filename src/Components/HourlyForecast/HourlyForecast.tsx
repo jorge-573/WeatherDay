@@ -1,4 +1,5 @@
-import { Item, Label, Row, Temp, Title, Wrapper } from './HourlyForecast.styles'
+import { SectionTitle } from '../shared/typography'
+import { Item, Label, Row, Temp, Wrapper } from './HourlyForecast.styles'
 
 const hourlyForecast = [
   { hour: 'Now', temp: 72, active: true },
@@ -12,7 +13,7 @@ const hourlyForecast = [
 export function HourlyForecast() {
   return (
     <Wrapper>
-      <Title>24-Hour Forecast</Title>
+      <SectionTitle>24-Hour Forecast</SectionTitle>
       <Row>
         {hourlyForecast.map((entry) => (
           <Item key={entry.hour} $active={entry.active}>

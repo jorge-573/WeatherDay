@@ -5,12 +5,6 @@ export const Wrapper = styled(GlassPanel)`
   padding: 1.1rem;
 `
 
-export const Title = styled.h2`
-  margin: 0;
-  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
-  line-height: 1.1;
-`
-
 export const Row = styled.div`
   display: grid;
   grid-template-columns: 1fr auto auto;

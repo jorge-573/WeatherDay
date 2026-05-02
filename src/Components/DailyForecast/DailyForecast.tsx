@@ -1,4 +1,5 @@
-import { Day, Range, Row, Temp, Title, Wrapper } from './DailyForecast.styles'
+import { SectionTitle } from '../shared/typography'
+import { Day, Range, Row, Temp, Wrapper } from './DailyForecast.styles'
 
 const dailyForecast = [
   { day: 'Today', low: 58, high: 76 },
@@ -13,7 +14,7 @@ const dailyForecast = [
 export function DailyForecast() {
   return (
     <Wrapper>
-      <Title>7-Day Forecast</Title>
+      <SectionTitle>7-Day Forecast</SectionTitle>
       {dailyForecast.map((entry) => (
         <Row key={entry.day}>
           <Day>{entry.day}</Day>
