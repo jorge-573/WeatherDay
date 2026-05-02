@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { fontSize, radii } from '../../styles/tokens'
+import { chrome, fontSize, radii } from '../../styles/tokens'
 
 export const SearchBox = styled.label`
   display: inline-flex;
@@ -7,8 +7,8 @@ export const SearchBox = styled.label`
   gap: 0.55rem;
   padding: 0.42rem 0.9rem;
   border-radius: ${radii.pill};
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: ${chrome.surface};
+  border: 1px solid ${chrome.border};
   min-width: 220px;
 
   @media (max-width: 900px) {
@@ -18,7 +18,7 @@ export const SearchBox = styled.label`
 
 export const SearchIcon = styled.span`
   display: inline-flex;
-  color: rgba(214, 232, 248, 0.7);
+  color: ${chrome.textMuted};
 
   svg {
     width: 14px;
@@ -32,11 +32,11 @@ export const SearchInput = styled.input`
   border: none;
   outline: none;
   background: transparent;
-  color: #eaf4ff;
+  color: ${chrome.textBright};
   font: inherit;
   font-size: ${fontSize.meta};
 
   &::placeholder {
-    color: rgba(214, 232, 248, 0.55);
+    color: ${chrome.textDim};
   }
 `

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { backdropBlur } from '../../styles/mixins'
-import { fontSize, pageGutter } from '../../styles/tokens'
+import { chrome, fontSize, pageGutter } from '../../styles/tokens'
 
 export const Wrapper = styled.footer`
   width: 100%;
@@ -8,8 +8,8 @@ export const Wrapper = styled.footer`
   display: grid;
   justify-items: center;
   gap: 0.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(3, 8, 14, 0.82);
+  border-top: 1px solid ${chrome.surface};
+  background: ${chrome.footerBg};
   ${backdropBlur(14)}
 `
 
@@ -37,7 +37,7 @@ export const Brand = styled.p`
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: rgba(235, 244, 255, 0.94);
+  color: ${chrome.textBrand};
 `
 
 export const Copyright = styled.p`
