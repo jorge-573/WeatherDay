@@ -1,4 +1,3 @@
-import type { TimeOfDay } from "../../types/timeOfDay";
 import SunnyIcon from "@mui/icons-material/Sunny";
 import clearNightBackground from "../../assets/backgrounds/NightSky.png";
 import {
@@ -15,14 +14,10 @@ import {
   Wrapper,
 } from "./CurrentWeather.styles";
 
-type CurrentWeatherProps = {
-  timeOfDay: TimeOfDay;
-};
-
-export function CurrentWeather({ timeOfDay }: CurrentWeatherProps) {
+export function CurrentWeather() {
   return (
-    <Wrapper $timeOfDay={timeOfDay}>
-      <Visual $timeOfDay={timeOfDay} $backgroundImage={clearNightBackground} />
+    <Wrapper>
+      <Visual $backgroundImage={clearNightBackground} />
       <Summary>
         <div>
           <City>San Francisco, CA</City>
@@ -37,8 +32,8 @@ export function CurrentWeather({ timeOfDay }: CurrentWeatherProps) {
           </CurrentStateRow>
         </div>
         <MetaRow>
-          <MetaTag $timeOfDay={timeOfDay}>H: 76 | L: 58</MetaTag>
-          <MetaTag $timeOfDay={timeOfDay}>Feels like 74</MetaTag>
+          <MetaTag>H: 76 | L: 58</MetaTag>
+          <MetaTag>Feels like 74</MetaTag>
         </MetaRow>
       </Summary>
     </Wrapper>

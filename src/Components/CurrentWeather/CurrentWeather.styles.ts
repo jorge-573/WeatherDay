@@ -1,8 +1,7 @@
 import styled from 'styled-components'
-import { getCardTheme } from '../../styles/theme'
-import { GlassPanel, type TimeProps } from '../shared/panel'
+import { GlassPanel } from '../shared/panel'
 
-export const Wrapper = styled(GlassPanel)<TimeProps>`
+export const Wrapper = styled(GlassPanel)`
   position: relative;
   padding: 1.25rem;
   display: flex;
@@ -67,16 +66,16 @@ export const MetaRow = styled.div`
   gap: 0.55rem;
 `
 
-export const MetaTag = styled.span<TimeProps>`
+export const MetaTag = styled.span`
   border-radius: 999px;
-  border: 1px solid ${({ $timeOfDay }) => getCardTheme($timeOfDay).panelBorder};
+  border: 1px solid ${({ theme }) => theme.panelBorder};
   padding: 0.3rem 0.8rem;
   font-size: 0.84rem;
-  color: ${({ $timeOfDay }) => getCardTheme($timeOfDay).textMuted};
+  color: ${({ theme }) => theme.textMuted};
   background: rgba(255, 255, 255, 0.18);
 `
 
-type VisualProps = TimeProps & {
+type VisualProps = {
   $backgroundImage?: string
 }
 
@@ -85,7 +84,7 @@ export const Visual = styled.div<VisualProps>`
   inset: 0;
   pointer-events: none;
   overflow: hidden;
-  color: ${({ $timeOfDay }) => getCardTheme($timeOfDay).textPrimary};
+  color: ${({ theme }) => theme.textPrimary};
 
   &::before {
     content: '';
@@ -110,17 +109,4 @@ export const Visual = styled.div<VisualProps>`
       rgba(0, 0, 0, 1) 100%
     );
   }
-`
-
-export const Title = styled.h2`
-  margin: 0;
-  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
-  line-height: 1.1;
-`
-
-export const Caption = styled.p`
-  margin: 0.5rem 0 0;
-  font-size: 0.95rem;
-  line-height: 1.45;
-  opacity: 0.9;
 `

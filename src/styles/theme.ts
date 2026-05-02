@@ -68,3 +68,7 @@ export const appTheme = {
 }
 
 export const getCardTheme = (timeOfDay: TimeOfDay) => appTheme.cardThemeByTime[timeOfDay]
+
+declare module 'styled-components' {
+  export interface DefaultTheme extends CardTheme {}
+}

@@ -1,8 +1,7 @@
 import styled from 'styled-components'
-import { getCardTheme } from '../../styles/theme'
-import { GlassPanel, type TimeProps } from '../shared/panel'
+import { GlassPanel } from '../shared/panel'
 
-export const Wrapper = styled(GlassPanel)<TimeProps>`
+export const Wrapper = styled(GlassPanel)`
   padding: 1.1rem;
 `
 
@@ -12,13 +11,13 @@ export const Title = styled.h2`
   line-height: 1.1;
 `
 
-export const Row = styled.div<TimeProps>`
+export const Row = styled.div`
   display: grid;
   grid-template-columns: 1fr auto auto;
   align-items: center;
   gap: 0.5rem;
   padding: 0.55rem 0;
-  border-bottom: 1px solid ${({ $timeOfDay }) => getCardTheme($timeOfDay).panelBorder};
+  border-bottom: 1px solid ${({ theme }) => theme.panelBorder};
 
   &:last-child {
     border-bottom: none;
@@ -37,13 +36,13 @@ export const Temp = styled.p`
   font-weight: 600;
 `
 
-export const Range = styled.div<TimeProps>`
+export const Range = styled.div`
   width: 86px;
   height: 8px;
   border-radius: 999px;
   background: linear-gradient(
     90deg,
-    ${({ $timeOfDay }) => getCardTheme($timeOfDay).accent},
+    ${({ theme }) => theme.accent},
     rgba(201, 84, 255, 0.8)
   );
 `

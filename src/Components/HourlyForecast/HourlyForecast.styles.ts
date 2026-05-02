@@ -1,8 +1,7 @@
 import styled from 'styled-components'
-import { getCardTheme } from '../../styles/theme'
-import { GlassPanel, type TimeProps } from '../shared/panel'
+import { GlassPanel } from '../shared/panel'
 
-export const Wrapper = styled(GlassPanel)<TimeProps>`
+export const Wrapper = styled(GlassPanel)`
   padding: 1.2rem;
 `
 
@@ -27,9 +26,9 @@ export const Row = styled.div`
   }
 `
 
-export const Item = styled.div<TimeProps & { $active?: boolean }>`
+export const Item = styled.div<{ $active?: boolean }>`
   border-radius: 14px;
-  border: 1px solid ${({ $timeOfDay, $active }) => ($active ? getCardTheme($timeOfDay).panelBorder : 'transparent')};
+  border: 1px solid ${({ theme, $active }) => ($active ? theme.panelBorder : 'transparent')};
   background: ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.16)' : 'transparent')};
   padding: 0.65rem 0.45rem;
   text-align: center;

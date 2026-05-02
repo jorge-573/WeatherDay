@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { GlassPanel, type TimeProps } from '../shared/panel'
+import { GlassPanel } from '../shared/panel'
 
 export const Grid = styled.div`
   display: grid;
@@ -11,7 +11,7 @@ export const Grid = styled.div`
   }
 `
 
-export const Card = styled(GlassPanel)<TimeProps>`
+export const Card = styled(GlassPanel)`
   padding: 0.9rem;
 `
 

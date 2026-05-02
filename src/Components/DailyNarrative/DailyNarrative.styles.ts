@@ -1,8 +1,7 @@
 import styled from 'styled-components'
-import { getCardTheme } from '../../styles/theme'
-import { GlassPanel, type TimeProps } from '../shared/panel'
+import { GlassPanel } from '../shared/panel'
 
-export const Wrapper = styled(GlassPanel)<TimeProps>`
+export const Wrapper = styled(GlassPanel)`
   padding: 1.1rem;
 `
 
@@ -19,8 +18,8 @@ export const Paragraph = styled.p`
   opacity: 0.9;
 `
 
-export const Divider = styled.hr<TimeProps>`
+export const Divider = styled.hr`
   border: 0;
-  border-top: 1px solid ${({ $timeOfDay }) => getCardTheme($timeOfDay).panelBorder};
+  border-top: 1px solid ${({ theme }) => theme.panelBorder};
   margin: 0.9rem 0;
 `

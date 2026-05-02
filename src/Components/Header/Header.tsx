@@ -1,4 +1,3 @@
-import type { TimeOfDay } from '../../types/timeOfDay'
 import { LocationIcon, SettingsIcon } from '../Icons'
 import { SearchBar } from '../SearchBar'
 import { IconButton } from '../shared/IconButton'
@@ -10,23 +9,18 @@ import {
   Wrapper,
 } from './Header.styles'
 
-type HeaderProps = {
-  timeOfDay: TimeOfDay
-}
-
 const links = ['Forecast', 'Maps', 'Air Quality', 'History']
 const activeLink = 'Forecast'
 
-export function Header({ timeOfDay }: HeaderProps) {
+export function Header() {
   return (
-    <Wrapper $timeOfDay={timeOfDay}>
+    <Wrapper>
       <Brand>WeatherDay</Brand>
       <Nav>
         {links.map((entry) => (
           <Link
             key={entry}
             href="#"
-            $timeOfDay={timeOfDay}
             data-active={entry === activeLink}
           >
             {entry}

@@ -1,9 +1,4 @@
-import type { TimeOfDay } from '../../types/timeOfDay'
 import { Day, Range, Row, Temp, Title, Wrapper } from './DailyForecast.styles'
-
-type DailyForecastProps = {
-  timeOfDay: TimeOfDay
-}
 
 const dailyForecast = [
   { day: 'Today', low: 58, high: 76 },
@@ -15,14 +10,14 @@ const dailyForecast = [
   { day: 'Sun', low: 59, high: 79 },
 ]
 
-export function DailyForecast({ timeOfDay }: DailyForecastProps) {
+export function DailyForecast() {
   return (
-    <Wrapper $timeOfDay={timeOfDay}>
+    <Wrapper>
       <Title>7-Day Forecast</Title>
       {dailyForecast.map((entry) => (
-        <Row key={entry.day} $timeOfDay={timeOfDay}>
+        <Row key={entry.day}>
           <Day>{entry.day}</Day>
-          <Range $timeOfDay={timeOfDay} />
+          <Range />
           <Temp>
             {entry.low} / {entry.high}
           </Temp>

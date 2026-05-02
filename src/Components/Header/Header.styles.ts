@@ -1,8 +1,6 @@
 import styled from 'styled-components'
-import { getCardTheme } from '../../styles/theme'
-import type { TimeProps } from '../shared/panel'
 
-export const Wrapper = styled.header<TimeProps>`
+export const Wrapper = styled.header`
   width: 100%;
   padding: 0.85rem clamp(1rem, 2.6vw, 2.25rem);
   display: grid;
@@ -45,7 +43,7 @@ export const Nav = styled.nav`
   }
 `
 
-export const Link = styled.a<TimeProps>`
+export const Link = styled.a`
   font-size: 0.95rem;
   text-decoration: none;
   color: rgba(214, 232, 248, 0.72);
@@ -61,7 +59,7 @@ export const Link = styled.a<TimeProps>`
 
   &[data-active='true'] {
     color: #eaf4ff;
-    border-bottom-color: ${({ $timeOfDay }) => getCardTheme($timeOfDay).accent};
+    border-bottom-color: ${({ theme }) => theme.accent};
   }
 `
 

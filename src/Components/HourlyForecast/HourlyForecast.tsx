@@ -1,9 +1,4 @@
-import type { TimeOfDay } from '../../types/timeOfDay'
 import { Item, Label, Row, Temp, Title, Wrapper } from './HourlyForecast.styles'
-
-type HourlyForecastProps = {
-  timeOfDay: TimeOfDay
-}
 
 const hourlyForecast = [
   { hour: 'Now', temp: 72, active: true },
@@ -14,13 +9,13 @@ const hourlyForecast = [
   { hour: '6 PM', temp: 69, active: false },
 ]
 
-export function HourlyForecast({ timeOfDay }: HourlyForecastProps) {
+export function HourlyForecast() {
   return (
-    <Wrapper $timeOfDay={timeOfDay}>
+    <Wrapper>
       <Title>24-Hour Forecast</Title>
       <Row>
         {hourlyForecast.map((entry) => (
-          <Item key={entry.hour} $timeOfDay={timeOfDay} $active={entry.active}>
+          <Item key={entry.hour} $active={entry.active}>
             <Label>{entry.hour}</Label>
             <Temp>{entry.temp} deg</Temp>
           </Item>

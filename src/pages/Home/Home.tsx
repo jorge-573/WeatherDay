@@ -5,28 +5,23 @@ import { DailyNarrative } from '../../Components/DailyNarrative'
 import { Header } from '../../Components/Header'
 import { HourlyForecast } from '../../Components/HourlyForecast'
 import { WeatherStats } from '../../Components/WeatherStats'
-import type { TimeOfDay } from '../../types/timeOfDay'
 import { CenterColumn, Main, Page, RightColumn } from './Home.styles'
 
-type HomeProps = {
-  timeOfDay: TimeOfDay
-}
-
-export function Home({ timeOfDay }: HomeProps) {
+export function Home() {
   return (
     <Page>
-      <Header timeOfDay={timeOfDay} />
+      <Header />
 
       <Main>
         <CenterColumn>
-          <CurrentWeather timeOfDay={timeOfDay} />
-          <HourlyForecast timeOfDay={timeOfDay} />
-          <WeatherStats timeOfDay={timeOfDay} />
+          <CurrentWeather />
+          <HourlyForecast />
+          <WeatherStats />
         </CenterColumn>
 
         <RightColumn>
-          <DailyForecast timeOfDay={timeOfDay} />
-          <DailyNarrative timeOfDay={timeOfDay} />
+          <DailyForecast />
+          <DailyNarrative />
         </RightColumn>
       </Main>
 

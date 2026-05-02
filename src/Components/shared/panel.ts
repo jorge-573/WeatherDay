@@ -1,15 +1,11 @@
 import styled from 'styled-components'
-import { getCardTheme } from '../../styles/theme'
-import type { TimeOfDay } from '../../types/timeOfDay'
 
-export type TimeProps = { $timeOfDay: TimeOfDay }
-
-export const GlassPanel = styled.section<TimeProps>`
+export const GlassPanel = styled.section`
   border-radius: 28px;
-  border: 1px solid ${({ $timeOfDay }) => getCardTheme($timeOfDay).panelBorder};
-  background: ${({ $timeOfDay }) => getCardTheme($timeOfDay).panelBackground};
-  color: ${({ $timeOfDay }) => getCardTheme($timeOfDay).textPrimary};
-  box-shadow: ${({ $timeOfDay }) => getCardTheme($timeOfDay).panelShadow};
+  border: 1px solid ${({ theme }) => theme.panelBorder};
+  background: ${({ theme }) => theme.panelBackground};
+  color: ${({ theme }) => theme.textPrimary};
+  box-shadow: ${({ theme }) => theme.panelShadow};
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
 `
