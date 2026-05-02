@@ -3,28 +3,29 @@ import { getCardTheme } from '../../styles/theme'
 import { GlassPanel, type TimeProps } from '../shared/panel'
 
 export const Wrapper = styled(GlassPanel)<TimeProps>`
+  position: relative;
   padding: 1.25rem;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  display: flex;
   min-height: 230px;
   overflow: hidden;
-
-  @media (max-width: 760px) {
-    grid-template-columns: 1fr;
-  }
 `
 
 export const Summary = styled.div`
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 0.8rem;
-  padding-right: 0.4rem;
+  max-width: 55%;
+
+  @media (max-width: 760px) {
+    max-width: 100%;
+  }
 `
 
 export const City = styled.p`
-  margin: 0;
+  margin-bottom: 1rem;
   font-size: 0.95rem;
   opacity: 0.9;
 `
@@ -80,13 +81,10 @@ type VisualProps = TimeProps & {
 }
 
 export const Visual = styled.div<VisualProps>`
-  position: relative;
-  margin: -1.25rem -1.25rem -1.25rem 0;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   overflow: hidden;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  padding: 1rem;
   color: ${({ $timeOfDay }) => getCardTheme($timeOfDay).textPrimary};
 
   &::before {
@@ -97,19 +95,20 @@ export const Visual = styled.div<VisualProps>`
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.60;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(145deg, rgba(3, 10, 18, 0.1), rgba(3, 10, 18, 0.25));
-  }
-
-  > * {
-    position: relative;
-    z-index: 1;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.2) 35%,
+      rgba(0, 0, 0, 0.75) 65%,
+      rgba(0, 0, 0, 1) 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.2) 35%,
+      rgba(0, 0, 0, 0.75) 65%,
+      rgba(0, 0, 0, 1) 100%
+    );
   }
 `
 

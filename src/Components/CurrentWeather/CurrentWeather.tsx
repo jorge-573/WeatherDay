@@ -1,5 +1,5 @@
 import type { TimeOfDay } from "../../types/timeOfDay";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import SunnyIcon from "@mui/icons-material/Sunny";
 import clearNightBackground from "../../assets/backgrounds/NightSky.png";
 import {
   City,
@@ -22,12 +22,13 @@ type CurrentWeatherProps = {
 export function CurrentWeather({ timeOfDay }: CurrentWeatherProps) {
   return (
     <Wrapper $timeOfDay={timeOfDay}>
+      <Visual $timeOfDay={timeOfDay} $backgroundImage={clearNightBackground} />
       <Summary>
         <div>
           <City>San Francisco, CA</City>
           <CurrentStateRow>
             <ConditionIconWrap>
-              <WbSunnyIcon sx={{ fontSize: 100 }} />
+              <SunnyIcon sx={{ fontSize: 125 }} />
             </ConditionIconWrap>
             <ConditionText>
               <Temperature>72 deg</Temperature>
@@ -40,9 +41,6 @@ export function CurrentWeather({ timeOfDay }: CurrentWeatherProps) {
           <MetaTag $timeOfDay={timeOfDay}>Feels like 74</MetaTag>
         </MetaRow>
       </Summary>
-
-      <Visual $timeOfDay={timeOfDay} $backgroundImage={clearNightBackground}>
-      </Visual>
     </Wrapper>
   );
 }
