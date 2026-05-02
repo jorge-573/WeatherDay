@@ -70,5 +70,6 @@ export const appTheme = {
 export const getCardTheme = (timeOfDay: TimeOfDay) => appTheme.cardThemeByTime[timeOfDay]
 
 declare module 'styled-components' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface DefaultTheme extends CardTheme {}
 }
