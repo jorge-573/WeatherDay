@@ -1,5 +1,8 @@
-import { BackgroundScene } from './Components/BackgroundScene'
+import { ThemeProvider } from 'styled-components'
+import { BackgroundScene } from './components/BackgroundScene'
 import { useTimeOfDay } from './hooks/useTimeOfDay'
+import { Home } from './pages/Home'
+import { getCardTheme } from './styles/theme'
 
 function App() {
   const timeOfDay = useTimeOfDay()
@@ -7,7 +10,13 @@ function App() {
   // This will be replaced by weather-specific backgrounds later.
   const weatherBackgroundOverride: string | null = null
 
-  return <BackgroundScene timeOfDay={timeOfDay} weatherBackgroundOverride={weatherBackgroundOverride} />
+  return (
+    <ThemeProvider theme={getCardTheme(timeOfDay)}>
+      <BackgroundScene timeOfDay={timeOfDay} weatherBackgroundOverride={weatherBackgroundOverride}>
+        <Home />
+      </BackgroundScene>
+    </ThemeProvider>
+  )
 }
 
 export default App
