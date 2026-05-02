@@ -1,16 +1,17 @@
 import styled from 'styled-components'
+import { backdropBlur } from '../../styles/mixins'
+import { fontSize, pageGutter } from '../../styles/tokens'
 
 export const Wrapper = styled.header`
   width: 100%;
-  padding: 0.85rem clamp(1rem, 2.6vw, 2.25rem);
+  padding: 0.85rem ${pageGutter};
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 1.5rem;
   background: rgba(5, 12, 22, 0.62);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  ${backdropBlur(14)}
 
   @media (max-width: 760px) {
     grid-template-columns: 1fr;
@@ -44,7 +45,7 @@ export const Nav = styled.nav`
 `
 
 export const Link = styled.a`
-  font-size: 0.95rem;
+  font-size: ${fontSize.body};
   text-decoration: none;
   color: rgba(214, 232, 248, 0.72);
   padding-bottom: 0.3rem;

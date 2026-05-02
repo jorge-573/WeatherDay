@@ -1,10 +1,10 @@
-import { Footer } from '../../Components/Footer'
-import { CurrentWeather } from '../../Components/CurrentWeather'
-import { DailyForecast } from '../../Components/DailyForecast'
-import { DailyNarrative } from '../../Components/DailyNarrative'
-import { Header } from '../../Components/Header'
-import { HourlyForecast } from '../../Components/HourlyForecast'
-import { WeatherStats } from '../../Components/WeatherStats'
+import { Footer } from '../../components/Footer'
+import { CurrentWeather } from '../../components/CurrentWeather'
+import { DailyForecast } from '../../components/DailyForecast'
+import { DailyNarrative } from '../../components/DailyNarrative'
+import { Header } from '../../components/Header'
+import { HourlyForecast } from '../../components/HourlyForecast'
+import { WeatherStats } from '../../components/WeatherStats'
 import { CenterColumn, Main, Page, RightColumn } from './Home.styles'
 
 export function Home() {

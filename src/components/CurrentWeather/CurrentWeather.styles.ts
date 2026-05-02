@@ -1,5 +1,6 @@
 import styled from 'styled-components'
-import { GlassPanel } from '../shared/panel'
+import { fontSize, radii } from '../../styles/tokens'
+import { GlassPanel } from '../shared/GlassPanel'
 
 export const Wrapper = styled(GlassPanel)`
   position: relative;
@@ -25,7 +26,7 @@ export const Summary = styled.div`
 
 export const City = styled.p`
   margin-bottom: 1rem;
-  font-size: 0.95rem;
+  font-size: ${fontSize.body};
   opacity: 0.9;
 `
 
@@ -42,13 +43,13 @@ export const Condition = styled.p`
   font-weight: 600;
 `
 
-export const CurrentStateRow = styled.div`
+export const TempRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.9rem;
 `
 
-export const ConditionIconWrap = styled.div`
+export const ConditionIcon = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -67,19 +68,19 @@ export const MetaRow = styled.div`
 `
 
 export const MetaTag = styled.span`
-  border-radius: 999px;
+  border-radius: ${radii.pill};
   border: 1px solid ${({ theme }) => theme.panelBorder};
   padding: 0.3rem 0.8rem;
-  font-size: 0.84rem;
+  font-size: ${fontSize.label};
   color: ${({ theme }) => theme.textMuted};
   background: rgba(255, 255, 255, 0.18);
 `
 
-type VisualProps = {
+type BackgroundImageProps = {
   $backgroundImage?: string
 }
 
-export const Visual = styled.div<VisualProps>`
+export const BackgroundImage = styled.div<BackgroundImageProps>`
   position: absolute;
   inset: 0;
   pointer-events: none;

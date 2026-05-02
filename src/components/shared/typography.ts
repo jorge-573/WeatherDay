@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { fontSize } from '../../styles/tokens'
 
 export const SectionTitle = styled.h2`
   margin: 0;
@@ -8,7 +9,7 @@ export const SectionTitle = styled.h2`
 
 export const Paragraph = styled.p`
   margin: 0.5rem 0 0;
-  font-size: 0.95rem;
+  font-size: ${fontSize.body};
   line-height: 1.45;
   opacity: 0.9;
 `

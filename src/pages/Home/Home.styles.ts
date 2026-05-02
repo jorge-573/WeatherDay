@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { pageGutter } from '../../styles/tokens'
 
 export const Page = styled.div`
   min-height: 100vh;
@@ -10,7 +11,7 @@ export const Main = styled.main`
   width: 100%;
   max-width: 1760px;
   margin: 0 auto;
-  padding: 1.25rem clamp(1rem, 2.6vw, 2.25rem);
+  padding: 1.25rem ${pageGutter};
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
   gap: 1.1rem;

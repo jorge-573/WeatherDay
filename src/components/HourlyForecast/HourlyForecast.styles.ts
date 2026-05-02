@@ -1,5 +1,6 @@
 import styled from 'styled-components'
-import { GlassPanel } from '../shared/panel'
+import { fontSize, radii } from '../../styles/tokens'
+import { GlassPanel } from '../shared/GlassPanel'
 
 export const Wrapper = styled(GlassPanel)`
   padding: 1.2rem;
@@ -21,7 +22,7 @@ export const Row = styled.div`
 `
 
 export const Item = styled.div<{ $active?: boolean }>`
-  border-radius: 14px;
+  border-radius: ${radii.tile};
   border: 1px solid ${({ theme, $active }) => ($active ? theme.panelBorder : 'transparent')};
   background: ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.16)' : 'transparent')};
   padding: 0.65rem 0.45rem;
@@ -31,11 +32,11 @@ export const Item = styled.div<{ $active?: boolean }>`
 
 export const Label = styled.p`
   margin: 0;
-  font-size: 0.84rem;
+  font-size: ${fontSize.label};
   opacity: 0.84;
 `
 
-export const Temp = styled.p`
+export const Temperature = styled.p`
   margin: 0.5rem 0 0;
   font-size: 1.5rem;
   font-weight: 600;

@@ -1,35 +1,35 @@
-import SunnyIcon from "@mui/icons-material/Sunny";
-import clearNightBackground from "../../assets/backgrounds/NightSky.png";
+import SunnyIcon from '@mui/icons-material/Sunny'
+import clearNightBackground from '../../assets/backgrounds/NightSky.png'
 import {
+  BackgroundImage,
   City,
-  ConditionIconWrap,
+  ConditionIcon,
   ConditionText,
   Condition,
-  CurrentStateRow,
+  TempRow,
   MetaRow,
   MetaTag,
   Summary,
   Temperature,
-  Visual,
   Wrapper,
-} from "./CurrentWeather.styles";
+} from './CurrentWeather.styles'
 
 export function CurrentWeather() {
   return (
     <Wrapper>
-      <Visual $backgroundImage={clearNightBackground} />
+      <BackgroundImage $backgroundImage={clearNightBackground} />
       <Summary>
         <div>
           <City>San Francisco, CA</City>
-          <CurrentStateRow>
-            <ConditionIconWrap>
+          <TempRow>
+            <ConditionIcon>
               <SunnyIcon sx={{ fontSize: 125 }} />
-            </ConditionIconWrap>
+            </ConditionIcon>
             <ConditionText>
               <Temperature>72 deg</Temperature>
               <Condition>Mostly Sunny</Condition>
             </ConditionText>
-          </CurrentStateRow>
+          </TempRow>
         </div>
         <MetaRow>
           <MetaTag>H: 76 | L: 58</MetaTag>
@@ -37,5 +37,5 @@ export function CurrentWeather() {
         </MetaRow>
       </Summary>
     </Wrapper>
-  );
+  )
 }

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { GlassPanel } from '../shared/panel'
+import { GlassPanel } from '../shared/GlassPanel'
 
 export const Wrapper = styled(GlassPanel)`
   padding: 1.1rem;

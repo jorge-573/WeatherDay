@@ -1,5 +1,5 @@
 import { ThemeProvider } from 'styled-components'
-import { BackgroundScene } from './Components/BackgroundScene'
+import { BackgroundScene } from './components/BackgroundScene'
 import { useTimeOfDay } from './hooks/useTimeOfDay'
 import { Home } from './pages/Home'
 import { getCardTheme } from './styles/theme'

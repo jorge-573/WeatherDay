@@ -1,5 +1,5 @@
 import { SectionTitle } from '../shared/typography'
-import { Day, Range, Row, Temp, Wrapper } from './DailyForecast.styles'
+import { Day, Range, Row, Temperature, Wrapper } from './DailyForecast.styles'
 
 const dailyForecast = [
   { day: 'Today', low: 58, high: 76 },
@@ -19,9 +19,9 @@ export function DailyForecast() {
         <Row key={entry.day}>
           <Day>{entry.day}</Day>
           <Range />
-          <Temp>
+          <Temperature>
             {entry.low} / {entry.high}
-          </Temp>
+          </Temperature>
         </Row>
       ))}
     </Wrapper>

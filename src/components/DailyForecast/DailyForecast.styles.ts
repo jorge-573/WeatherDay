@@ -1,5 +1,6 @@
 import styled from 'styled-components'
-import { GlassPanel } from '../shared/panel'
+import { fontSize, radii } from '../../styles/tokens'
+import { GlassPanel } from '../shared/GlassPanel'
 
 export const Wrapper = styled(GlassPanel)`
   padding: 1.1rem;
@@ -21,19 +22,19 @@ export const Row = styled.div`
 
 export const Day = styled.p`
   margin: 0;
-  font-size: 0.95rem;
+  font-size: ${fontSize.body};
 `
 
-export const Temp = styled.p`
+export const Temperature = styled.p`
   margin: 0;
-  font-size: 0.95rem;
+  font-size: ${fontSize.body};
   font-weight: 600;
 `
 
 export const Range = styled.div`
   width: 86px;
   height: 8px;
-  border-radius: 999px;
+  border-radius: ${radii.pill};
   background: linear-gradient(
     90deg,
     ${({ theme }) => theme.accent},

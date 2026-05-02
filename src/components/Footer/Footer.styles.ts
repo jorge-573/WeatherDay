@@ -1,15 +1,16 @@
 import styled from 'styled-components'
+import { backdropBlur } from '../../styles/mixins'
+import { fontSize, pageGutter } from '../../styles/tokens'
 
 export const Wrapper = styled.footer`
   width: 100%;
-  padding: 1.4rem clamp(1rem, 2.6vw, 2.25rem) 1.1rem;
+  padding: 1.4rem ${pageGutter} 1.1rem;
   display: grid;
   justify-items: center;
   gap: 0.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   background: rgba(3, 8, 14, 0.82);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  ${backdropBlur(14)}
 `
 
 export const Links = styled.nav`
@@ -22,7 +23,7 @@ export const Links = styled.nav`
 
 export const Link = styled.a`
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: ${fontSize.meta};
   color: rgba(197, 210, 225, 0.75);
   transition: color 0.2s ease;
 
