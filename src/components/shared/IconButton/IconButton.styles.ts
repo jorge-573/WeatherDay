@@ -12,7 +12,10 @@ export const Button = styled.button`
   border-radius: 50%;
   color: ${chrome.textMuted};
   cursor: pointer;
-  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover {
     color: ${chrome.textBright};

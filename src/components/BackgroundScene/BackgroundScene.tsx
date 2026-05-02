@@ -13,7 +13,8 @@ export function BackgroundScene({
   timeOfDay,
   weatherBackgroundOverride = null,
 }: BackgroundSceneProps) {
-  const activeBackground = weatherBackgroundOverride ?? appTheme.backgroundsByTime[timeOfDay]
+  const activeBackground =
+    weatherBackgroundOverride ?? appTheme.backgroundsByTime[timeOfDay]
 
   return (
     <AppShell $background={activeBackground}>

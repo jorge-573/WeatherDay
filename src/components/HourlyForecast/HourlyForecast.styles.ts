@@ -23,8 +23,10 @@ export const Row = styled.div`
 
 export const Item = styled.div<{ $active?: boolean }>`
   border-radius: ${radii.tile};
-  border: 1px solid ${({ theme, $active }) => ($active ? theme.panelBorder : 'transparent')};
-  background: ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.16)' : 'transparent')};
+  border: 1px solid
+    ${({ theme, $active }) => ($active ? theme.panelBorder : 'transparent')};
+  background: ${({ $active }) =>
+    $active ? 'rgba(255, 255, 255, 0.16)' : 'transparent'};
   padding: 0.65rem 0.45rem;
   text-align: center;
   min-height: 94px;

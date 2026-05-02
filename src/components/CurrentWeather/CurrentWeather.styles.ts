@@ -91,7 +91,8 @@ export const BackgroundImage = styled.div<BackgroundImageProps>`
     content: '';
     position: absolute;
     inset: 0;
-    background-image: ${({ $backgroundImage }) => ($backgroundImage ? `url(${$backgroundImage})` : 'none')};
+    background-image: ${({ $backgroundImage }) =>
+      $backgroundImage ? `url(${$backgroundImage})` : 'none'};
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

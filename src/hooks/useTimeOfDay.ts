@@ -3,7 +3,9 @@ import type { TimeOfDay } from '../types/timeOfDay'
 import { getTimeOfDay } from '../utils/getTimeOfDay'
 
 export function useTimeOfDay(): TimeOfDay {
-  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(() => getTimeOfDay(new Date()))
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(() =>
+    getTimeOfDay(new Date())
+  )
 
   useEffect(() => {
     const updateTimeOfDay = () => {

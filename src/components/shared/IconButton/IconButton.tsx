@@ -5,7 +5,11 @@ type IconButtonProps = {
   children: ReactNode
 } & ButtonHTMLAttributes<HTMLButtonElement>
 
-export function IconButton({ children, type = 'button', ...props }: IconButtonProps) {
+export function IconButton({
+  children,
+  type = 'button',
+  ...props
+}: IconButtonProps) {
   return (
     <Button type={type} {...props}>
       {children}

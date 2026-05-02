@@ -16,7 +16,8 @@ import {
 } from './CurrentWeather.styles'
 
 export function CurrentWeather() {
-  const { location, temperature, condition, high, low, feelsLike } = currentWeatherMock
+  const { location, temperature, condition, high, low, feelsLike } =
+    currentWeatherMock
 
   return (
     <Wrapper>
@@ -35,7 +36,9 @@ export function CurrentWeather() {
           </TempRow>
         </div>
         <MetaRow>
-          <MetaTag>H: {high} | L: {low}</MetaTag>
+          <MetaTag>
+            H: {high} | L: {low}
+          </MetaTag>
           <MetaTag>Feels like {feelsLike}</MetaTag>
         </MetaRow>
       </Summary>

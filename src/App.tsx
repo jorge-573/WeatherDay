@@ -12,7 +12,10 @@ function App() {
 
   return (
     <ThemeProvider theme={getCardTheme(timeOfDay)}>
-      <BackgroundScene timeOfDay={timeOfDay} weatherBackgroundOverride={weatherBackgroundOverride}>
+      <BackgroundScene
+        timeOfDay={timeOfDay}
+        weatherBackgroundOverride={weatherBackgroundOverride}
+      >
         <Home />
       </BackgroundScene>
     </ThemeProvider>

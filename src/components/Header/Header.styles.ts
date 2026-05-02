@@ -49,7 +49,9 @@ export const Link = styled.a`
   color: ${chrome.textMuted};
   padding-bottom: 0.3rem;
   border-bottom: 2px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover,
   &:focus-visible {
