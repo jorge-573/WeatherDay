@@ -16,8 +16,7 @@ import {
 } from './CurrentWeather.styles'
 
 export function CurrentWeather() {
-  const { location, temperature, condition, high, low, feelsLike } =
-    currentWeatherMock
+  const { location, temperature, condition, high, low, feelsLike } = currentWeatherMock
 
   return (
     <Wrapper>

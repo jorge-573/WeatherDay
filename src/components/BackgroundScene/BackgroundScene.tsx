@@ -8,13 +8,8 @@ type BackgroundSceneProps = PropsWithChildren<{
   weatherBackgroundOverride?: string | null
 }>
 
-export function BackgroundScene({
-  children,
-  timeOfDay,
-  weatherBackgroundOverride = null,
-}: BackgroundSceneProps) {
-  const activeBackground =
-    weatherBackgroundOverride ?? appTheme.backgroundsByTime[timeOfDay]
+export function BackgroundScene({ children, timeOfDay, weatherBackgroundOverride = null }: BackgroundSceneProps) {
+  const activeBackground = weatherBackgroundOverride ?? appTheme.backgroundsByTime[timeOfDay]
 
   return (
     <AppShell $background={activeBackground}>

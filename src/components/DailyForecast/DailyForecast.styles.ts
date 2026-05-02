@@ -35,9 +35,5 @@ export const Range = styled.div`
   width: 86px;
   height: 8px;
   border-radius: ${radii.pill};
-  background: linear-gradient(
-    90deg,
-    ${({ theme }) => theme.accent},
-    rgba(201, 84, 255, 0.8)
-  );
+  background: linear-gradient(90deg, ${({ theme }) => theme.accent}, rgba(201, 84, 255, 0.8));
 `
