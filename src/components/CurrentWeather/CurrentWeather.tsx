@@ -35,7 +35,9 @@ export function CurrentWeather() {
           </TempRow>
         </div>
         <MetaRow>
-          <MetaTag>H: {high} | L: {low}</MetaTag>
+          <MetaTag>
+            H: {high} | L: {low}
+          </MetaTag>
           <MetaTag>Feels like {feelsLike}</MetaTag>
         </MetaRow>
       </Summary>
