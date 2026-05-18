@@ -1,10 +1,14 @@
-import { weatherStatsMock } from '../../data/mocks/weatherStats'
+import type { WeatherStat } from '../../types/weather'
 import { Card, Grid, Label, Subtext, Value } from './WeatherStats.styles'
 
-export function WeatherStats() {
+type WeatherStatsProps = {
+  data: WeatherStat[]
+}
+
+export function WeatherStats({ data }: WeatherStatsProps) {
   return (
     <Grid>
-      {weatherStatsMock.map((entry) => (
+      {data.map((entry) => (
         <Card key={entry.label}>
           <Label>{entry.label}</Label>
           <Value>{entry.value}</Value>

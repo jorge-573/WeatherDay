@@ -3,6 +3,8 @@ import { backdropBlur } from '../../styles/mixins'
 import { chrome, fontSize, pageGutter } from '../../styles/tokens'
 
 export const Wrapper = styled.header`
+  position: relative;
+  z-index: 10;
   width: 100%;
   padding: 0.85rem ${pageGutter};
   display: grid;

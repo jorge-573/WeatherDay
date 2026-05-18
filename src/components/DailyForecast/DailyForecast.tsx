@@ -1,12 +1,16 @@
-import { dailyForecastMock } from '../../data/mocks/dailyForecast'
+import type { DailyForecastEntry } from '../../types/weather'
 import { SectionTitle } from '../shared/typography'
 import { Day, Range, Row, Temperature, Wrapper } from './DailyForecast.styles'
 
-export function DailyForecast() {
+type DailyForecastProps = {
+  data: DailyForecastEntry[]
+}
+
+export function DailyForecast({ data }: DailyForecastProps) {
   return (
     <Wrapper>
       <SectionTitle>7-Day Forecast</SectionTitle>
-      {dailyForecastMock.map((entry) => (
+      {data.map((entry) => (
         <Row key={entry.day}>
           <Day>{entry.day}</Day>
           <Range />

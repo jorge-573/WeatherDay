@@ -1,13 +1,17 @@
 import { Fragment } from 'react'
-import { dailyNarrativeMock } from '../../data/mocks/dailyNarrative'
+import type { NarrativeEntry } from '../../types/weather'
 import { Paragraph, SectionTitle } from '../shared/typography'
 import { Divider, Wrapper } from './DailyNarrative.styles'
 
-export function DailyNarrative() {
+type DailyNarrativeProps = {
+  data: NarrativeEntry[]
+}
+
+export function DailyNarrative({ data }: DailyNarrativeProps) {
   return (
     <Wrapper>
       <SectionTitle>Daily Narrative</SectionTitle>
-      {dailyNarrativeMock.map((entry, index) => (
+      {data.map((entry, index) => (
         <Fragment key={entry.period}>
           {index > 0 && <Divider />}
           <Paragraph>

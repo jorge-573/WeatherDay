@@ -1,6 +1,6 @@
 import SunnyIcon from '@mui/icons-material/Sunny'
 import clearNightBackground from '../../assets/backgrounds/NightSky.png'
-import { currentWeatherMock } from '../../data/mocks/currentWeather'
+import type { CurrentWeatherSnapshot } from '../../types/weather'
 import {
   BackgroundImage,
   City,
@@ -15,8 +15,12 @@ import {
   Wrapper,
 } from './CurrentWeather.styles'
 
-export function CurrentWeather() {
-  const { location, temperature, condition, high, low, feelsLike } = currentWeatherMock
+type CurrentWeatherProps = {
+  data: CurrentWeatherSnapshot
+}
+
+export function CurrentWeather({ data }: CurrentWeatherProps) {
+  const { location, temperature, condition, high, low, feelsLike } = data
 
   return (
     <Wrapper>

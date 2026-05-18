@@ -1,11 +1,17 @@
+import { useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { BackgroundScene } from './components/BackgroundScene'
+import { DEFAULT_CITY } from './config/defaultCity'
 import { useTimeOfDay } from './hooks/useTimeOfDay'
+import { useWeather } from './hooks/useWeather'
 import { Home } from './pages/Home'
 import { getCardTheme } from './styles/theme'
+import type { GeocodingResult } from './types/weather'
 
 function App() {
   const timeOfDay = useTimeOfDay()
+  const [selectedCity, setSelectedCity] = useState<GeocodingResult>(DEFAULT_CITY)
+  const { data, loading, error } = useWeather(selectedCity)
 
   // This will be replaced by weather-specific backgrounds later.
   const weatherBackgroundOverride: string | null = null
@@ -13,7 +19,7 @@ function App() {
   return (
     <ThemeProvider theme={getCardTheme(timeOfDay)}>
       <BackgroundScene timeOfDay={timeOfDay} weatherBackgroundOverride={weatherBackgroundOverride}>
-        <Home />
+        <Home data={data} loading={loading} error={error} onCitySelect={setSelectedCity} />
       </BackgroundScene>
     </ThemeProvider>
   )
