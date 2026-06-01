@@ -1,5 +1,6 @@
+import ToggleButton from '@mui/material/ToggleButton'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import type { UnitSystem } from '../../config/units'
-import { Option, Toggle } from './UnitToggle.styles'
 
 type UnitToggleProps = {
   units: UnitSystem
@@ -8,23 +9,35 @@ type UnitToggleProps = {
 
 export function UnitToggle({ units, onChange }: UnitToggleProps) {
   return (
-    <Toggle role="group" aria-label="Temperature units">
-      <Option
-        type="button"
-        $active={units === 'imperial'}
-        aria-pressed={units === 'imperial'}
-        onClick={() => onChange('imperial')}
-      >
+    <ToggleButtonGroup
+      exclusive
+      size="small"
+      value={units}
+      onChange={(_, next: UnitSystem | null) => {
+        if (next) onChange(next)
+      }}
+      aria-label="Temperature units"
+      sx={{
+        '& .MuiToggleButton-root': {
+          px: 1.5,
+          py: 0.5,
+          border: 'none',
+          borderRadius: '9999px !important',
+          color: 'text.secondary',
+          '&.Mui-selected': {
+            backgroundColor: 'primary.main',
+            color: 'primary.contrastText',
+            '&:hover': { backgroundColor: 'primary.main' },
+          },
+        },
+      }}
+    >
+      <ToggleButton value="imperial" aria-label="Fahrenheit">
         °F
-      </Option>
-      <Option
-        type="button"
-        $active={units === 'metric'}
-        aria-pressed={units === 'metric'}
-        onClick={() => onChange('metric')}
-      >
+      </ToggleButton>
+      <ToggleButton value="metric" aria-label="Celsius">
         °C
-      </Option>
-    </Toggle>
+      </ToggleButton>
+    </ToggleButtonGroup>
   )
 }

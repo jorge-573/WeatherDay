@@ -1,21 +1,23 @@
 import type { PropsWithChildren } from 'react'
-import { appTheme } from '../../styles/theme'
+import Box from '@mui/material/Box'
+import { backgroundsByTime, overlayByTime } from '../../theme/backgrounds'
 import type { TimeOfDay } from '../../types/timeOfDay'
-import { AppShell, Overlay, PageFrame } from './BackgroundScene.styles'
 
 type BackgroundSceneProps = PropsWithChildren<{
   timeOfDay: TimeOfDay
-  weatherBackgroundOverride?: string | null
 }>
 
-export function BackgroundScene({ children, timeOfDay, weatherBackgroundOverride = null }: BackgroundSceneProps) {
-  const activeBackground = weatherBackgroundOverride ?? appTheme.backgroundsByTime[timeOfDay]
-
+export function BackgroundScene({ children, timeOfDay }: BackgroundSceneProps) {
   return (
-    <AppShell $background={activeBackground}>
-      <Overlay $timeOfDay={timeOfDay}>
-        <PageFrame>{children}</PageFrame>
-      </Overlay>
-    </AppShell>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundImage: backgroundsByTime[timeOfDay],
+        backgroundAttachment: 'fixed',
+        transition: 'background-image 600ms ease',
+      }}
+    >
+      <Box sx={{ minHeight: '100vh', backgroundColor: overlayByTime[timeOfDay] }}>{children}</Box>
+    </Box>
   )
 }
