@@ -94,13 +94,16 @@ function isNightAt(time: string, sunByDate: Map<string, { sunrise: string; sunse
 
 export function toHourlyForecast(response: ForecastResponse): HourlyForecastEntry[] {
   const sunByDate = new Map(
-    response.daily.time.map((date, i) => [date, { sunrise: response.daily.sunrise[i], sunset: response.daily.sunset[i] }])
+    response.daily.time.map((date, i) => [
+      date,
+      { sunrise: response.daily.sunrise[i], sunset: response.daily.sunset[i] },
+    ])
   )
   const startIdx = findCurrentHourIndex(response.hourly.time, response.current.time)
   return response.hourly.time.slice(startIdx, startIdx + 24).map((time, i) => {
     const idx = startIdx + i
     const isNow = i === 0
-    
+
     return {
       hour: isNow ? 'Now' : formatHour(time),
       temperature: Math.round(isNow ? response.current.temperature_2m : response.hourly.temperature_2m[idx]),
