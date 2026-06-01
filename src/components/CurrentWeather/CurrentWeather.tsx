@@ -1,6 +1,6 @@
 import SunnyIcon from '@mui/icons-material/Sunny'
 import clearNightBackground from '../../assets/backgrounds/NightSky.png'
-import { currentWeatherMock } from '../../data/mocks/currentWeather'
+import type { CurrentWeatherSnapshot } from '../../types/weather'
 import {
   BackgroundImage,
   City,
@@ -15,8 +15,13 @@ import {
   Wrapper,
 } from './CurrentWeather.styles'
 
-export function CurrentWeather() {
-  const { location, temperature, condition, high, low, feelsLike } = currentWeatherMock
+type CurrentWeatherProps = {
+  data: CurrentWeatherSnapshot
+  temperatureLabel: string
+}
+
+export function CurrentWeather({ data, temperatureLabel }: CurrentWeatherProps) {
+  const { location, temperature, condition, high, low, feelsLike } = data
 
   return (
     <Wrapper>
@@ -29,16 +34,24 @@ export function CurrentWeather() {
               <SunnyIcon sx={{ fontSize: 125 }} />
             </ConditionIcon>
             <ConditionText>
-              <Temperature>{temperature} deg</Temperature>
+              <Temperature>
+                {temperature}
+                {temperatureLabel}
+              </Temperature>
               <Condition>{condition}</Condition>
             </ConditionText>
           </TempRow>
         </div>
         <MetaRow>
           <MetaTag>
-            H: {high} | L: {low}
+            H: {high}
+            {temperatureLabel} | L: {low}
+            {temperatureLabel}
           </MetaTag>
-          <MetaTag>Feels like {feelsLike}</MetaTag>
+          <MetaTag>
+            Feels like {feelsLike}
+            {temperatureLabel}
+          </MetaTag>
         </MetaRow>
       </Summary>
     </Wrapper>

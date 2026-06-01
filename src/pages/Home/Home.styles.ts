@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { pageGutter } from '../../styles/tokens'
+import { fontSize, pageGutter } from '../../styles/tokens'
 
 export const Page = styled.div`
   min-height: 100vh;
@@ -45,4 +45,12 @@ export const RightColumn = styled.aside`
   @media (max-width: 760px) {
     grid-template-columns: 1fr;
   }
+`
+
+export const StatusMessage = styled.div`
+  grid-column: 1 / -1;
+  padding: 3rem 1rem;
+  text-align: center;
+  font-size: ${fontSize.body};
+  color: ${({ theme }) => theme.textMuted};
 `

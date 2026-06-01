@@ -29,3 +29,14 @@ export type NarrativeEntry = {
   period: string
   body: string
 }
+
+export type GeocodingResult = {
+  id: number
+  name: string
+  latitude: number
+  longitude: number
+  country?: string
+  countryCode?: string
+  admin1?: string
+  timezone?: string
+}
