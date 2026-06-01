@@ -10,7 +10,7 @@ import type {
 import type { ForecastResponse } from './openMeteo'
 import { getWeatherCondition } from './weatherCodes'
 
-export function formatLocation(city: GeocodingResult): string {
+function formatLocation(city: GeocodingResult): string {
   const parts = [city.name]
   if (city.admin1) parts.push(city.admin1)
   if (city.countryCode) parts.push(city.countryCode)

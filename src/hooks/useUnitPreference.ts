@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { UnitSystem } from '../config/units'
 
 const STORAGE_KEY = 'weatherday:units'
@@ -16,9 +16,5 @@ export function useUnitPreference() {
     window.localStorage.setItem(STORAGE_KEY, units)
   }, [units])
 
-  const toggleUnits = useCallback(() => {
-    setUnits((prev) => (prev === 'imperial' ? 'metric' : 'imperial'))
-  }, [])
-
-  return { units, setUnits, toggleUnits }
+  return { units, setUnits }
 }
