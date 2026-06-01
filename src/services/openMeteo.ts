@@ -1,3 +1,4 @@
+import { UNIT_CONFIG, type UnitSystem } from '../config/units'
 import type { GeocodingResult } from '../types/weather'
 
 const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search'
@@ -77,8 +78,10 @@ export async function searchCities(query: string, signal?: AbortSignal): Promise
 export async function fetchForecast(
   latitude: number,
   longitude: number,
+  units: UnitSystem,
   signal?: AbortSignal
 ): Promise<ForecastResponse> {
+  const unitConfig = UNIT_CONFIG[units]
   const url = new URL(FORECAST_URL)
   url.searchParams.set('latitude', latitude.toString())
   url.searchParams.set('longitude', longitude.toString())
@@ -97,9 +100,9 @@ export async function fetchForecast(
   )
   url.searchParams.set('hourly', 'temperature_2m,weather_code')
   url.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min,weather_code')
-  url.searchParams.set('temperature_unit', 'fahrenheit')
-  url.searchParams.set('wind_speed_unit', 'mph')
-  url.searchParams.set('precipitation_unit', 'inch')
+  url.searchParams.set('temperature_unit', unitConfig.temperatureUnit)
+  url.searchParams.set('wind_speed_unit', unitConfig.windSpeedUnit)
+  url.searchParams.set('precipitation_unit', unitConfig.precipitationUnit)
   url.searchParams.set('timezone', 'auto')
   url.searchParams.set('forecast_days', '7')
 

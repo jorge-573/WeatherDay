@@ -1,3 +1,4 @@
+import { UNIT_CONFIG, type UnitSystem } from '../config/units'
 import type {
   CurrentWeatherSnapshot,
   DailyForecastEntry,
@@ -84,17 +85,17 @@ function uvLevel(uv: number | undefined): string {
   return 'Extreme'
 }
 
-function visibilityNote(metres: number | undefined): string {
-  if (metres === undefined) return 'No data'
-  const miles = metres / 1609.34
-  if (miles >= 6) return 'Clear view'
-  if (miles >= 3) return 'Hazy'
+function visibilityNote(meters: number | undefined): string {
+  if (meters === undefined) return 'No data'
+  if (meters >= 9656) return 'Clear view'
+  if (meters >= 4828) return 'Hazy'
   return 'Reduced'
 }
 
-export function toWeatherStats(response: ForecastResponse): WeatherStat[] {
+export function toWeatherStats(response: ForecastResponse, units: UnitSystem): WeatherStat[] {
+  const config = UNIT_CONFIG[units]
   const { current } = response
-  const visibilityMiles = current.visibility !== undefined ? Math.round(current.visibility / 1609.34) : null
+  const visibility = current.visibility !== undefined ? Math.round(current.visibility / config.visibilityDivisor) : null
   return [
     {
       label: 'UV Index',
@@ -103,7 +104,7 @@ export function toWeatherStats(response: ForecastResponse): WeatherStat[] {
     },
     {
       label: 'Wind',
-      value: `${Math.round(current.wind_speed_10m)} mph`,
+      value: `${Math.round(current.wind_speed_10m)} ${config.windLabel}`,
       note: `${bearingToCompass(current.wind_direction_10m)} direction`,
     },
     {
@@ -113,7 +114,7 @@ export function toWeatherStats(response: ForecastResponse): WeatherStat[] {
     },
     {
       label: 'Visibility',
-      value: visibilityMiles !== null ? `${visibilityMiles} mi` : '—',
+      value: visibility !== null ? `${visibility} ${config.visibilityLabel}` : '—',
       note: visibilityNote(current.visibility),
     },
   ]
@@ -123,11 +124,12 @@ function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-export function toNarrative(response: ForecastResponse, city: GeocodingResult): NarrativeEntry[] {
-  const todayHigh = Math.round(response.daily.temperature_2m_max[0])
-  const todayLow = Math.round(response.daily.temperature_2m_min[0])
-  const tomorrowHigh = Math.round(response.daily.temperature_2m_max[1] ?? todayHigh)
-  const tomorrowLow = Math.round(response.daily.temperature_2m_min[1] ?? todayLow)
+export function toNarrative(response: ForecastResponse, city: GeocodingResult, units: UnitSystem): NarrativeEntry[] {
+  const label = UNIT_CONFIG[units].temperatureLabel
+  const todayHigh = `${Math.round(response.daily.temperature_2m_max[0])}${label}`
+  const todayLow = `${Math.round(response.daily.temperature_2m_min[0])}${label}`
+  const tomorrowHigh = `${Math.round(response.daily.temperature_2m_max[1] ?? response.daily.temperature_2m_max[0])}${label}`
+  const tomorrowLow = `${Math.round(response.daily.temperature_2m_min[1] ?? response.daily.temperature_2m_min[0])}${label}`
   const condition = getWeatherCondition(response.current.weather_code).label.toLowerCase()
   const tomorrowCondition = getWeatherCondition(response.daily.weather_code[1] ?? 0).label.toLowerCase()
 

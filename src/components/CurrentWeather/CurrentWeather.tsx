@@ -17,9 +17,10 @@ import {
 
 type CurrentWeatherProps = {
   data: CurrentWeatherSnapshot
+  temperatureLabel: string
 }
 
-export function CurrentWeather({ data }: CurrentWeatherProps) {
+export function CurrentWeather({ data, temperatureLabel }: CurrentWeatherProps) {
   const { location, temperature, condition, high, low, feelsLike } = data
 
   return (
@@ -33,16 +34,24 @@ export function CurrentWeather({ data }: CurrentWeatherProps) {
               <SunnyIcon sx={{ fontSize: 125 }} />
             </ConditionIcon>
             <ConditionText>
-              <Temperature>{temperature} deg</Temperature>
+              <Temperature>
+                {temperature}
+                {temperatureLabel}
+              </Temperature>
               <Condition>{condition}</Condition>
             </ConditionText>
           </TempRow>
         </div>
         <MetaRow>
           <MetaTag>
-            H: {high} | L: {low}
+            H: {high}
+            {temperatureLabel} | L: {low}
+            {temperatureLabel}
           </MetaTag>
-          <MetaTag>Feels like {feelsLike}</MetaTag>
+          <MetaTag>
+            Feels like {feelsLike}
+            {temperatureLabel}
+          </MetaTag>
         </MetaRow>
       </Summary>
     </Wrapper>

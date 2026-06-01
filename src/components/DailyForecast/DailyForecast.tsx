@@ -4,9 +4,10 @@ import { Day, Range, Row, Temperature, Wrapper } from './DailyForecast.styles'
 
 type DailyForecastProps = {
   data: DailyForecastEntry[]
+  temperatureLabel: string
 }
 
-export function DailyForecast({ data }: DailyForecastProps) {
+export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
   return (
     <Wrapper>
       <SectionTitle>7-Day Forecast</SectionTitle>
@@ -15,7 +16,9 @@ export function DailyForecast({ data }: DailyForecastProps) {
           <Day>{entry.day}</Day>
           <Range />
           <Temperature>
-            {entry.low} / {entry.high}
+            {entry.low}
+            {temperatureLabel} / {entry.high}
+            {temperatureLabel}
           </Temperature>
         </Row>
       ))}

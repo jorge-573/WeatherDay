@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { UnitSystem } from '../config/units'
 import { toCurrentWeather, toDailyForecast, toHourlyForecast, toNarrative, toWeatherStats } from '../services/mappers'
 import { fetchForecast } from '../services/openMeteo'
 import type {
@@ -24,7 +25,7 @@ type WeatherState = {
   error: string | null
 }
 
-export function useWeather(city: GeocodingResult | null): WeatherState {
+export function useWeather(city: GeocodingResult | null, units: UnitSystem): WeatherState {
   const [state, setState] = useState<WeatherState>({
     data: null,
     loading: city !== null,
@@ -40,15 +41,15 @@ export function useWeather(city: GeocodingResult | null): WeatherState {
     const controller = new AbortController()
     setState((prev) => ({ ...prev, loading: true, error: null }))
 
-    fetchForecast(city.latitude, city.longitude, controller.signal)
+    fetchForecast(city.latitude, city.longitude, units, controller.signal)
       .then((response) => {
         if (controller.signal.aborted) return
         const data: WeatherData = {
           current: toCurrentWeather(response, city),
           hourly: toHourlyForecast(response),
           daily: toDailyForecast(response),
-          stats: toWeatherStats(response),
-          narrative: toNarrative(response, city),
+          stats: toWeatherStats(response, units),
+          narrative: toNarrative(response, city, units),
         }
         setState({ data, loading: false, error: null })
       })
@@ -59,7 +60,7 @@ export function useWeather(city: GeocodingResult | null): WeatherState {
       })
 
     return () => controller.abort()
-  }, [city])
+  }, [city, units])
 
   return state
 }
