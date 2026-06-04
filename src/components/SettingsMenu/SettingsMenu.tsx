@@ -17,11 +17,7 @@ export function SettingsMenu({ locationOnStartup, onLocationOnStartupChange }: S
 
   return (
     <>
-      <IconButton
-        aria-label="Settings"
-        onClick={(e) => setAnchorEl(e.currentTarget)}
-        sx={{ color: 'text.secondary' }}
-      >
+      <IconButton aria-label="Settings" onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ color: 'text.secondary' }}>
         <SettingsOutlinedIcon />
       </IconButton>
       <Menu

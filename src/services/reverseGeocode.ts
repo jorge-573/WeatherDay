@@ -23,12 +23,7 @@ function coordsId(latitude: number, longitude: number): number {
 
 function toGeocodingResult(latitude: number, longitude: number, address?: NominatimAddress): GeocodingResult {
   const name =
-    address?.city ??
-    address?.town ??
-    address?.village ??
-    address?.municipality ??
-    address?.county ??
-    'Current location'
+    address?.city ?? address?.town ?? address?.village ?? address?.municipality ?? address?.county ?? 'Current location'
 
   return {
     id: coordsId(latitude, longitude),
