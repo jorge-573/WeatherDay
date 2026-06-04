@@ -7,7 +7,6 @@ import { DailyForecast } from '../../components/DailyForecast'
 import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
 import { HourlyForecast } from '../../components/HourlyForecast'
-import { WeatherScene } from '../../components/WeatherScene'
 import { WeatherStats } from '../../components/WeatherStats'
 import { UNIT_CONFIG, type UnitSystem } from '../../config/units'
 import type { WeatherData } from '../../hooks/useWeather'
@@ -24,7 +23,7 @@ type HomeProps = {
   onUnitChange: (units: UnitSystem) => void
 }
 
-export function Home({ data, loading, error, units, timeOfDay, onCitySelect, onUnitChange }: HomeProps) {
+export function Home({ data, loading, error, units, onCitySelect, onUnitChange }: HomeProps) {
   const temperatureLabel = UNIT_CONFIG[units].temperatureLabel
 
   return (

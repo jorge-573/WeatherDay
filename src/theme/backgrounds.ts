@@ -5,8 +5,7 @@ import type { TimeOfDay } from '../types/timeOfDay'
 export const backgroundsByTime: Record<TimeOfDay, string> = {
   night:
     'radial-gradient(circle at 80% 16%, rgba(36, 64, 92, 0.55), rgba(6, 16, 33, 0) 32%), linear-gradient(135deg, #041422 0%, #00344d 60%, #000c17 100%)',
-  day:
-    'radial-gradient(circle at 50% -8%, rgba(114, 220, 255, 0.38), transparent 42%), radial-gradient(circle at 78% 14%, rgba(140, 120, 200, 0.28), transparent 38%), linear-gradient(165deg, #3d7a9e 0%, #2a5f7f 42%, #1a3d52 100%)',
+  day: 'radial-gradient(circle at 50% -8%, rgba(114, 220, 255, 0.38), transparent 42%), radial-gradient(circle at 78% 14%, rgba(140, 120, 200, 0.28), transparent 38%), linear-gradient(165deg, #3d7a9e 0%, #2a5f7f 42%, #1a3d52 100%)',
   sunrise:
     'radial-gradient(ellipse 95% 75% at 8% 6%, rgba(255, 200, 110, 0.55), transparent 52%), radial-gradient(circle at 28% 22%, rgba(255, 140, 90, 0.38), transparent 42%), radial-gradient(circle at 55% 35%, rgba(244, 166, 184, 0.22), transparent 48%), linear-gradient(175deg, #6b4a72 0%, #9a5a5a 18%, #c47a52 34%, #5a6a94 52%, #243550 72%, #121c28 100%)',
   sunset:
