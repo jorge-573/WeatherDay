@@ -45,8 +45,6 @@ export function Home({ data, loading, error, units, timeOfDay, onCitySelect, onU
         {data ? (
           <Stack spacing={{ xs: 3, md: 4 }}>
             <CurrentWeather data={data.current} temperatureLabel={temperatureLabel} />
-            <WeatherScene group={data.current.group} timeOfDay={timeOfDay} condition={data.current.condition} />
-            <Divider />
             <HourlyForecast data={data.hourly} temperatureLabel={temperatureLabel} />
             <Divider />
             <DailyForecast data={data.daily} temperatureLabel={temperatureLabel} />
