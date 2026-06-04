@@ -1,35 +1,14 @@
-import { useEffect } from 'react'
 import { BackgroundScene } from './components/BackgroundScene'
-import { useLocationOnStartup } from './hooks/useLocationOnStartup'
-import { useSelectedCity } from './hooks/useSelectedCity'
+import { useCityLocation } from './hooks/useCityLocation'
 import { useUnitPreference } from './hooks/useUnitPreference'
 import { useWeather } from './hooks/useWeather'
 import { Home } from './pages/Home'
-import { fetchCurrentLocationCity } from './services/currentLocation'
 import { getTimeOfDay } from './utils/getTimeOfDay'
 
 function App() {
-  const { city: selectedCity, isCurrentLocation, selectCity } = useSelectedCity()
-  const { enabled: locationOnStartup, setEnabled: setLocationOnStartup } = useLocationOnStartup()
+  const cityLocation = useCityLocation()
   const { units, setUnits } = useUnitPreference()
-  const { data, loading, error } = useWeather(selectedCity, units)
-
-  useEffect(() => {
-    if (!locationOnStartup) return
-
-    let cancelled = false
-    fetchCurrentLocationCity()
-      .then((city) => {
-        if (!cancelled) selectCity(city, 'geolocation')
-      })
-      .catch(() => {
-        // Keep last saved city if GPS or reverse geocode fails.
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [locationOnStartup, selectCity])
+  const { data, loading, error } = useWeather(cityLocation.city, units)
 
   const timeOfDay = data?.timeOfDay ?? getTimeOfDay(new Date())
 
@@ -40,12 +19,8 @@ function App() {
         loading={loading}
         error={error}
         units={units}
-        timeOfDay={timeOfDay}
-        isCurrentLocation={isCurrentLocation}
-        onCitySelect={selectCity}
+        cityLocation={cityLocation}
         onUnitChange={setUnits}
-        locationOnStartup={locationOnStartup}
-        onLocationOnStartupChange={setLocationOnStartup}
       />
     </BackgroundScene>
   )

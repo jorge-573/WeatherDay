@@ -9,8 +9,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import type { UnitSystem } from '../../config/units'
-import type { CitySource } from '../../hooks/useSelectedCity'
-import type { GeocodingResult } from '../../types/weather'
+import type { useCityLocation } from '../../hooks/useCityLocation'
 import { SearchBar } from '../SearchBar'
 import { SettingsMenu } from '../SettingsMenu'
 import { UnitToggle } from '../UnitToggle'
@@ -20,19 +19,11 @@ const activeLink = 'Dashboard'
 
 type HeaderProps = {
   units: UnitSystem
-  onCitySelect?: (city: GeocodingResult, source: CitySource) => void
+  cityLocation: ReturnType<typeof useCityLocation>
   onUnitChange: (units: UnitSystem) => void
-  locationOnStartup: boolean
-  onLocationOnStartupChange: (enabled: boolean) => void
 }
 
-export function Header({
-  units,
-  onCitySelect,
-  onUnitChange,
-  locationOnStartup,
-  onLocationOnStartupChange,
-}: HeaderProps) {
+export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
   return (
     <AppBar
       position="sticky"
@@ -76,7 +67,12 @@ export function Header({
         <Box sx={{ flex: 1 }} />
 
         <Stack direction="row" spacing={1} alignItems="center">
-          <SearchBar onCitySelect={onCitySelect} />
+          <SearchBar
+            onSearchSelect={cityLocation.selectFromSearch}
+            onCurrentLocationClick={cityLocation.requestCurrentLocation}
+            locating={cityLocation.locating}
+            locateError={cityLocation.locateError}
+          />
           <UnitToggle units={units} onChange={onUnitChange} />
           <IconButton aria-label="Notifications" sx={{ color: 'text.secondary' }}>
             <Badge color="error" variant="dot">
@@ -84,8 +80,8 @@ export function Header({
             </Badge>
           </IconButton>
           <SettingsMenu
-            locationOnStartup={locationOnStartup}
-            onLocationOnStartupChange={onLocationOnStartupChange}
+            locationOnStartup={cityLocation.locationOnStartup}
+            onLocationOnStartupChange={cityLocation.setLocationOnStartup}
           />
           <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main', color: 'secondary.contrastText' }}>W</Avatar>
         </Stack>

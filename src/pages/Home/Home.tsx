@@ -9,46 +9,24 @@ import { Header } from '../../components/Header'
 import { HourlyForecast } from '../../components/HourlyForecast'
 import { WeatherStats } from '../../components/WeatherStats'
 import { UNIT_CONFIG, type UnitSystem } from '../../config/units'
-import type { CitySource } from '../../hooks/useSelectedCity'
+import type { useCityLocation } from '../../hooks/useCityLocation'
 import type { WeatherData } from '../../hooks/useWeather'
-import type { TimeOfDay } from '../../types/timeOfDay'
-import type { GeocodingResult } from '../../types/weather'
 
 type HomeProps = {
   data: WeatherData | null
   loading: boolean
   error: string | null
   units: UnitSystem
-  timeOfDay: TimeOfDay
-  isCurrentLocation: boolean
-  onCitySelect: (city: GeocodingResult, source: CitySource) => void
+  cityLocation: ReturnType<typeof useCityLocation>
   onUnitChange: (units: UnitSystem) => void
-  locationOnStartup: boolean
-  onLocationOnStartupChange: (enabled: boolean) => void
 }
 
-export function Home({
-  data,
-  loading,
-  error,
-  units,
-  isCurrentLocation,
-  onCitySelect,
-  onUnitChange,
-  locationOnStartup,
-  onLocationOnStartupChange,
-}: HomeProps) {
+export function Home({ data, loading, error, units, cityLocation, onUnitChange }: HomeProps) {
   const temperatureLabel = UNIT_CONFIG[units].temperatureLabel
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Header
-        units={units}
-        onCitySelect={onCitySelect}
-        onUnitChange={onUnitChange}
-        locationOnStartup={locationOnStartup}
-        onLocationOnStartupChange={onLocationOnStartupChange}
-      />
+      <Header units={units} cityLocation={cityLocation} onUnitChange={onUnitChange} />
 
       <Box
         component="main"
@@ -66,7 +44,7 @@ export function Home({
             <CurrentWeather
               data={data.current}
               temperatureLabel={temperatureLabel}
-              isCurrentLocation={isCurrentLocation}
+              isCurrentLocation={cityLocation.isCurrentLocation}
             />
             <HourlyForecast data={data.hourly} temperatureLabel={temperatureLabel} />
             <Divider />

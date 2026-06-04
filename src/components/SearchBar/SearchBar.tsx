@@ -10,27 +10,29 @@ import Typography from '@mui/material/Typography'
 import MyLocationIcon from '@mui/icons-material/MyLocation'
 import SearchIcon from '@mui/icons-material/Search'
 import { useCitySearch } from '../../hooks/useCitySearch'
-import { useCurrentLocation } from '../../hooks/useCurrentLocation'
-import type { CitySource } from '../../hooks/useSelectedCity'
 import type { GeocodingResult } from '../../types/weather'
 
 type SearchBarProps = {
   placeholder?: string
-  onCitySelect?: (city: GeocodingResult, source: CitySource) => void
+  onSearchSelect?: (city: GeocodingResult) => void
+  onCurrentLocationClick?: () => void
+  locating?: boolean
+  locateError?: string | null
 }
 
 function optionLabel(city: GeocodingResult): string {
   return [city.name, city.admin1, city.country].filter(Boolean).join(', ')
 }
 
-export function SearchBar({ placeholder = 'Search city...', onCitySelect }: SearchBarProps) {
+export function SearchBar({
+  placeholder = 'Search city...',
+  onSearchSelect,
+  onCurrentLocationClick,
+  locating = false,
+  locateError = null,
+}: SearchBarProps) {
   const [query, setQuery] = useState('')
   const { results, loading } = useCitySearch(query)
-  const {
-    loading: locating,
-    error: locateError,
-    requestLocation,
-  } = useCurrentLocation((city) => onCitySelect?.(city, 'geolocation'))
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, width: { xs: '100%', sm: 300 } }}>
@@ -43,7 +45,7 @@ export function SearchBar({ placeholder = 'Search city...', onCitySelect }: Sear
         noOptionsText={query.trim().length < 2 ? 'Type to search' : 'No matches'}
         onInputChange={(_, value) => setQuery(value)}
         onChange={(_, city) => {
-          if (city) onCitySelect?.(city, 'search')
+          if (city) onSearchSelect?.(city)
         }}
         value={null}
         blurOnSelect
@@ -96,7 +98,7 @@ export function SearchBar({ placeholder = 'Search city...', onCitySelect }: Sear
         <span>
           <IconButton
             aria-label="Use current location"
-            onClick={requestLocation}
+            onClick={onCurrentLocationClick}
             disabled={locating}
             size="small"
             sx={{
