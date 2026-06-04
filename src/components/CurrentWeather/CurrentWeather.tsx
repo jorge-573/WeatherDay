@@ -2,24 +2,37 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
+import MyLocationIcon from '@mui/icons-material/MyLocation'
 import type { CurrentWeatherSnapshot } from '../../types/weather'
 import { WeatherIcon } from '../shared/WeatherIcon'
 
 type CurrentWeatherProps = {
   data: CurrentWeatherSnapshot
   temperatureLabel: string
+  isCurrentLocation?: boolean
 }
 
-export function CurrentWeather({ data, temperatureLabel }: CurrentWeatherProps) {
+export function CurrentWeather({ data, temperatureLabel, isCurrentLocation = false }: CurrentWeatherProps) {
   const { location, temperature, condition, code, isNight, high, low, feelsLike } = data
 
   return (
     <Box sx={{ textAlign: 'center', py: { xs: 2, md: 3 } }}>
-      <Stack direction="row" spacing={0.75} alignItems="center" justifyContent="center" sx={{ mb: 2 }}>
-        <LocationOnOutlinedIcon fontSize="small" sx={{ color: 'text.primary' }} />
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
-          {location}
-        </Typography>
+      <Stack alignItems="center" spacing={0.5} sx={{ mb: 2 }}>
+        <Stack direction="row" spacing={0.75} alignItems="center" justifyContent="center">
+          {isCurrentLocation ? (
+            <MyLocationIcon fontSize="small" sx={{ color: (t) => t.md3.accent }} aria-hidden />
+          ) : (
+            <LocationOnOutlinedIcon fontSize="small" sx={{ color: 'text.secondary' }} aria-hidden />
+          )}
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
+            {location}
+          </Typography>
+        </Stack>
+        {isCurrentLocation && (
+          <Typography variant="caption" sx={{ color: (t) => t.md3.accent, fontWeight: 600 }}>
+            Current location
+          </Typography>
+        )}
       </Stack>
 
       <Stack direction="row" spacing={2} alignItems="flex-start" justifyContent="center">

@@ -8,10 +8,11 @@ import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import type { UnitSystem } from '../../config/units'
+import type { CitySource } from '../../hooks/useSelectedCity'
 import type { GeocodingResult } from '../../types/weather'
 import { SearchBar } from '../SearchBar'
+import { SettingsMenu } from '../SettingsMenu'
 import { UnitToggle } from '../UnitToggle'
 
 const navLinks = ['Dashboard', 'Maps', 'Forecasts', 'Historical']
@@ -19,11 +20,19 @@ const activeLink = 'Dashboard'
 
 type HeaderProps = {
   units: UnitSystem
-  onCitySelect?: (city: GeocodingResult) => void
+  onCitySelect?: (city: GeocodingResult, source: CitySource) => void
   onUnitChange: (units: UnitSystem) => void
+  locationOnStartup: boolean
+  onLocationOnStartupChange: (enabled: boolean) => void
 }
 
-export function Header({ units, onCitySelect, onUnitChange }: HeaderProps) {
+export function Header({
+  units,
+  onCitySelect,
+  onUnitChange,
+  locationOnStartup,
+  onLocationOnStartupChange,
+}: HeaderProps) {
   return (
     <AppBar
       position="sticky"
@@ -74,9 +83,10 @@ export function Header({ units, onCitySelect, onUnitChange }: HeaderProps) {
               <NotificationsNoneIcon />
             </Badge>
           </IconButton>
-          <IconButton aria-label="Settings" sx={{ color: 'text.secondary' }}>
-            <SettingsOutlinedIcon />
-          </IconButton>
+          <SettingsMenu
+            locationOnStartup={locationOnStartup}
+            onLocationOnStartupChange={onLocationOnStartupChange}
+          />
           <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main', color: 'secondary.contrastText' }}>W</Avatar>
         </Stack>
       </Toolbar>
