@@ -61,7 +61,12 @@ const ICONS: Record<IconKey, IconSet> = {
   thunder: sameDayAndNight(Thunderstorm),
 }
 
-function byIntensity(intensity: WeatherIntensity | undefined, light: IconKey, normal: IconKey, heavy: IconKey): IconKey {
+function byIntensity(
+  intensity: WeatherIntensity | undefined,
+  light: IconKey,
+  normal: IconKey,
+  heavy: IconKey
+): IconKey {
   if (intensity === 'light') return light
   if (intensity === 'heavy') return heavy
   return normal
