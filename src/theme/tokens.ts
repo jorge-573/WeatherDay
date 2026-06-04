@@ -3,8 +3,9 @@
 // roles onto `palette`, and the full set is exposed via `md3` for surface tints
 // and other roles MUI's palette does not model directly.
 export const md3 = {
-  primary: '#72dcff',
-  onPrimary: '#004c5e',
+  primary: '#ffffff',
+  onPrimary: '#0a0f13',
+  accent: '#72dcff',
   primaryContainer: '#00d2ff',
   onPrimaryContainer: '#004253',
   primaryFixed: '#00d2ff',

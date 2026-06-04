@@ -40,7 +40,15 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
                   {entry.date}
                 </Typography>
               </Stack>
-              <WeatherIcon code={entry.code} size={24} sx={{ color: 'text.primary' }} />
+              <Stack alignItems="center" spacing={0.25} sx={{ width: 88 }}>
+                <WeatherIcon code={entry.code} size={24} sx={{ color: 'text.primary' }} />
+                <Typography
+                  variant="caption"
+                  sx={{ color: 'text.secondary', textAlign: 'center', lineHeight: 1.2, fontSize: '0.65rem' }}
+                >
+                  {entry.condition}
+                </Typography>
+              </Stack>
               <Box
                 sx={{
                   position: 'relative',
@@ -58,7 +66,7 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
                     left: `${left}%`,
                     width: `${Math.max(width, 6)}%`,
                     borderRadius: 999,
-                    background: (t) => `linear-gradient(90deg, ${t.palette.secondary.main}, ${t.palette.primary.main})`,
+                    background: (t) => `linear-gradient(90deg, ${t.palette.secondary.main}, ${t.md3.accent})`,
                   }}
                 />
               </Box>

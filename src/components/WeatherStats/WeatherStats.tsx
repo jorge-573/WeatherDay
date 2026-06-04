@@ -61,7 +61,7 @@ export function WeatherStats({ data }: WeatherStatsProps) {
               backgroundColor: (t) => t.md3.surfaceContainerHighest,
               '& .MuiLinearProgress-bar': {
                 borderRadius: 999,
-                background: (t) => `linear-gradient(90deg, ${t.palette.secondary.main}, ${t.palette.primary.main})`,
+                background: (t) => `linear-gradient(90deg, ${t.palette.secondary.main}, ${t.md3.accent})`,
               },
             }}
           />

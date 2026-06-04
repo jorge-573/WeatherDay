@@ -6,6 +6,8 @@ export type CurrentWeatherSnapshot = {
   location: string
   temperature: number
   condition: string
+  code: number
+  isNight: boolean
   group: WeatherGroup
   high: number
   low: number
@@ -16,6 +18,7 @@ export type HourlyForecastEntry = {
   hour: string
   temperature: number
   code: number
+  condition: string
   isNight: boolean
   isNow?: boolean
 }
@@ -26,6 +29,7 @@ export type DailyForecastEntry = {
   low: number
   high: number
   code: number
+  condition: string
 }
 
 export type SunStat = {

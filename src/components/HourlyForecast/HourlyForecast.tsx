@@ -38,7 +38,7 @@ export function HourlyForecast({ data, temperatureLabel }: HourlyForecastProps) 
             alignItems="center"
             spacing={1}
             sx={{
-              minWidth: 64,
+              minWidth: 76,
               py: 1.5,
               px: 1,
               borderRadius: 3,
@@ -53,11 +53,22 @@ export function HourlyForecast({ data, temperatureLabel }: HourlyForecastProps) 
               code={entry.code}
               isNight={entry.isNight}
               size={26}
-              sx={{ color: entry.isNow ? 'primary.main' : 'text.primary' }}
+              sx={{ color: entry.isNow ? (t) => t.md3.accent : 'text.primary' }}
             />
             <Typography sx={{ fontWeight: 700 }}>
               {entry.temperature}
               {temperatureLabel}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'text.secondary',
+                textAlign: 'center',
+                lineHeight: 1.2,
+                fontSize: '0.65rem',
+              }}
+            >
+              {entry.condition}
             </Typography>
           </Stack>
         ))}

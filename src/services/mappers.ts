@@ -71,11 +71,20 @@ function findCurrentHourIndex(times: string[], currentTime: string): number {
 }
 
 export function toCurrentWeather(response: ForecastResponse, city: GeocodingResult): CurrentWeatherSnapshot {
-  const condition = getWeatherCondition(response.current.weather_code)
+  const code = response.current.weather_code
+  const condition = getWeatherCondition(code)
+  const sunByDate = new Map(
+    response.daily.time.map((date, i) => [
+      date,
+      { sunrise: response.daily.sunrise[i], sunset: response.daily.sunset[i] },
+    ])
+  )
   return {
     location: formatLocation(city),
     temperature: Math.round(response.current.temperature_2m),
     condition: condition.label,
+    code,
+    isNight: isNightAt(response.current.time, sunByDate),
     group: condition.group,
     high: Math.round(response.daily.temperature_2m_max[0]),
     low: Math.round(response.daily.temperature_2m_min[0]),
@@ -103,11 +112,13 @@ export function toHourlyForecast(response: ForecastResponse): HourlyForecastEntr
   return response.hourly.time.slice(startIdx, startIdx + 24).map((time, i) => {
     const idx = startIdx + i
     const isNow = i === 0
+    const code = isNow ? response.current.weather_code : response.hourly.weather_code[idx]
 
     return {
       hour: isNow ? 'Now' : formatHour(time),
       temperature: Math.round(isNow ? response.current.temperature_2m : response.hourly.temperature_2m[idx]),
-      code: isNow ? response.current.weather_code : response.hourly.weather_code[idx],
+      code,
+      condition: getWeatherCondition(code).label,
       isNight: isNightAt(time, sunByDate),
       isNow,
     }
@@ -115,13 +126,17 @@ export function toHourlyForecast(response: ForecastResponse): HourlyForecastEntr
 }
 
 export function toDailyForecast(response: ForecastResponse): DailyForecastEntry[] {
-  return response.daily.time.map((time, i) => ({
-    day: formatDayLabel(time, i),
-    date: formatMonthDay(time),
-    low: Math.round(response.daily.temperature_2m_min[i]),
-    high: Math.round(response.daily.temperature_2m_max[i]),
-    code: response.daily.weather_code[i],
-  }))
+  return response.daily.time.map((time, i) => {
+    const code = response.daily.weather_code[i]
+    return {
+      day: formatDayLabel(time, i),
+      date: formatMonthDay(time),
+      low: Math.round(response.daily.temperature_2m_min[i]),
+      high: Math.round(response.daily.temperature_2m_max[i]),
+      code,
+      condition: getWeatherCondition(code).label,
+    }
+  })
 }
 
 const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']

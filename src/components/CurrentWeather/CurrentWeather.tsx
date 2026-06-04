@@ -1,11 +1,9 @@
 import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import type { CurrentWeatherSnapshot } from '../../types/weather'
+import { WeatherIcon } from '../shared/WeatherIcon'
 
 type CurrentWeatherProps = {
   data: CurrentWeatherSnapshot
@@ -13,58 +11,55 @@ type CurrentWeatherProps = {
 }
 
 export function CurrentWeather({ data, temperatureLabel }: CurrentWeatherProps) {
-  const { location, temperature, condition, high, low, feelsLike } = data
+  const { location, temperature, condition, code, isNight, high, low, feelsLike } = data
 
   return (
-    <Box>
-      <Stack direction="row" spacing={0.75} alignItems="center" sx={{ color: 'text.secondary', mb: 1 }}>
-        <LocationOnOutlinedIcon fontSize="small" />
+    <Box sx={{ textAlign: 'center', py: { xs: 2, md: 3 } }}>
+      <Stack direction="row" spacing={0.75} alignItems="center" justifyContent="center" sx={{ mb: 2 }}>
+        <LocationOnOutlinedIcon fontSize="small" sx={{ color: 'text.primary' }} />
         <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
           {location}
         </Typography>
       </Stack>
 
-      <Stack direction="row" spacing={3} alignItems="flex-start" flexWrap="wrap">
+      <Stack direction="row" spacing={2} alignItems="flex-start" justifyContent="center">
         <Typography
           component="div"
           sx={{
             fontFamily: (t) => t.typography.h1.fontFamily,
             fontWeight: 700,
-            fontSize: 'clamp(4rem, 11vw, 7rem)',
+            fontSize: 'clamp(4.5rem, 14vw, 8rem)',
             lineHeight: 0.95,
+            color: 'text.primary',
           }}
         >
           {temperature}
-          <Typography component="span" sx={{ fontSize: '0.4em', verticalAlign: 'top', ml: 0.5, color: 'primary.main' }}>
+          <Typography
+            component="span"
+            sx={{ fontSize: '0.45em', verticalAlign: 'top', ml: 0.25, color: 'text.primary' }}
+          >
             {temperatureLabel}
           </Typography>
         </Typography>
-
-        <Box sx={{ pt: { xs: 0, sm: 2 } }}>
-          <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 700 }}>
-            {condition}
-          </Typography>
-          <Typography sx={{ color: 'text.secondary' }}>
-            Feels like {feelsLike}
-            {temperatureLabel}
-          </Typography>
+        <Box sx={{ pt: 1 }}>
+          <WeatherIcon code={code} isNight={isNight} size={56} sx={{ color: 'text.primary' }} />
         </Box>
       </Stack>
 
-      <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-        <Chip
-          size="small"
-          icon={<ArrowUpwardIcon sx={{ fontSize: '1rem !important' }} />}
-          label={`H: ${high}${temperatureLabel}`}
-          sx={{ bgcolor: (t) => t.md3.surfaceContainerHigh, color: 'text.primary' }}
-        />
-        <Chip
-          size="small"
-          icon={<ArrowDownwardIcon sx={{ fontSize: '1rem !important' }} />}
-          label={`L: ${low}${temperatureLabel}`}
-          sx={{ bgcolor: (t) => t.md3.surfaceContainerHigh, color: 'text.primary' }}
-        />
-      </Stack>
+      <Typography variant="h5" sx={{ mt: 2, fontWeight: 700, color: 'text.primary' }}>
+        {condition}
+      </Typography>
+
+      <Typography sx={{ mt: 1, color: 'text.primary' }}>
+        Feels like {feelsLike}
+        {temperatureLabel}
+        {' • '}
+        High {high}
+        {temperatureLabel}
+        {' • '}
+        Low {low}
+        {temperatureLabel}
+      </Typography>
     </Box>
   )
 }
