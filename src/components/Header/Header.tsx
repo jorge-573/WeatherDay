@@ -8,10 +8,10 @@ import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import type { UnitSystem } from '../../config/units'
-import type { GeocodingResult } from '../../types/weather'
+import type { useCityLocation } from '../../hooks/useCityLocation'
 import { SearchBar } from '../SearchBar'
+import { SettingsMenu } from '../SettingsMenu'
 import { UnitToggle } from '../UnitToggle'
 
 const navLinks = ['Dashboard', 'Maps', 'Forecasts', 'Historical']
@@ -19,11 +19,11 @@ const activeLink = 'Dashboard'
 
 type HeaderProps = {
   units: UnitSystem
-  onCitySelect?: (city: GeocodingResult) => void
+  cityLocation: ReturnType<typeof useCityLocation>
   onUnitChange: (units: UnitSystem) => void
 }
 
-export function Header({ units, onCitySelect, onUnitChange }: HeaderProps) {
+export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
   return (
     <AppBar
       position="sticky"
@@ -67,16 +67,22 @@ export function Header({ units, onCitySelect, onUnitChange }: HeaderProps) {
         <Box sx={{ flex: 1 }} />
 
         <Stack direction="row" spacing={1} alignItems="center">
-          <SearchBar onCitySelect={onCitySelect} />
+          <SearchBar
+            onSearchSelect={cityLocation.selectFromSearch}
+            onCurrentLocationClick={cityLocation.requestCurrentLocation}
+            locating={cityLocation.locating}
+            locateError={cityLocation.locateError}
+          />
           <UnitToggle units={units} onChange={onUnitChange} />
           <IconButton aria-label="Notifications" sx={{ color: 'text.secondary' }}>
             <Badge color="error" variant="dot">
               <NotificationsNoneIcon />
             </Badge>
           </IconButton>
-          <IconButton aria-label="Settings" sx={{ color: 'text.secondary' }}>
-            <SettingsOutlinedIcon />
-          </IconButton>
+          <SettingsMenu
+            locationOnStartup={cityLocation.locationOnStartup}
+            onLocationOnStartupChange={cityLocation.setLocationOnStartup}
+          />
           <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main', color: 'secondary.contrastText' }}>W</Avatar>
         </Stack>
       </Toolbar>
