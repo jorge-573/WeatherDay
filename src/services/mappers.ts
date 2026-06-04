@@ -4,8 +4,7 @@ import type {
   DailyForecastEntry,
   GeocodingResult,
   HourlyForecastEntry,
-  NarrativeEntry,
-  WeatherStat,
+  WeatherStats,
 } from '../types/weather'
 import type { ForecastResponse } from './openMeteo'
 import { getWeatherCondition } from './weatherCodes'
@@ -18,55 +17,126 @@ function formatLocation(city: GeocodingResult): string {
 }
 
 function formatHour(iso: string): string {
-  const date = new Date(iso)
-  const hour = date.getHours()
+  const hour = isoHour(iso)
   if (hour === 0) return '12 AM'
   if (hour === 12) return '12 PM'
   return hour < 12 ? `${hour} AM` : `${hour - 12} PM`
 }
 
+function formatClock(iso: string): string {
+  const match = /T(\d{2}):(\d{2})/.exec(iso)
+  if (!match) return ''
+  let hour = Number(match[1])
+  const minute = match[2]
+  const meridiem = hour >= 12 ? 'PM' : 'AM'
+  hour = hour % 12 || 12
+  return `${hour}:${minute} ${meridiem}`
+}
+
+function isoHour(iso: string): number {
+  const match = /T(\d{2}):/.exec(iso)
+  return match ? Number(match[1]) : new Date(iso).getHours()
+}
+
+function isoMinutes(iso: string): number {
+  const match = /T(\d{2}):(\d{2})/.exec(iso)
+  return match ? Number(match[1]) * 60 + Number(match[2]) : 0
+}
+
+// daily.time is a date-only string (YYYY-MM-DD); parse as a local date so the
+// weekday isn't shifted a day backward in negative UTC offsets.
+function parseLocalDate(iso: string): Date {
+  const [year, month, day] = iso.slice(0, 10).split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
 function formatDayLabel(iso: string, index: number): string {
   if (index === 0) return 'Today'
-  const date = new Date(iso)
-  return date.toLocaleDateString('en-US', { weekday: 'short' })
+  return parseLocalDate(iso).toLocaleDateString('en-US', { weekday: 'short' })
+}
+
+function formatMonthDay(iso: string): string {
+  const date = parseLocalDate(iso)
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${mm}/${dd}`
 }
 
 function findCurrentHourIndex(times: string[], currentTime: string): number {
-  const idx = times.findIndex((t) => t >= currentTime)
-  return idx === -1 ? 0 : idx
+  const currentHour = currentTime.slice(0, 13)
+  const exact = times.findIndex((t) => t.slice(0, 13) === currentHour)
+  if (exact !== -1) return exact
+  const next = times.findIndex((t) => t >= currentTime)
+  return next === -1 ? 0 : next
 }
 
 export function toCurrentWeather(response: ForecastResponse, city: GeocodingResult): CurrentWeatherSnapshot {
-  const condition = getWeatherCondition(response.current.weather_code)
+  const code = response.current.weather_code
+  const condition = getWeatherCondition(code)
+  const sunByDate = new Map(
+    response.daily.time.map((date, i) => [
+      date,
+      { sunrise: response.daily.sunrise[i], sunset: response.daily.sunset[i] },
+    ])
+  )
   return {
     location: formatLocation(city),
     temperature: Math.round(response.current.temperature_2m),
     condition: condition.label,
+    code,
+    isNight: isNightAt(response.current.time, sunByDate),
+    group: condition.group,
     high: Math.round(response.daily.temperature_2m_max[0]),
     low: Math.round(response.daily.temperature_2m_min[0]),
     feelsLike: Math.round(response.current.apparent_temperature),
   }
 }
 
+function isNightAt(time: string, sunByDate: Map<string, { sunrise: string; sunset: string }>): boolean {
+  const sun = sunByDate.get(time.slice(0, 10))
+  if (!sun) {
+    const hour = isoHour(time)
+    return hour < 6 || hour >= 19
+  }
+  return time < sun.sunrise || time >= sun.sunset
+}
+
 export function toHourlyForecast(response: ForecastResponse): HourlyForecastEntry[] {
+  const sunByDate = new Map(
+    response.daily.time.map((date, i) => [
+      date,
+      { sunrise: response.daily.sunrise[i], sunset: response.daily.sunset[i] },
+    ])
+  )
   const startIdx = findCurrentHourIndex(response.hourly.time, response.current.time)
-  return response.hourly.time.slice(startIdx, startIdx + 6).map((time, i) => {
+  return response.hourly.time.slice(startIdx, startIdx + 24).map((time, i) => {
     const idx = startIdx + i
     const isNow = i === 0
+    const code = isNow ? response.current.weather_code : response.hourly.weather_code[idx]
+
     return {
       hour: isNow ? 'Now' : formatHour(time),
-      temperature: Math.round(response.hourly.temperature_2m[idx]),
+      temperature: Math.round(isNow ? response.current.temperature_2m : response.hourly.temperature_2m[idx]),
+      code,
+      condition: getWeatherCondition(code).label,
+      isNight: isNightAt(time, sunByDate),
       isNow,
     }
   })
 }
 
 export function toDailyForecast(response: ForecastResponse): DailyForecastEntry[] {
-  return response.daily.time.map((time, i) => ({
-    day: formatDayLabel(time, i),
-    low: Math.round(response.daily.temperature_2m_min[i]),
-    high: Math.round(response.daily.temperature_2m_max[i]),
-  }))
+  return response.daily.time.map((time, i) => {
+    const code = response.daily.weather_code[i]
+    return {
+      day: formatDayLabel(time, i),
+      date: formatMonthDay(time),
+      low: Math.round(response.daily.temperature_2m_min[i]),
+      high: Math.round(response.daily.temperature_2m_max[i]),
+      code,
+      condition: getWeatherCondition(code).label,
+    }
+  })
 }
 
 const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
@@ -85,66 +155,32 @@ function uvLevel(uv: number | undefined): string {
   return 'Extreme'
 }
 
-function visibilityNote(meters: number | undefined): string {
-  if (meters === undefined) return 'No data'
-  if (meters >= 9656) return 'Clear view'
-  if (meters >= 4828) return 'Hazy'
-  return 'Reduced'
+// Fraction of daylight elapsed (0-1) for the sunrise/sunset progress bar.
+function dayProgress(current: string, sunrise: string, sunset: string): number {
+  const now = isoMinutes(current)
+  const start = isoMinutes(sunrise)
+  const end = isoMinutes(sunset)
+  if (end <= start) return 0
+  return Math.min(1, Math.max(0, (now - start) / (end - start)))
 }
 
-export function toWeatherStats(response: ForecastResponse, units: UnitSystem): WeatherStat[] {
+export function toWeatherStats(response: ForecastResponse, units: UnitSystem): WeatherStats {
   const config = UNIT_CONFIG[units]
-  const { current } = response
-  const visibility = current.visibility !== undefined ? Math.round(current.visibility / config.visibilityDivisor) : null
-  return [
-    {
-      label: 'UV Index',
-      value: current.uv_index !== undefined ? Math.round(current.uv_index).toString() : '—',
-      note: uvLevel(current.uv_index),
+  const { current, daily } = response
+  return {
+    sun: {
+      sunrise: formatClock(daily.sunrise[0]),
+      sunset: formatClock(daily.sunset[0]),
+      progress: dayProgress(current.time, daily.sunrise[0], daily.sunset[0]),
     },
-    {
-      label: 'Wind',
-      value: `${Math.round(current.wind_speed_10m)} ${config.windLabel}`,
-      note: `${bearingToCompass(current.wind_direction_10m)} direction`,
+    wind: {
+      value: Math.round(current.wind_speed_10m),
+      unit: config.windLabel,
+      direction: bearingToCompass(current.wind_direction_10m),
     },
-    {
-      label: 'Humidity',
-      value: `${Math.round(current.relative_humidity_2m)}%`,
-      note: 'Relative humidity',
+    uv: {
+      value: current.uv_index !== undefined ? Math.round(current.uv_index) : null,
+      level: uvLevel(current.uv_index),
     },
-    {
-      label: 'Visibility',
-      value: visibility !== null ? `${visibility} ${config.visibilityLabel}` : '—',
-      note: visibilityNote(current.visibility),
-    },
-  ]
-}
-
-function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-export function toNarrative(response: ForecastResponse, city: GeocodingResult, units: UnitSystem): NarrativeEntry[] {
-  const label = UNIT_CONFIG[units].temperatureLabel
-  const todayHigh = `${Math.round(response.daily.temperature_2m_max[0])}${label}`
-  const todayLow = `${Math.round(response.daily.temperature_2m_min[0])}${label}`
-  const tomorrowHigh = `${Math.round(response.daily.temperature_2m_max[1] ?? response.daily.temperature_2m_max[0])}${label}`
-  const tomorrowLow = `${Math.round(response.daily.temperature_2m_min[1] ?? response.daily.temperature_2m_min[0])}${label}`
-  const condition = getWeatherCondition(response.current.weather_code).label.toLowerCase()
-  const tomorrowCondition = getWeatherCondition(response.daily.weather_code[1] ?? 0).label.toLowerCase()
-
-  return [
-    {
-      period: 'Today',
-      body: `${capitalize(condition)} in ${city.name} with a high near ${todayHigh} and a low around ${todayLow}.`,
-    },
-    {
-      period: 'Tonight',
-      body: `Lows near ${todayLow} with conditions remaining ${condition}.`,
-    },
-    {
-      period: 'Tomorrow',
-      body: `Expect ${tomorrowCondition} with temperatures between ${tomorrowLow} and ${tomorrowHigh}.`,
-    },
-  ]
+  }
 }

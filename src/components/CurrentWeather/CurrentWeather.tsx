@@ -1,19 +1,9 @@
-import SunnyIcon from '@mui/icons-material/Sunny'
-import clearNightBackground from '../../assets/backgrounds/NightSky.png'
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import type { CurrentWeatherSnapshot } from '../../types/weather'
-import {
-  BackgroundImage,
-  City,
-  ConditionIcon,
-  ConditionText,
-  Condition,
-  TempRow,
-  MetaRow,
-  MetaTag,
-  Summary,
-  Temperature,
-  Wrapper,
-} from './CurrentWeather.styles'
+import { WeatherIcon } from '../shared/WeatherIcon'
 
 type CurrentWeatherProps = {
   data: CurrentWeatherSnapshot
@@ -21,39 +11,55 @@ type CurrentWeatherProps = {
 }
 
 export function CurrentWeather({ data, temperatureLabel }: CurrentWeatherProps) {
-  const { location, temperature, condition, high, low, feelsLike } = data
+  const { location, temperature, condition, code, isNight, high, low, feelsLike } = data
 
   return (
-    <Wrapper>
-      <BackgroundImage $backgroundImage={clearNightBackground} />
-      <Summary>
-        <div>
-          <City>{location}</City>
-          <TempRow>
-            <ConditionIcon>
-              <SunnyIcon sx={{ fontSize: 125 }} />
-            </ConditionIcon>
-            <ConditionText>
-              <Temperature>
-                {temperature}
-                {temperatureLabel}
-              </Temperature>
-              <Condition>{condition}</Condition>
-            </ConditionText>
-          </TempRow>
-        </div>
-        <MetaRow>
-          <MetaTag>
-            H: {high}
-            {temperatureLabel} | L: {low}
+    <Box sx={{ textAlign: 'center', py: { xs: 2, md: 3 } }}>
+      <Stack direction="row" spacing={0.75} alignItems="center" justifyContent="center" sx={{ mb: 2 }}>
+        <LocationOnOutlinedIcon fontSize="small" sx={{ color: 'text.primary' }} />
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
+          {location}
+        </Typography>
+      </Stack>
+
+      <Stack direction="row" spacing={2} alignItems="flex-start" justifyContent="center">
+        <Typography
+          component="div"
+          sx={{
+            fontFamily: (t) => t.typography.h1.fontFamily,
+            fontWeight: 700,
+            fontSize: 'clamp(4.5rem, 14vw, 8rem)',
+            lineHeight: 0.95,
+            color: 'text.primary',
+          }}
+        >
+          {temperature}
+          <Typography
+            component="span"
+            sx={{ fontSize: '0.45em', verticalAlign: 'top', ml: 0.25, color: 'text.primary' }}
+          >
             {temperatureLabel}
-          </MetaTag>
-          <MetaTag>
-            Feels like {feelsLike}
-            {temperatureLabel}
-          </MetaTag>
-        </MetaRow>
-      </Summary>
-    </Wrapper>
+          </Typography>
+        </Typography>
+        <Box sx={{ pt: 1 }}>
+          <WeatherIcon code={code} isNight={isNight} size={56} sx={{ color: 'text.primary' }} />
+        </Box>
+      </Stack>
+
+      <Typography variant="h5" sx={{ mt: 2, fontWeight: 700, color: 'text.primary' }}>
+        {condition}
+      </Typography>
+
+      <Typography sx={{ mt: 1, color: 'text.primary' }}>
+        Feels like {feelsLike}
+        {temperatureLabel}
+        {' • '}
+        High {high}
+        {temperatureLabel}
+        {' • '}
+        Low {low}
+        {temperatureLabel}
+      </Typography>
+    </Box>
   )
 }

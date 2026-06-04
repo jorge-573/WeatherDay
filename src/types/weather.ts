@@ -1,7 +1,14 @@
+import type { WeatherCondition } from '../services/weatherCodes'
+
+export type WeatherGroup = WeatherCondition['group']
+
 export type CurrentWeatherSnapshot = {
   location: string
   temperature: number
   condition: string
+  code: number
+  isNight: boolean
+  group: WeatherGroup
   high: number
   low: number
   feelsLike: number
@@ -10,24 +17,31 @@ export type CurrentWeatherSnapshot = {
 export type HourlyForecastEntry = {
   hour: string
   temperature: number
+  code: number
+  condition: string
+  isNight: boolean
   isNow?: boolean
 }
 
 export type DailyForecastEntry = {
   day: string
+  date: string
   low: number
   high: number
+  code: number
+  condition: string
 }
 
-export type WeatherStat = {
-  label: string
-  value: string
-  note: string
+export type SunStat = {
+  sunrise: string
+  sunset: string
+  progress: number
 }
 
-export type NarrativeEntry = {
-  period: string
-  body: string
+export type WeatherStats = {
+  sun: SunStat
+  wind: { value: number; unit: string; direction: string }
+  uv: { value: number | null; level: string }
 }
 
 export type GeocodingResult = {

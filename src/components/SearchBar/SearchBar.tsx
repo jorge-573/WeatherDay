@@ -1,129 +1,82 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useState } from 'react'
+import Autocomplete from '@mui/material/Autocomplete'
+import InputAdornment from '@mui/material/InputAdornment'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import SearchIcon from '@mui/icons-material/Search'
 import { useCitySearch } from '../../hooks/useCitySearch'
 import type { GeocodingResult } from '../../types/weather'
-import { SearchIcon as SearchSvgIcon } from '../Icons'
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownItemSubtitle,
-  DropdownItemTitle,
-  DropdownStatus,
-  Root,
-  SearchBox,
-  SearchIcon,
-  SearchInput,
-} from './SearchBar.styles'
 
 type SearchBarProps = {
   placeholder?: string
-  ariaLabel?: string
   onCitySelect?: (city: GeocodingResult) => void
 }
 
-export function SearchBar({ placeholder = 'Search city...', ariaLabel = 'Search city', onCitySelect }: SearchBarProps) {
+function optionLabel(city: GeocodingResult): string {
+  return [city.name, city.admin1, city.country].filter(Boolean).join(', ')
+}
+
+export function SearchBar({ placeholder = 'Search city...', onCitySelect }: SearchBarProps) {
   const [query, setQuery] = useState('')
-  const [open, setOpen] = useState(false)
-  const [highlightedIndex, setHighlightedIndex] = useState(0)
-  const rootRef = useRef<HTMLDivElement>(null)
-
-  const { results, loading, error } = useCitySearch(query)
-  const trimmed = query.trim()
-  const showDropdown = open && trimmed.length >= 2
-
-  useEffect(() => {
-    setHighlightedIndex(0)
-  }, [results])
-
-  useEffect(() => {
-    function onMouseDown(event: MouseEvent) {
-      if (!rootRef.current) return
-      if (!rootRef.current.contains(event.target as Node)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', onMouseDown)
-    return () => document.removeEventListener('mousedown', onMouseDown)
-  }, [])
-
-  function handleSelect(city: GeocodingResult) {
-    onCitySelect?.(city)
-    setQuery('')
-    setOpen(false)
-  }
-
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'ArrowDown') {
-      event.preventDefault()
-      if (results.length === 0) return
-      setOpen(true)
-      setHighlightedIndex((prev) => (prev + 1) % results.length)
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault()
-      if (results.length === 0) return
-      setOpen(true)
-      setHighlightedIndex((prev) => (prev - 1 + results.length) % results.length)
-    } else if (event.key === 'Enter') {
-      const selected = results[highlightedIndex]
-      if (selected) {
-        event.preventDefault()
-        handleSelect(selected)
-      }
-    } else if (event.key === 'Escape') {
-      setOpen(false)
-    }
-  }
+  const { results, loading } = useCitySearch(query)
 
   return (
-    <Root ref={rootRef}>
-      <SearchBox>
-        <SearchIcon aria-hidden>
-          <SearchSvgIcon />
-        </SearchIcon>
-        <SearchInput
+    <Autocomplete<GeocodingResult>
+      options={results}
+      loading={loading}
+      filterOptions={(options) => options}
+      getOptionLabel={optionLabel}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
+      noOptionsText={query.trim().length < 2 ? 'Type to search' : 'No matches'}
+      onInputChange={(_, value) => setQuery(value)}
+      onChange={(_, city) => {
+        if (city) onCitySelect?.(city)
+      }}
+      value={null}
+      blurOnSelect
+      clearOnBlur
+      sx={{ width: { xs: '100%', sm: 260 } }}
+      renderOption={(props, option) => {
+        const { key, ...rest } = props as { key: string } & React.HTMLAttributes<HTMLLIElement>
+        const subtitle = [option.admin1, option.country].filter(Boolean).join(', ')
+        return (
+          <li key={key} {...rest}>
+            <span>
+              <Typography component="span" sx={{ fontWeight: 600 }}>
+                {option.name}
+              </Typography>
+              {subtitle && (
+                <Typography component="span" sx={{ color: 'text.secondary', ml: 0.75, fontSize: '0.85em' }}>
+                  {subtitle}
+                </Typography>
+              )}
+            </span>
+          </li>
+        )
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
           placeholder={placeholder}
-          aria-label={ariaLabel}
-          value={query}
-          onChange={(event) => {
-            setQuery(event.target.value)
-            setOpen(true)
+          size="small"
+          slotProps={{
+            input: {
+              ...params.InputProps,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                </InputAdornment>
+              ),
+            },
           }}
-          onFocus={() => setOpen(true)}
-          onKeyDown={handleKeyDown}
-          autoComplete="off"
-          spellCheck={false}
-          role="combobox"
-          aria-expanded={showDropdown}
-          aria-autocomplete="list"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 9999,
+              backgroundColor: (theme) => theme.md3.surfaceContainerHigh,
+            },
+          }}
         />
-      </SearchBox>
-      {showDropdown && (
-        <Dropdown role="listbox">
-          {loading && <DropdownStatus>Searching…</DropdownStatus>}
-          {!loading && error && <DropdownStatus>Search failed</DropdownStatus>}
-          {!loading && !error && results.length === 0 && <DropdownStatus>No matches</DropdownStatus>}
-          {!loading &&
-            results.map((city, index) => {
-              const subtitle = [city.admin1, city.country].filter(Boolean).join(', ')
-              const isActive = index === highlightedIndex
-              return (
-                <DropdownItem
-                  key={`${city.id}-${city.latitude}-${city.longitude}`}
-                  role="option"
-                  aria-selected={isActive}
-                  $active={isActive}
-                  onMouseEnter={() => setHighlightedIndex(index)}
-                  onMouseDown={(event) => {
-                    event.preventDefault()
-                    handleSelect(city)
-                  }}
-                >
-                  <DropdownItemTitle>{city.name}</DropdownItemTitle>
-                  {subtitle && <DropdownItemSubtitle>{subtitle}</DropdownItemSubtitle>}
-                </DropdownItem>
-              )
-            })}
-        </Dropdown>
       )}
-    </Root>
+    />
   )
 }

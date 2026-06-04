@@ -1,22 +1,23 @@
 import { useEffect, useState } from 'react'
 import type { UnitSystem } from '../config/units'
-import { toCurrentWeather, toDailyForecast, toHourlyForecast, toNarrative, toWeatherStats } from '../services/mappers'
+import { toCurrentWeather, toDailyForecast, toHourlyForecast, toWeatherStats } from '../services/mappers'
 import { fetchForecast } from '../services/openMeteo'
 import type {
   CurrentWeatherSnapshot,
   DailyForecastEntry,
   GeocodingResult,
   HourlyForecastEntry,
-  NarrativeEntry,
-  WeatherStat,
+  WeatherStats,
 } from '../types/weather'
+import type { TimeOfDay } from '../types/timeOfDay'
+import { getTimeOfDayFromLocalISO } from '../utils/getTimeOfDay'
 
 export type WeatherData = {
   current: CurrentWeatherSnapshot
   hourly: HourlyForecastEntry[]
   daily: DailyForecastEntry[]
-  stats: WeatherStat[]
-  narrative: NarrativeEntry[]
+  stats: WeatherStats
+  timeOfDay: TimeOfDay
 }
 
 type WeatherState = {
@@ -49,7 +50,7 @@ export function useWeather(city: GeocodingResult | null, units: UnitSystem): Wea
           hourly: toHourlyForecast(response),
           daily: toDailyForecast(response),
           stats: toWeatherStats(response, units),
-          narrative: toNarrative(response, city, units),
+          timeOfDay: getTimeOfDayFromLocalISO(response.current.time),
         }
         setState({ data, loading: false, error: null })
       })
