@@ -42,8 +42,23 @@ export function Home({ data, loading, error, units, cityLocation, onUnitChange }
       >
         <Box sx={{ mb: { xs: 3, md: 4 } }}>
           <WeatherAlert
-            title="Severe Thunderstorm Warning"
-            detail="Until 8:00 PM • Flash flood risk in coastal areas."
+            alerts={[
+              {
+                title: 'Severe Thunderstorm Warning',
+                detail: 'Until 8:00 PM • Flash flood risk in coastal areas.',
+                severity: 'severe',
+              },
+              {
+                title: 'Coastal Flood Advisory',
+                detail: 'Until 11:00 PM • Minor tidal flooding expected.',
+                severity: 'moderate',
+              },
+              {
+                title: 'Wind Advisory',
+                detail: 'Until 6:00 AM • Gusts up to 45 mph.',
+                severity: 'minor',
+              },
+            ]}
           />
         </Box>
 
