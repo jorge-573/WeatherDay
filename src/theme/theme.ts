@@ -53,5 +53,13 @@ export const theme = createTheme({
     MuiToggleButton: {
       styleOverrides: { root: { textTransform: 'none', fontWeight: 600 } },
     },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+          width: '100%',
+        },
+      },
+    },
   },
 })
