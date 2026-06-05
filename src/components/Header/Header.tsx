@@ -1,18 +1,13 @@
 import AppBar from '@mui/material/AppBar'
-import Avatar from '@mui/material/Avatar'
-import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import type { UnitSystem } from '../../config/units'
 import type { useCityLocation } from '../../hooks/useCityLocation'
 import { SearchBar } from '../SearchBar'
 import { SettingsMenu } from '../SettingsMenu'
-import { UnitToggle } from '../UnitToggle'
 
 const navLinks = ['Dashboard', 'Maps', 'Forecasts', 'Historical']
 const activeLink = 'Dashboard'
@@ -29,13 +24,26 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
       position="sticky"
       elevation={0}
       sx={{
+        width: '100%',
+        left: 0,
+        right: 0,
+        borderRadius: 0,
         backgroundColor: 'rgba(5, 12, 22, 0.62)',
         backdropFilter: 'blur(18px)',
         borderBottom: 1,
         borderColor: 'divider',
       }}
     >
-      <Toolbar sx={{ gap: 2, py: 1 }}>
+      <Toolbar
+        disableGutters
+        sx={{
+          width: '100%',
+          maxWidth: 'none',
+          gap: 2,
+          py: 1,
+          px: { xs: 2, sm: 3, md: 4 },
+        }}
+      >
         <Typography
           variant="h6"
           sx={{ fontWeight: 800, letterSpacing: '0.08em', color: 'primary.main', textTransform: 'uppercase' }}
@@ -73,17 +81,12 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
             locating={cityLocation.locating}
             locateError={cityLocation.locateError}
           />
-          <UnitToggle units={units} onChange={onUnitChange} />
-          <IconButton aria-label="Notifications" sx={{ color: 'text.secondary' }}>
-            <Badge color="error" variant="dot">
-              <NotificationsNoneIcon />
-            </Badge>
-          </IconButton>
           <SettingsMenu
+            units={units}
+            onUnitsChange={onUnitChange}
             locationOnStartup={cityLocation.locationOnStartup}
             onLocationOnStartupChange={cityLocation.setLocationOnStartup}
           />
-          <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main', color: 'secondary.contrastText' }}>W</Avatar>
         </Stack>
       </Toolbar>
     </AppBar>
