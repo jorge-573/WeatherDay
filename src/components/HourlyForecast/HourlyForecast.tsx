@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box'
-import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { HourlyForecastEntry } from '../../types/weather'
@@ -16,11 +15,7 @@ export function HourlyForecast({ data, temperatureLabel }: HourlyForecastProps) 
     <Box>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.5 }}>
         <SectionLabel>Hourly Forecast</SectionLabel>
-        <Link href="#" underline="hover" sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>
-          Next 24 Hours
-        </Link>
       </Stack>
-
       <Stack
         direction="row"
         spacing={1}
