@@ -54,3 +54,20 @@ export type GeocodingResult = {
   admin1?: string
   timezone?: string
 }
+
+export type AlertSeverity = 'extreme' | 'severe' | 'moderate' | 'minor' | 'unknown'
+
+export type WeatherAlert = {
+  id: string
+  event: string
+  headline?: string
+  description?: string
+  instruction?: string
+  severity: AlertSeverity
+  areaDesc?: string
+  onset?: string
+  effective?: string
+  expires?: string
+  ends?: string
+  senderName?: string
+}
