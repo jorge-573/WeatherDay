@@ -40,27 +40,11 @@ export function Home({ data, loading, error, units, cityLocation, onUnitChange }
           py: { xs: 3, md: 4 },
         }}
       >
-        <Box sx={{ mb: { xs: 3, md: 4 } }}>
-          <WeatherAlert
-            alerts={[
-              {
-                title: 'Severe Thunderstorm Warning',
-                detail: 'Until 8:00 PM • Flash flood risk in coastal areas.',
-                severity: 'severe',
-              },
-              {
-                title: 'Coastal Flood Advisory',
-                detail: 'Until 11:00 PM • Minor tidal flooding expected.',
-                severity: 'moderate',
-              },
-              {
-                title: 'Wind Advisory',
-                detail: 'Until 6:00 AM • Gusts up to 45 mph.',
-                severity: 'minor',
-              },
-            ]}
-          />
-        </Box>
+        {data && data.alerts.length > 0 && (
+          <Box sx={{ mb: { xs: 3, md: 4 } }}>
+            <WeatherAlert alerts={data.alerts} />
+          </Box>
+        )}
 
         {data ? (
           <Stack spacing={{ xs: 3, md: 4 }}>

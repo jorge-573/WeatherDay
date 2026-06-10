@@ -9,19 +9,12 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded'
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded'
-
-export type AlertSeverity = 'extreme' | 'severe' | 'moderate' | 'minor'
-
-export type WeatherAlertItem = {
-  title: string
-  detail: string
-  severity?: AlertSeverity
-}
+import type { AlertSeverity, WeatherAlert as WeatherAlertData } from '../../types/weather'
 
 type WeatherAlertProps = {
-  alerts: WeatherAlertItem[]
+  alerts: WeatherAlertData[]
   rotateMs?: number
-  onViewDetails?: (alert: WeatherAlertItem) => void
+  onViewDetails?: (alert: WeatherAlertData) => void
 }
 
 const SEVERITY_RANK: Record<AlertSeverity, number> = {
@@ -29,16 +22,25 @@ const SEVERITY_RANK: Record<AlertSeverity, number> = {
   severe: 1,
   moderate: 2,
   minor: 3,
+  unknown: 4,
 }
 
-function severityRank(severity?: AlertSeverity) {
-  return severity ? SEVERITY_RANK[severity] : Number.MAX_SAFE_INTEGER
+function severityRank(severity: AlertSeverity) {
+  return SEVERITY_RANK[severity]
+}
+
+function formatAlertDetail(alert: WeatherAlertData): string {
+  const until = alert.expires ?? alert.ends
+  const untilLabel = until
+    ? `Until ${new Date(until).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`
+    : undefined
+  return [untilLabel, alert.areaDesc].filter(Boolean).join(' • ')
 }
 
 export function WeatherAlert({ alerts, rotateMs = 6000, onViewDetails }: WeatherAlertProps) {
   const sortedAlerts = useMemo(
     () => [...alerts].sort((a, b) => severityRank(a.severity) - severityRank(b.severity)),
-    [alerts],
+    [alerts]
   )
 
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
@@ -101,10 +103,10 @@ export function WeatherAlert({ alerts, rotateMs = 6000, onViewDetails }: Weather
           >
             <Box>
               <Typography sx={{ fontWeight: 700 }} noWrap>
-                {currentAlert.title}
+                {currentAlert.event}
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.85 }} noWrap>
-                {currentAlert.detail}
+                {formatAlertDetail(currentAlert)}
               </Typography>
             </Box>
           </Fade>
@@ -120,12 +122,7 @@ export function WeatherAlert({ alerts, rotateMs = 6000, onViewDetails }: Weather
             >
               <ChevronLeftRoundedIcon fontSize="small" />
             </IconButton>
-            <IconButton
-              size="small"
-              aria-label="Next alert"
-              onClick={() => goTo(index + 1)}
-              sx={{ color: 'inherit' }}
-            >
+            <IconButton size="small" aria-label="Next alert" onClick={() => goTo(index + 1)} sx={{ color: 'inherit' }}>
               <ChevronRightRoundedIcon fontSize="small" />
             </IconButton>
           </Stack>
@@ -151,7 +148,7 @@ export function WeatherAlert({ alerts, rotateMs = 6000, onViewDetails }: Weather
           <Stack direction="row" spacing={0.75}>
             {sortedAlerts.map((alert, dotIndex) => (
               <Box
-                key={`${alert.title}-${dotIndex}`}
+                key={`${alert.id}-${dotIndex}`}
                 role="button"
                 aria-label={`Show alert ${dotIndex + 1}`}
                 onClick={() => goTo(dotIndex)}

@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import type { UnitSystem } from '../config/units'
 import { toCurrentWeather, toDailyForecast, toHourlyForecast, toWeatherStats } from '../services/mappers'
+import { fetchAlerts } from '../services/nwsAlerts'
 import { fetchForecast } from '../services/openMeteo'
 import type {
   CurrentWeatherSnapshot,
   DailyForecastEntry,
   GeocodingResult,
   HourlyForecastEntry,
+  WeatherAlert,
   WeatherStats,
 } from '../types/weather'
 import type { TimeOfDay } from '../types/timeOfDay'
@@ -18,6 +20,7 @@ export type WeatherData = {
   daily: DailyForecastEntry[]
   stats: WeatherStats
   timeOfDay: TimeOfDay
+  alerts: WeatherAlert[]
 }
 
 type WeatherState = {
@@ -42,8 +45,11 @@ export function useWeather(city: GeocodingResult | null, units: UnitSystem): Wea
     const controller = new AbortController()
     setState((prev) => ({ ...prev, loading: true, error: null }))
 
-    fetchForecast(city.latitude, city.longitude, units, controller.signal)
-      .then((response) => {
+    Promise.all([
+      fetchForecast(city.latitude, city.longitude, units, controller.signal),
+      fetchAlerts(city.latitude, city.longitude, controller.signal).catch(() => []),
+    ])
+      .then(([response, alerts]) => {
         if (controller.signal.aborted) return
         const data: WeatherData = {
           current: toCurrentWeather(response, city),
@@ -51,6 +57,7 @@ export function useWeather(city: GeocodingResult | null, units: UnitSystem): Wea
           daily: toDailyForecast(response),
           stats: toWeatherStats(response, units),
           timeOfDay: getTimeOfDayFromLocalISO(response.current.time),
+          alerts,
         }
         setState({ data, loading: false, error: null })
       })
