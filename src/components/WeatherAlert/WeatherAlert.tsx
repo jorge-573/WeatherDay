@@ -32,7 +32,12 @@ function severityRank(severity: AlertSeverity) {
 function formatAlertDetail(alert: WeatherAlertData): string {
   const until = alert.expires ?? alert.ends
   const untilLabel = until
-    ? `Until ${new Date(until).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`
+    ? `Until ${new Date(until).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+      })}`
     : undefined
   return [untilLabel, alert.areaDesc].filter(Boolean).join(' • ')
 }

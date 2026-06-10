@@ -112,12 +112,7 @@ export function AlertDetailsDialog({ open, alerts, onClose }: AlertDetailsDialog
                 }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreRoundedIcon />}>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={1.5}
-                    sx={{ flex: 1, minWidth: 0, pr: 1 }}
-                  >
+                  <Stack direction="row" alignItems="center" spacing={1.5} sx={{ flex: 1, minWidth: 0, pr: 1 }}>
                     <Chip
                       label={severityLabel(alert.severity)}
                       size="small"
@@ -149,12 +144,8 @@ export function AlertDetailsDialog({ open, alerts, onClose }: AlertDetailsDialog
                         {expires && <DetailField label="Expires" value={expires} />}
                       </Stack>
                     )}
-                    {alert.description && (
-                      <DetailField label="Details" value={alert.description} preLine />
-                    )}
-                    {alert.instruction && (
-                      <DetailField label="What to do" value={alert.instruction} preLine />
-                    )}
+                    {alert.description && <DetailField label="Details" value={alert.description} preLine />}
+                    {alert.instruction && <DetailField label="What to do" value={alert.instruction} preLine />}
                     {alert.senderName && <DetailField label="Source" value={alert.senderName} />}
                   </Stack>
                 </AccordionDetails>
