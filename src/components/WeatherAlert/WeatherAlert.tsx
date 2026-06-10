@@ -10,11 +10,11 @@ import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded'
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded'
 import type { AlertSeverity, WeatherAlert as WeatherAlertData } from '../../types/weather'
+import { AlertDetailsDialog } from './AlertDetailsDialog'
 
 type WeatherAlertProps = {
   alerts: WeatherAlertData[]
   rotateMs?: number
-  onViewDetails?: (alert: WeatherAlertData) => void
 }
 
 const SEVERITY_RANK: Record<AlertSeverity, number> = {
@@ -37,7 +37,7 @@ function formatAlertDetail(alert: WeatherAlertData): string {
   return [untilLabel, alert.areaDesc].filter(Boolean).join(' • ')
 }
 
-export function WeatherAlert({ alerts, rotateMs = 6000, onViewDetails }: WeatherAlertProps) {
+export function WeatherAlert({ alerts, rotateMs = 6000 }: WeatherAlertProps) {
   const sortedAlerts = useMemo(
     () => [...alerts].sort((a, b) => severityRank(a.severity) - severityRank(b.severity)),
     [alerts]
@@ -47,6 +47,7 @@ export function WeatherAlert({ alerts, rotateMs = 6000, onViewDetails }: Weather
   const [index, setIndex] = useState(0)
   const [visible, setVisible] = useState(true)
   const [paused, setPaused] = useState(false)
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const nextIndexRef = useRef(0)
 
   const count = sortedAlerts.length
@@ -63,13 +64,13 @@ export function WeatherAlert({ alerts, rotateMs = 6000, onViewDetails }: Weather
   }
 
   useEffect(() => {
-    if (count <= 1 || paused) return
+    if (count <= 1 || paused || detailsOpen) return
     const id = window.setInterval(() => {
       nextIndexRef.current = (index + 1) % count
       setVisible(false)
     }, rotateMs)
     return () => window.clearInterval(id)
-  }, [count, paused, index, rotateMs])
+  }, [count, paused, detailsOpen, index, rotateMs])
 
   if (count === 0) return null
 
@@ -130,7 +131,7 @@ export function WeatherAlert({ alerts, rotateMs = 6000, onViewDetails }: Weather
 
         <Button
           variant="text"
-          onClick={() => onViewDetails?.(currentAlert)}
+          onClick={() => setDetailsOpen(true)}
           sx={{
             flexShrink: 0,
             color: 'inherit',
@@ -169,6 +170,8 @@ export function WeatherAlert({ alerts, rotateMs = 6000, onViewDetails }: Weather
           </Typography>
         </Stack>
       )}
+
+      <AlertDetailsDialog open={detailsOpen} alerts={sortedAlerts} onClose={() => setDetailsOpen(false)} />
     </Stack>
   )
 }
