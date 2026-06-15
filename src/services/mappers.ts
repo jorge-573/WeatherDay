@@ -33,6 +33,10 @@ function formatClock(iso: string): string {
   return `${hour}:${minute} ${meridiem}`
 }
 
+function toPercent(value: number | null | undefined): number | null {
+  return value === null || value === undefined ? null : Math.round(value)
+}
+
 function isoHour(iso: string): number {
   const match = /T(\d{2}):/.exec(iso)
   return match ? Number(match[1]) : new Date(iso).getHours()
@@ -121,6 +125,7 @@ export function toHourlyForecast(response: ForecastResponse): HourlyForecastEntr
       condition: getWeatherCondition(code).label,
       isNight: isNightAt(time, sunByDate),
       isNow,
+      precipitationProbability: toPercent(response.hourly.precipitation_probability?.[idx]),
     }
   })
 }
@@ -135,6 +140,7 @@ export function toDailyForecast(response: ForecastResponse): DailyForecastEntry[
       high: Math.round(response.daily.temperature_2m_max[i]),
       code,
       condition: getWeatherCondition(code).label,
+      precipitationProbability: toPercent(response.daily.precipitation_probability_max?.[i]),
     }
   })
 }
