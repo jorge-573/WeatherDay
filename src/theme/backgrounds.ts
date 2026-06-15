@@ -12,6 +12,11 @@ export const backgroundsByTime: Record<TimeOfDay, string> = {
     'radial-gradient(ellipse 100% 72% at 92% 92%, rgba(255, 165, 85, 0.58), transparent 52%), radial-gradient(circle at 72% 78%, rgba(235, 95, 75, 0.45), transparent 44%), radial-gradient(circle at 48% 62%, rgba(180, 85, 130, 0.3), transparent 50%), linear-gradient(195deg, #2a1f3d 0%, #5a2e4a 14%, #8c4238 28%, #b85a3c 40%, #6a4a6e 56%, #2e3a58 74%, #0f1720 100%)',
 }
 
+// Neutral backdrop for the radar page so the map's precipitation colors pop
+// against a calm "control room" gradient instead of the weather scene.
+export const radarBackground =
+  'radial-gradient(circle at 50% -10%, rgba(40, 52, 66, 0.45), transparent 45%), linear-gradient(180deg, #0b0f14 0%, #060a10 55%, #03060a 100%)'
+
 export const overlayByTime: Record<TimeOfDay, string> = {
   night: 'rgba(0, 0, 0, 0.28)',
   day: 'rgba(0, 0, 0, 0.05)',

@@ -1,28 +1,30 @@
-import { BackgroundScene } from './components/BackgroundScene'
-import { useCityLocation } from './hooks/useCityLocation'
-import { useUnitPreference } from './hooks/useUnitPreference'
-import { useWeather } from './hooks/useWeather'
+import { lazy, Suspense } from 'react'
+import Typography from '@mui/material/Typography'
+import { Route, Routes } from 'react-router-dom'
+import { Layout } from './components/Layout'
 import { Home } from './pages/Home'
-import { getTimeOfDay } from './utils/getTimeOfDay'
+
+const Radar = lazy(() => import('./pages/Radar').then((module) => ({ default: module.Radar })))
 
 function App() {
-  const cityLocation = useCityLocation()
-  const { units, setUnits } = useUnitPreference()
-  const { data, loading, error } = useWeather(cityLocation.city, units)
-
-  const timeOfDay = data?.timeOfDay ?? getTimeOfDay(new Date())
-
   return (
-    <BackgroundScene timeOfDay={timeOfDay}>
-      <Home
-        data={data}
-        loading={loading}
-        error={error}
-        units={units}
-        cityLocation={cityLocation}
-        onUnitChange={setUnits}
-      />
-    </BackgroundScene>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route
+          path="radar"
+          element={
+            <Suspense
+              fallback={
+                <Typography sx={{ py: 8, textAlign: 'center', color: 'text.secondary' }}>Loading radar…</Typography>
+              }
+            >
+              <Radar />
+            </Suspense>
+          }
+        />
+      </Route>
+    </Routes>
   )
 }
 
