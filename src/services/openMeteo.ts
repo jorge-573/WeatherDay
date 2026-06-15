@@ -38,6 +38,7 @@ export type ForecastResponse = {
     time: string[]
     temperature_2m: number[]
     weather_code: number[]
+    precipitation_probability?: number[]
   }
   daily: {
     time: string[]
@@ -46,6 +47,7 @@ export type ForecastResponse = {
     weather_code: number[]
     sunrise: string[]
     sunset: string[]
+    precipitation_probability_max?: number[]
   }
 }
 
@@ -100,8 +102,11 @@ export async function fetchForecast(
       'visibility',
     ].join(',')
   )
-  url.searchParams.set('hourly', 'temperature_2m,weather_code')
-  url.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset')
+  url.searchParams.set('hourly', 'temperature_2m,weather_code,precipitation_probability')
+  url.searchParams.set(
+    'daily',
+    'temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset,precipitation_probability_max'
+  )
   url.searchParams.set('temperature_unit', unitConfig.temperatureUnit)
   url.searchParams.set('wind_speed_unit', unitConfig.windSpeedUnit)
   url.searchParams.set('precipitation_unit', unitConfig.precipitationUnit)

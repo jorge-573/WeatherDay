@@ -1,6 +1,9 @@
+import AcUnitIcon from '@mui/icons-material/AcUnit'
+import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import { getWeatherCondition } from '../../services/weatherCodes'
 import type { HourlyForecastEntry } from '../../types/weather'
 import { SectionLabel } from '../shared/SectionLabel'
 import { WeatherIcon } from '../shared/WeatherIcon'
@@ -54,6 +57,28 @@ export function HourlyForecast({ data, temperatureLabel }: HourlyForecastProps) 
               {entry.temperature}
               {temperatureLabel}
             </Typography>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={0.25}
+              sx={{
+                color: entry.precipitationProbability ? (t) => t.md3.accent : 'text.disabled',
+                minHeight: 16,
+              }}
+            >
+              {entry.precipitationProbability !== null && (
+                <>
+                  {getWeatherCondition(entry.code).group === 'snow' ? (
+                    <AcUnitIcon sx={{ fontSize: 12 }} />
+                  ) : (
+                    <WaterDropOutlinedIcon sx={{ fontSize: 12 }} />
+                  )}
+                  <Typography variant="caption" sx={{ fontWeight: 600, fontSize: '0.65rem' }}>
+                    {entry.precipitationProbability}%
+                  </Typography>
+                </>
+              )}
+            </Stack>
             <Typography
               variant="caption"
               sx={{

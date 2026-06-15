@@ -21,6 +21,7 @@ export type HourlyForecastEntry = {
   condition: string
   isNight: boolean
   isNow?: boolean
+  precipitationProbability: number | null
 }
 
 export type DailyForecastEntry = {
@@ -30,6 +31,7 @@ export type DailyForecastEntry = {
   high: number
   code: number
   condition: string
+  precipitationProbability: number | null
 }
 
 export type SunStat = {
