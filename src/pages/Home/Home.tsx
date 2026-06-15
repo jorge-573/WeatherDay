@@ -4,72 +4,47 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { CurrentWeather } from '../../components/CurrentWeather'
 import { DailyForecast } from '../../components/DailyForecast'
-import { Footer } from '../../components/Footer'
-import { Header } from '../../components/Header'
 import { HourlyForecast } from '../../components/HourlyForecast'
+import { useLayoutContext } from '../../components/Layout'
 import { WeatherAlert } from '../../components/WeatherAlert'
 import { WeatherStats } from '../../components/WeatherStats'
-import { UNIT_CONFIG, type UnitSystem } from '../../config/units'
-import type { useCityLocation } from '../../hooks/useCityLocation'
-import type { WeatherData } from '../../hooks/useWeather'
+import { UNIT_CONFIG } from '../../config/units'
 
-type HomeProps = {
-  data: WeatherData | null
-  loading: boolean
-  error: string | null
-  units: UnitSystem
-  cityLocation: ReturnType<typeof useCityLocation>
-  onUnitChange: (units: UnitSystem) => void
-}
-
-export function Home({ data, loading, error, units, cityLocation, onUnitChange }: HomeProps) {
+export function Home() {
+  const { data, loading, error, units, cityLocation } = useLayoutContext()
   const temperatureLabel = UNIT_CONFIG[units].temperatureLabel
 
+  if (!data) {
+    return (
+      <Typography sx={{ py: 8, textAlign: 'center', color: 'text.secondary' }}>
+        {loading
+          ? 'Loading weather…'
+          : error
+            ? `Could not load weather: ${error}`
+            : 'Search for a city to see the forecast.'}
+      </Typography>
+    )
+  }
+
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Header units={units} cityLocation={cityLocation} onUnitChange={onUnitChange} />
+    <>
+      {data.alerts.length > 0 && (
+        <Box sx={{ mb: { xs: 3, md: 4 } }}>
+          <WeatherAlert alerts={data.alerts} />
+        </Box>
+      )}
 
-      <Box
-        component="main"
-        sx={{
-          flex: 1,
-          width: '100%',
-          maxWidth: 1080,
-          mx: 'auto',
-          px: { xs: 2, sm: 3, md: 4 },
-          py: { xs: 3, md: 4 },
-        }}
-      >
-        {data && data.alerts.length > 0 && (
-          <Box sx={{ mb: { xs: 3, md: 4 } }}>
-            <WeatherAlert alerts={data.alerts} />
-          </Box>
-        )}
-
-        {data ? (
-          <Stack spacing={{ xs: 3, md: 4 }}>
-            <CurrentWeather
-              data={data.current}
-              temperatureLabel={temperatureLabel}
-              isCurrentLocation={cityLocation.isCurrentLocation}
-            />
-            <HourlyForecast data={data.hourly} temperatureLabel={temperatureLabel} />
-            <Divider />
-            <DailyForecast data={data.daily} temperatureLabel={temperatureLabel} />
-            <WeatherStats data={data.stats} />
-          </Stack>
-        ) : (
-          <Typography sx={{ py: 8, textAlign: 'center', color: 'text.secondary' }}>
-            {loading
-              ? 'Loading weather…'
-              : error
-                ? `Could not load weather: ${error}`
-                : 'Search for a city to see the forecast.'}
-          </Typography>
-        )}
-      </Box>
-
-      <Footer />
-    </Box>
+      <Stack spacing={{ xs: 3, md: 4 }}>
+        <CurrentWeather
+          data={data.current}
+          temperatureLabel={temperatureLabel}
+          isCurrentLocation={cityLocation.isCurrentLocation}
+        />
+        <HourlyForecast data={data.hourly} temperatureLabel={temperatureLabel} />
+        <Divider />
+        <DailyForecast data={data.daily} temperatureLabel={temperatureLabel} />
+        <WeatherStats data={data.stats} />
+      </Stack>
+    </>
   )
 }
