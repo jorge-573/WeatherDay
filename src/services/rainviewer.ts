@@ -43,7 +43,10 @@ export async function fetchRadarMaps(signal?: AbortSignal): Promise<RadarMaps> {
 }
 
 export type RadarTileOptions = {
-  /** RainViewer color scheme (0-8). 2 = "Universal Blue". */
+  /**
+   * RainViewer color scheme (0-8). 2 = "Universal Blue": rain runs cyan -> blue
+   * -> yellow -> red, with a separate blue/white snow palette.
+   */
   color?: number
   size?: 256 | 512
   smooth?: boolean
