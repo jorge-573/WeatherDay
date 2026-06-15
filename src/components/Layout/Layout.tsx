@@ -30,7 +30,7 @@ export function Layout() {
         sx={{
           flex: 1,
           width: '100%',
-          maxWidth: 1080,
+          maxWidth: isRadar ? 1400 : 1080,
           mx: 'auto',
           px: { xs: 2, sm: 3, md: 4 },
           py: { xs: 3, md: 4 },

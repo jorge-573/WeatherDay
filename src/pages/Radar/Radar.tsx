@@ -24,8 +24,8 @@ export function Radar() {
 
       <Box
         sx={{
-          height: { xs: 360, md: 560 },
-          borderRadius: 3,
+          height: { xs: '65vh', md: 'calc(100vh - 220px)' },
+          minHeight: { xs: 420, md: 520 },
           overflow: 'hidden',
           border: 1,
           borderColor: 'divider',
