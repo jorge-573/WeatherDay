@@ -115,3 +115,26 @@ export async function fetchForecast(
 
   return (await res.json()) as ForecastResponse
 }
+
+type UvResponse = { current?: { uv_index?: number } }
+
+/** Minimal current UV-index lookup, used to supplement NWS (which has no UV). */
+export async function fetchUvIndex(
+  latitude: number,
+  longitude: number,
+  signal?: AbortSignal
+): Promise<number | null> {
+  const url = new URL(FORECAST_URL)
+  url.searchParams.set('latitude', latitude.toString())
+  url.searchParams.set('longitude', longitude.toString())
+  url.searchParams.set('current', 'uv_index')
+  url.searchParams.set('timezone', 'auto')
+
+  const res = await fetch(url, { signal })
+  if (!res.ok) {
+    throw new Error(`UV request failed: ${res.status}`)
+  }
+
+  const data = (await res.json()) as UvResponse
+  return data.current?.uv_index ?? null
+}

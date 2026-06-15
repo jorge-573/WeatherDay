@@ -1,4 +1,5 @@
 import type { WeatherCondition } from '../services/weatherCodes'
+import type { TimeOfDay } from './timeOfDay'
 
 export type WeatherGroup = WeatherCondition['group']
 
@@ -70,4 +71,13 @@ export type WeatherAlert = {
   expires?: string
   ends?: string
   senderName?: string
+}
+
+export type WeatherData = {
+  current: CurrentWeatherSnapshot
+  hourly: HourlyForecastEntry[]
+  daily: DailyForecastEntry[]
+  stats: WeatherStats
+  timeOfDay: TimeOfDay
+  alerts: WeatherAlert[]
 }

@@ -17,7 +17,7 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
 
   return (
     <Box>
-      <SectionLabel>10-Day Forecast</SectionLabel>
+      <SectionLabel>Daily Forecast</SectionLabel>
 
       <Stack divider={<Box sx={{ borderBottom: 1, borderColor: 'divider' }} />} sx={{ mt: 1 }}>
         {data.map((entry, index) => {
