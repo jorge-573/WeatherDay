@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import IconButton from '@mui/material/IconButton'
@@ -17,9 +17,13 @@ type RadarMapProps = {
   locationName: string
 }
 
-const FRAME_INTERVAL_MS = 600
+const FRAME_INTERVAL_MS = 800
 const DEFAULT_ZOOM = 7
 const RADAR_OPACITY = 0.7
+// Wait this long after a tile error (e.g. a 429) before loading the next frame.
+const ERROR_BACKOFF_MS = 1200
+// Start animating once at least this many frames are available.
+const MIN_PLAYABLE_FRAMES = 2
 
 const CARTO_DARK_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 const CARTO_ATTRIBUTION =
@@ -99,38 +103,82 @@ function RadarLegend() {
   )
 }
 
+type FramePreloader = {
+  /** How many frames are mounted/requested so far (loaded sequentially). */
+  mountedCount: number
+  /** Number of frames whose tiles have finished loading. */
+  loadedCount: number
+  loaded: Record<string, boolean>
+  handleLoad: (index: number, path: string) => void
+  handleError: (index: number) => void
+}
+
 /**
- * Renders every frame as a preloaded layer and shows one at a time. The
- * requested frame is only revealed once its tiles have loaded; until then the
- * last loaded frame stays visible so playback never blanks out mid-animation.
+ * Loads radar frames one at a time instead of all at once. A new frame is only
+ * mounted (and its tiles requested) after the previous frame finishes loading
+ * or errors, which avoids the request burst that triggers RainViewer 429s.
  */
-function RadarFrameLayers({ host, frames, activeIndex }: { host: string; frames: RadarFrame[]; activeIndex: number }) {
+function useFramePreloader(frames: RadarFrame[]): FramePreloader {
+  const frameCount = frames.length
+  const firstPath = frames[0]?.path
+  const [mountedCount, setMountedCount] = useState(frameCount > 0 ? 1 : 0)
   const [loaded, setLoaded] = useState<Record<string, boolean>>({})
 
-  const markLoaded = (path: string) => {
-    setLoaded((prev) => (prev[path] ? prev : { ...prev, [path]: true }))
-  }
+  useEffect(() => {
+    setMountedCount(frameCount > 0 ? 1 : 0)
+    setLoaded({})
+  }, [firstPath, frameCount])
 
-  const visibleIndex = useMemo(() => {
-    if (loaded[frames[activeIndex]?.path]) return activeIndex
-    for (let i = activeIndex - 1; i >= 0; i--) {
-      if (loaded[frames[i]?.path]) return i
-    }
-    for (let i = frames.length - 1; i > activeIndex; i--) {
-      if (loaded[frames[i]?.path]) return i
-    }
-    return activeIndex
-  }, [activeIndex, frames, loaded])
+  const advanceFrom = useCallback(
+    (index: number) => {
+      setMountedCount((current) => (index >= current - 1 ? Math.min(current + 1, frameCount) : current))
+    },
+    [frameCount]
+  )
 
+  const handleLoad = useCallback(
+    (index: number, path: string) => {
+      setLoaded((prev) => (prev[path] ? prev : { ...prev, [path]: true }))
+      advanceFrom(index)
+    },
+    [advanceFrom]
+  )
+
+  const handleError = useCallback(
+    (index: number) => {
+      window.setTimeout(() => advanceFrom(index), ERROR_BACKOFF_MS)
+    },
+    [advanceFrom]
+  )
+
+  const loadedCount = useMemo(() => Object.values(loaded).filter(Boolean).length, [loaded])
+
+  return { mountedCount, loadedCount, loaded, handleLoad, handleError }
+}
+
+type RadarFrameLayersProps = {
+  host: string
+  frames: RadarFrame[]
+  mountedCount: number
+  visibleIndex: number
+  onLoad: (index: number, path: string) => void
+  onError: (index: number) => void
+}
+
+/** Renders only the mounted frames, showing the single visible one. */
+function RadarFrameLayers({ host, frames, mountedCount, visibleIndex, onLoad, onError }: RadarFrameLayersProps) {
   return (
     <>
-      {frames.map((frame, index) => (
+      {frames.slice(0, mountedCount).map((frame, index) => (
         <TileLayer
           key={frame.path}
           url={buildRadarTileUrl(host, frame)}
           opacity={index === visibleIndex ? RADAR_OPACITY : 0}
           zIndex={5}
-          eventHandlers={{ load: () => markLoaded(frame.path) }}
+          eventHandlers={{
+            load: () => onLoad(index, frame.path),
+            tileerror: () => onError(index),
+          }}
         />
       ))}
     </>
@@ -139,21 +187,39 @@ function RadarFrameLayers({ host, frames, activeIndex }: { host: string; frames:
 
 export function RadarMap({ latitude, longitude, locationName }: RadarMapProps) {
   const { host, frames, loading, error } = useRadarFrames()
+  const { mountedCount, loadedCount, loaded, handleLoad, handleError } = useFramePreloader(frames)
   const [activeIndex, setActiveIndex] = useState(0)
   const [playing, setPlaying] = useState(true)
+
+  // Only step through frames that have been mounted/loaded so far.
+  const playableCount = Math.max(1, mountedCount)
 
   useEffect(() => {
     setActiveIndex(0)
   }, [frames.length])
 
   useEffect(() => {
-    if (!playing || frames.length <= 1) return
+    if (!playing || loadedCount < MIN_PLAYABLE_FRAMES) return
     const id = window.setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % frames.length)
+      setActiveIndex((prev) => (prev + 1) % playableCount)
     }, FRAME_INTERVAL_MS)
     return () => window.clearInterval(id)
-  }, [playing, frames.length])
+  }, [playing, loadedCount, playableCount])
 
+  // Show the requested frame once it has loaded; until then hold the nearest
+  // loaded frame so playback never blanks out on a still-loading frame.
+  const visibleIndex = useMemo(() => {
+    if (loaded[frames[activeIndex]?.path]) return activeIndex
+    for (let i = activeIndex - 1; i >= 0; i--) {
+      if (loaded[frames[i]?.path]) return i
+    }
+    for (let i = mountedCount - 1; i > activeIndex; i--) {
+      if (loaded[frames[i]?.path]) return i
+    }
+    return activeIndex
+  }, [activeIndex, frames, loaded, mountedCount])
+
+  const sliderMax = Math.max(0, playableCount - 1)
   const activeFrame = frames[activeIndex]
   const hasFrames = frames.length > 0
 
@@ -166,7 +232,16 @@ export function RadarMap({ latitude, longitude, locationName }: RadarMapProps) {
         style={{ height: '100%', width: '100%', backgroundColor: '#03060a' }}
       >
         <TileLayer url={CARTO_DARK_URL} attribution={CARTO_ATTRIBUTION} subdomains="abcd" />
-        {hasFrames && <RadarFrameLayers host={host} frames={frames} activeIndex={activeIndex} />}
+        {hasFrames && (
+          <RadarFrameLayers
+            host={host}
+            frames={frames}
+            mountedCount={mountedCount}
+            visibleIndex={visibleIndex}
+            onLoad={handleLoad}
+            onError={handleError}
+          />
+        )}
         <CircleMarker
           center={[latitude, longitude]}
           radius={6}
@@ -218,8 +293,8 @@ export function RadarMap({ latitude, longitude, locationName }: RadarMapProps) {
                 aria-label="Radar time"
                 size="small"
                 min={0}
-                max={frames.length - 1}
-                value={activeIndex}
+                max={sliderMax}
+                value={Math.min(activeIndex, sliderMax)}
                 onChange={(_, value) => {
                   setPlaying(false)
                   setActiveIndex(value as number)

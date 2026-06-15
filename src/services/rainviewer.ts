@@ -1,5 +1,8 @@
 const WEATHER_MAPS_URL = 'https://api.rainviewer.com/public/weather-maps.json'
 
+// Most recent past frames to keep (older frames add tiles without much value).
+const MAX_PAST_FRAMES = 10
+
 export type RadarFrame = {
   /** Unix timestamp in seconds for the frame. */
   time: number
@@ -36,7 +39,8 @@ export async function fetchRadarMaps(signal?: AbortSignal): Promise<RadarMaps> {
   }
 
   const data = (await res.json()) as WeatherMapsResponse
-  const past = (data.radar?.past ?? []).map<RadarFrame>((frame) => ({ ...frame, kind: 'past' }))
+  // Cap the past frames to keep the total tile volume (and request load) modest.
+  const past = (data.radar?.past ?? []).slice(-MAX_PAST_FRAMES).map<RadarFrame>((frame) => ({ ...frame, kind: 'past' }))
   const nowcast = (data.radar?.nowcast ?? []).map<RadarFrame>((frame) => ({ ...frame, kind: 'nowcast' }))
 
   return { host: data.host, frames: [...past, ...nowcast] }
