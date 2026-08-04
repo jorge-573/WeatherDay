@@ -60,7 +60,6 @@ export async function fetchRainviewerFrames(signal?: AbortSignal): Promise<Radar
   }
 
   const data = (await res.json()) as WeatherMapsResponse
-  // Cap the past frames to keep the total tile volume (and request load) modest.
   const past = (data.radar?.past ?? []).slice(-MAX_PAST_FRAMES).map((raw) => toFrame(data.host, raw, false))
   const nowcast = (data.radar?.nowcast ?? []).map((raw) => toFrame(data.host, raw, true))
 
