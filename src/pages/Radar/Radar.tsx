@@ -18,7 +18,7 @@ export function Radar() {
           {city.name}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Live precipitation with a two-hour forecast. Press play to animate.
+          High-resolution NOAA radar in the US, worldwide coverage from RainViewer. Press play to animate.
         </Typography>
       </Box>
 
