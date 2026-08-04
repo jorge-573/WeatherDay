@@ -7,6 +7,8 @@ import type {
   GeocodingResult,
   HourlyForecastEntry,
   PressureTrend,
+  SunPhase,
+  SunStat,
   WeatherStats,
 } from '../types/weather'
 import type { AirQualityResponse, ForecastResponse } from '../types/openMeteo'
@@ -58,9 +60,15 @@ function isoHour(iso: string): number {
   return match ? Number(match[1]) : new Date(iso).getHours()
 }
 
-function isoMinutes(iso: string): number {
+/** Minutes since local midnight, or null when the timestamp is absent or malformed. */
+function isoMinutesOrNull(iso: string | null | undefined): number | null {
+  if (!iso) return null
   const match = /T(\d{2}):(\d{2})/.exec(iso)
-  return match ? Number(match[1]) * 60 + Number(match[2]) : 0
+  return match ? Number(match[1]) * 60 + Number(match[2]) : null
+}
+
+function isoMinutes(iso: string): number {
+  return isoMinutesOrNull(iso) ?? 0
 }
 
 // daily.time is a date-only string (YYYY-MM-DD); parse as a local date so the
@@ -177,13 +185,91 @@ function uvLevel(uv: number | undefined): string {
   return 'Extreme'
 }
 
-// Fraction of daylight elapsed (0-1) for the sunrise/sunset progress bar.
+// Fraction of daylight elapsed (0-1) for the sun arc's filled sweep. Clamped, so
+// this is only meaningful during the `daylight` phase; callers must check the
+// phase before drawing anything positional with it.
 function dayProgress(current: string, sunrise: string, sunset: string): number {
   const now = isoMinutes(current)
   const start = isoMinutes(sunrise)
   const end = isoMinutes(sunset)
   if (end <= start) return 0
   return Math.min(1, Math.max(0, (now - start) / (end - start)))
+}
+
+const MINUTES_PER_DAY = 24 * 60
+
+function sunPhase(nowMinutes: number, sunriseMinutes: number, sunsetMinutes: number): SunPhase {
+  if (nowMinutes < sunriseMinutes) return 'beforeSunrise'
+  if (nowMinutes >= sunsetMinutes) return 'afterSunset'
+  return 'daylight'
+}
+
+/**
+ * Minutes until the sun next rises or sets. After sunset this counts forward to
+ * tomorrow's sunrise, which is why the forecast needs more than one day.
+ */
+function minutesUntilNextSunEvent(
+  phase: SunPhase,
+  nowMinutes: number,
+  sunriseMinutes: number,
+  sunsetMinutes: number,
+  tomorrowSunriseMinutes: number | null
+): number | null {
+  switch (phase) {
+    case 'beforeSunrise':
+      return sunriseMinutes - nowMinutes
+    case 'daylight':
+      return sunsetMinutes - nowMinutes
+    case 'afterSunset':
+      return tomorrowSunriseMinutes === null ? null : MINUTES_PER_DAY - nowMinutes + tomorrowSunriseMinutes
+  }
+}
+
+function toSunStat(response: ForecastResponse): SunStat {
+  const { current, daily } = response
+  const sunriseIso = daily.sunrise[0]
+  const sunsetIso = daily.sunset[0]
+  const durations = {
+    daylight: formatDuration(daily.daylight_duration?.[0]),
+    sunshine: formatDuration(daily.sunshine_duration?.[0]),
+  }
+
+  const nowMinutes = isoMinutesOrNull(current.time)
+  const sunriseMinutes = isoMinutesOrNull(sunriseIso)
+  const sunsetMinutes = isoMinutesOrNull(sunsetIso)
+  // During polar day the provider reports the sunset on the following date rather
+  // than omitting it, which would otherwise parse as a same-day, minutes-long day.
+  const spansDates = sunriseIso?.slice(0, 10) !== sunsetIso?.slice(0, 10)
+
+  // With no usable sun events there is no position to mark; empty clock strings
+  // tell the arc to draw its track only.
+  if (
+    nowMinutes === null ||
+    sunriseMinutes === null ||
+    sunsetMinutes === null ||
+    spansDates ||
+    sunsetMinutes <= sunriseMinutes
+  ) {
+    return { sunrise: '', sunset: '', progress: 0, phase: 'daylight', until: null, ...durations }
+  }
+
+  const phase = sunPhase(nowMinutes, sunriseMinutes, sunsetMinutes)
+  const minutesUntil = minutesUntilNextSunEvent(
+    phase,
+    nowMinutes,
+    sunriseMinutes,
+    sunsetMinutes,
+    isoMinutesOrNull(daily.sunrise[1])
+  )
+
+  return {
+    sunrise: formatClock(sunriseIso),
+    sunset: formatClock(sunsetIso),
+    progress: dayProgress(current.time, sunriseIso, sunsetIso),
+    phase,
+    until: formatDuration(minutesUntil === null ? null : minutesUntil * 60),
+    ...durations,
+  }
 }
 
 const HPA_PER_INHG = 33.8639
@@ -241,13 +327,7 @@ export function toWeatherStats(response: ForecastResponse, units: UnitSystem): W
   const config = UNIT_CONFIG[units]
   const { current, daily } = response
   return {
-    sun: {
-      sunrise: formatClock(daily.sunrise[0]),
-      sunset: formatClock(daily.sunset[0]),
-      progress: dayProgress(current.time, daily.sunrise[0], daily.sunset[0]),
-      daylight: formatDuration(daily.daylight_duration?.[0]),
-      sunshine: formatDuration(daily.sunshine_duration?.[0]),
-    },
+    sun: toSunStat(response),
     wind: {
       value: Math.round(current.wind_speed_10m),
       unit: config.windLabel,

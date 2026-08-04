@@ -1,7 +1,4 @@
 import Box from '@mui/material/Box'
-import LinearProgress from '@mui/material/LinearProgress'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 import AirIcon from '@mui/icons-material/Air'
 import BlurOnIcon from '@mui/icons-material/BlurOn'
 import SpeedIcon from '@mui/icons-material/Speed'
@@ -14,9 +11,11 @@ import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined'
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined'
 import WbTwilightIcon from '@mui/icons-material/WbTwilight'
 import type { SvgIconComponent } from '@mui/icons-material'
-import { aqiColors, gradients, radii } from '../../theme'
+import { aqiColors } from '../../theme'
 import type { AirQuality, PressureTrend, WeatherStats as WeatherStatsData } from '../../types/weather'
 import { SectionLabel, StatTile } from '../shared'
+import { SunArc } from './SunArc'
+import { sunCountdown } from './sunCountdown'
 
 type WeatherStatsProps = {
   data: WeatherStatsData
@@ -40,41 +39,11 @@ function PressureDetail({ trend }: { trend: PressureTrend }) {
   )
 }
 
-function SunBody({ sunrise, sunset, progress }: { sunrise: string; sunset: string; progress: number }) {
-  return (
-    <Stack spacing={0.75}>
-      <Stack direction="row" justifyContent="space-between" alignItems="baseline">
-        <Typography sx={{ fontWeight: 700 }}>{sunrise}</Typography>
-        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-          Rise
-        </Typography>
-      </Stack>
-      <LinearProgress
-        variant="determinate"
-        value={Math.round(progress * 100)}
-        sx={{
-          height: 5,
-          borderRadius: radii.full,
-          backgroundColor: (t) => t.md3.surfaceContainerHighest,
-          '& .MuiLinearProgress-bar': {
-            borderRadius: radii.full,
-            background: gradients.accentBar,
-          },
-        }}
-      />
-      <Stack direction="row" justifyContent="space-between" alignItems="baseline">
-        <Typography sx={{ fontWeight: 700 }}>{sunset}</Typography>
-        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-          Set
-        </Typography>
-      </Stack>
-    </Stack>
-  )
-}
-
-function sunDetail(daylight: string | null, sunshine: string | null): string | null {
-  if (!daylight) return null
-  return sunshine ? `${daylight} of daylight · ${sunshine} of sun` : `${daylight} of daylight`
+/** The arc already shows the daylight length, so the caption carries the live countdown. */
+function sunDetail(sun: WeatherStatsData['sun']): string | null {
+  const countdown = sunCountdown(sun)
+  const sunshine = sun.sunshine ? `${sun.sunshine} of sun` : null
+  return [countdown, sunshine].filter(Boolean).join(' · ') || null
 }
 
 function windDetail(direction: string, gusts: number | null, unit: string): string {
@@ -105,8 +74,8 @@ export function WeatherStats({ data, airQuality, temperatureLabel }: WeatherStat
           gap: { xs: 1.5, sm: 2 },
         }}
       >
-        <StatTile icon={WbTwilightIcon} label="Sun" detail={sunDetail(sun.daylight, sun.sunshine)}>
-          <SunBody sunrise={sun.sunrise} sunset={sun.sunset} progress={sun.progress} />
+        <StatTile icon={WbTwilightIcon} label="Sun" detail={sunDetail(sun)}>
+          <SunArc sun={sun} />
         </StatTile>
 
         <StatTile
