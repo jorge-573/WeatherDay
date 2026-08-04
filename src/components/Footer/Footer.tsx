@@ -4,6 +4,7 @@ import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined'
+import { glass } from '../../theme'
 
 const footerLinks = ['Privacy Policy', 'Terms of Service', 'Data Sources', 'API Documentation']
 
@@ -15,7 +16,7 @@ export function Footer() {
         mt: 'auto',
         px: { xs: 2, md: 4 },
         py: 3,
-        backgroundColor: 'rgba(3, 8, 14, 0.82)',
+        ...glass.footer,
         borderTop: 1,
         borderColor: 'divider',
       }}

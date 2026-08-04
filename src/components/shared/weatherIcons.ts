@@ -12,7 +12,8 @@ import { SnowingHeavy } from '@material-symbols-svg/react/rounded/icons/snowing-
 import { Thunderstorm } from '@material-symbols-svg/react/rounded/icons/thunderstorm'
 import { Foggy } from '@material-symbols-svg/react/rounded/icons/foggy'
 import type { MaterialSymbolsComponent } from '@material-symbols-svg/react/rounded'
-import { getWeatherCondition, type WeatherIntensity } from './weatherCodes'
+import { getWeatherCondition } from '../../domain/weatherCodes'
+import type { WeatherIntensity } from '../../types/weather'
 
 // WMO weather interpretation codes (the numbers Open-Meteo returns). The coarse
 // `WeatherCondition.group` can't tell partly cloudy from overcast (both are

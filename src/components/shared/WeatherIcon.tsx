@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import type { SxProps, Theme } from '@mui/material/styles'
-import { getWeatherIcon } from '../../services/weatherIcons'
+import { getWeatherIcon } from './weatherIcons'
 
 type WeatherIconProps = {
   code: number

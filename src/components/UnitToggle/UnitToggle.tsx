@@ -1,6 +1,7 @@
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import type { UnitSystem } from '../../config/units'
+import { radii } from '../../theme'
 
 type UnitToggleProps = {
   units: UnitSystem
@@ -22,7 +23,7 @@ export function UnitToggle({ units, onChange }: UnitToggleProps) {
           px: 1.5,
           py: 0.5,
           border: 'none',
-          borderRadius: '9999px !important',
+          borderRadius: `${radii.full} !important`,
           color: 'text.secondary',
           '&.Mui-selected': {
             backgroundColor: 'primary.main',

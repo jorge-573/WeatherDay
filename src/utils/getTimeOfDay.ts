@@ -19,7 +19,3 @@ export function getTimeOfDayFromLocalISO(localISO: string): TimeOfDay {
   if (!match) return getTimeOfDay(new Date())
   return timeOfDayFromHour(Number(match[1]))
 }
-
-export function formatTimeOfDayLabel(timeOfDay: TimeOfDay): string {
-  return timeOfDay.charAt(0).toUpperCase() + timeOfDay.slice(1)
-}

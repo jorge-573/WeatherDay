@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { RadarFrame } from '../../services/radar'
+import type { RadarFrame } from '../../types/radar'
 
 // Wait this long after a tile error (e.g. a 429) before loading the next frame.
 const ERROR_BACKOFF_MS = 1200

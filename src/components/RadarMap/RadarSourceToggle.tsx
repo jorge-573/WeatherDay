@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
-import type { RadarSource } from '../../services/radar'
+import type { RadarSource } from '../../types/radar'
 import { PANEL_SX } from './panel'
 import { SOURCE_META, SOURCE_ORDER } from './sources'
 

@@ -1,5 +1,5 @@
 import { TileLayer, WMSTileLayer } from 'react-leaflet'
-import type { RadarFrame } from '../../services/radar'
+import type { RadarFrame } from '../../types/radar'
 
 const RADAR_OPACITY = 0.7
 

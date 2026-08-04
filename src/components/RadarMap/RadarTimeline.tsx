@@ -6,7 +6,8 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import PauseRoundedIcon from '@mui/icons-material/PauseRounded'
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded'
-import type { RadarFrame } from '../../services/radar'
+import type { RadarFrame } from '../../types/radar'
+import { StatusMessage } from '../shared'
 import { OVERLAY_Z_INDEX, PANEL_SX } from './panel'
 
 type RadarTimelineProps = {
@@ -23,14 +24,6 @@ type RadarTimelineProps = {
 
 function formatFrameTime(time: number): string {
   return new Date(time * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
-}
-
-function StatusText({ children }: { children: string }) {
-  return (
-    <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
-      {children}
-    </Typography>
-  )
 }
 
 /** Playback controls and the timestamp of the frame on screen. */
@@ -58,9 +51,9 @@ export function RadarTimeline({
       }}
     >
       {error ? (
-        <StatusText>{`Radar unavailable: ${error}`}</StatusText>
+        <StatusMessage inline>{`Radar unavailable: ${error}`}</StatusMessage>
       ) : loading || !frame ? (
-        <StatusText>Loading radar frames…</StatusText>
+        <StatusMessage inline>Loading radar frames…</StatusMessage>
       ) : (
         <Stack direction="row" alignItems="center" spacing={{ xs: 1, sm: 2 }}>
           <IconButton

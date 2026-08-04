@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { buildNoaaFrames, findNoaaRegion } from '../services/noaaRadar'
-import type { RadarFrame, RadarSource } from '../services/radar'
+import type { RadarFrame, RadarSource } from '../types/radar'
 import { fetchRainviewerFrames } from '../services/rainviewer'
 
 type FetchState = {

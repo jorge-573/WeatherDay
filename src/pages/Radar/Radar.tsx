@@ -3,12 +3,13 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { useLayoutContext } from '../../components/Layout'
 import { RadarMap } from '../../components/RadarMap'
-import { SectionLabel } from '../../components/shared/SectionLabel'
+import { SectionLabel } from '../../components/shared'
+import { formatCityLabel } from '../../utils/formatCityLabel'
 
 export function Radar() {
   const { cityLocation } = useLayoutContext()
   const { city } = cityLocation
-  const locationName = [city.name, city.admin1, city.country].filter(Boolean).join(', ')
+  const locationName = formatCityLabel(city)
 
   return (
     <Stack spacing={{ xs: 2, md: 3 }}>

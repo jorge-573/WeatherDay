@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import { radii } from '../../theme'
 import { PANEL_SX } from './panel'
 import type { LegendRow } from './sources'
 
@@ -25,7 +26,7 @@ export function RadarLegend({ rows }: { rows: LegendRow[] }) {
             >
               {row.label}
             </Typography>
-            <Box sx={{ height: 8, borderRadius: 999, backgroundImage: row.gradient }} />
+            <Box sx={{ height: 8, borderRadius: radii.full, backgroundImage: row.gradient }} />
             <Stack direction="row" justifyContent="space-between" sx={{ mt: 0.25 }}>
               <Typography variant="caption" sx={CAPTION_SX}>
                 Light

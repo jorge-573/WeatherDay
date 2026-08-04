@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import MyLocationIcon from '@mui/icons-material/MyLocation'
 import type { CurrentWeatherSnapshot } from '../../types/weather'
-import { WeatherIcon } from '../shared/WeatherIcon'
+import { WeatherIcon } from '../shared'
 
 type CurrentWeatherProps = {
   data: CurrentWeatherSnapshot

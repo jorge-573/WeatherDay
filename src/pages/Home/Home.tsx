@@ -1,11 +1,11 @@
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 import { CurrentWeather } from '../../components/CurrentWeather'
 import { DailyForecast } from '../../components/DailyForecast'
 import { HourlyForecast } from '../../components/HourlyForecast'
 import { useLayoutContext } from '../../components/Layout'
+import { StatusMessage } from '../../components/shared'
 import { WeatherAlert } from '../../components/WeatherAlert'
 import { WeatherStats } from '../../components/WeatherStats'
 import { UNIT_CONFIG } from '../../config/units'
@@ -16,13 +16,13 @@ export function Home() {
 
   if (!data) {
     return (
-      <Typography sx={{ py: 8, textAlign: 'center', color: 'text.secondary' }}>
+      <StatusMessage>
         {loading
           ? 'Loading weather…'
           : error
             ? `Could not load weather: ${error}`
             : 'Search for a city to see the forecast.'}
-      </Typography>
+      </StatusMessage>
     )
   }
 

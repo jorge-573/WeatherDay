@@ -7,8 +7,10 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import RadarRoundedIcon from '@mui/icons-material/RadarRounded'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
+import { ROUTES } from '../../config/routes'
 import type { UnitSystem } from '../../config/units'
 import type { useCityLocation } from '../../hooks/useCityLocation'
+import { glass } from '../../theme'
 import { SearchBar } from '../SearchBar'
 import { SettingsMenu } from '../SettingsMenu'
 
@@ -18,8 +20,8 @@ type NavLinkItem = {
 }
 
 const navLinks: NavLinkItem[] = [
-  { label: 'Dashboard', to: '/' },
-  { label: 'Radar', to: '/radar' },
+  { label: 'Dashboard', to: ROUTES.home },
+  { label: 'Radar', to: ROUTES.radar },
   { label: 'Forecasts' },
   { label: 'Historical' },
 ]
@@ -32,7 +34,7 @@ type HeaderProps = {
 
 export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
   const { pathname } = useLocation()
-  const isRadar = pathname === '/radar'
+  const isRadar = pathname === ROUTES.radar
 
   return (
     <AppBar
@@ -43,8 +45,7 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
         left: 0,
         right: 0,
         borderRadius: 0,
-        backgroundColor: 'rgba(5, 12, 22, 0.62)',
-        backdropFilter: 'blur(18px)',
+        ...glass.header,
         borderBottom: 1,
         borderColor: 'divider',
       }}
@@ -95,7 +96,7 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
         <Stack direction="row" spacing={1} alignItems="center">
           <IconButton
             component={RouterLink}
-            to="/radar"
+            to={ROUTES.radar}
             aria-label="Open radar"
             sx={{
               display: { xs: 'inline-flex', md: 'none' },
