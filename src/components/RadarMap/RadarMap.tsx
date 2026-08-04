@@ -117,18 +117,7 @@ type RadarSourceToggleProps = {
 
 function RadarSourceToggle({ source, coverageFallback, onChange }: RadarSourceToggleProps) {
   return (
-    <Box
-      sx={{
-        position: 'absolute',
-        top: { xs: 8, sm: 16 },
-        left: { xs: 8, sm: 16 },
-        zIndex: 1000,
-        width: { xs: 148, sm: 176 },
-        px: 1,
-        py: 0.75,
-        ...PANEL_SX,
-      }}
-    >
+    <Box sx={{ px: 1, py: 0.75, ...PANEL_SX }}>
       <ToggleButtonGroup
         exclusive
         fullWidth
@@ -181,18 +170,7 @@ function RadarSourceToggle({ source, coverageFallback, onChange }: RadarSourceTo
 /** Static color key for precipitation intensity, matched to the active tile palette. */
 function RadarLegend({ rows }: { rows: LegendRow[] }) {
   return (
-    <Box
-      sx={{
-        position: 'absolute',
-        top: { xs: 8, sm: 16 },
-        right: { xs: 8, sm: 16 },
-        zIndex: 1000,
-        width: { xs: 128, sm: 150 },
-        px: 1.5,
-        py: 1,
-        ...PANEL_SX,
-      }}
-    >
+    <Box sx={{ px: 1.5, py: 1, ...PANEL_SX }}>
       <Stack spacing={1}>
         {rows.map((row) => (
           <Box key={row.label}>
@@ -385,9 +363,21 @@ export function RadarMap({ latitude, longitude, locationName }: RadarMapProps) {
         <RadarAttribution credit={RADAR_ATTRIBUTION[effectiveSource]} />
       </MapContainer>
 
-      <RadarSourceToggle source={source} coverageFallback={coverageFallback} onChange={setSource} />
-
-      {hasFrames && <RadarLegend rows={LEGEND_ROWS[effectiveSource]} />}
+      {/* Kept to the right so Leaflet's zoom control owns the top-left corner. */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: { xs: 8, sm: 16 },
+          right: { xs: 8, sm: 16 },
+          zIndex: 1000,
+          width: { xs: 148, sm: 176 },
+        }}
+      >
+        <Stack spacing={1}>
+          <RadarSourceToggle source={source} coverageFallback={coverageFallback} onChange={setSource} />
+          {hasFrames && <RadarLegend rows={LEGEND_ROWS[effectiveSource]} />}
+        </Stack>
+      </Box>
 
       {(loading || error || hasFrames) && (
         <Box
