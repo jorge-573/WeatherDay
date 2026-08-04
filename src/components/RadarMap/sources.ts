@@ -1,5 +1,5 @@
 import { NOAA_ATTRIBUTION } from '../../services/noaaRadar'
-import type { RadarSource } from '../../services/radar'
+import type { RadarSource } from '../../types/radar'
 import { RAINVIEWER_ATTRIBUTION } from '../../services/rainviewer'
 
 export type LegendRow = {

@@ -1,12 +1,9 @@
-import AcUnitIcon from '@mui/icons-material/AcUnit'
-import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { getWeatherCondition } from '../../services/weatherCodes'
+import { gradients, radii } from '../../theme'
 import type { DailyForecastEntry } from '../../types/weather'
-import { SectionLabel } from '../shared/SectionLabel'
-import { WeatherIcon } from '../shared/WeatherIcon'
+import { ConditionCaption, PrecipitationBadge, SectionLabel, WeatherIcon } from '../shared'
 
 type DailyForecastProps = {
   data: DailyForecastEntry[]
@@ -45,37 +42,14 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
               </Stack>
               <Stack alignItems="center" spacing={0.25} sx={{ width: 88 }}>
                 <WeatherIcon code={entry.code} size={24} sx={{ color: 'text.primary' }} />
-                <Typography
-                  variant="caption"
-                  sx={{ color: 'text.secondary', textAlign: 'center', lineHeight: 1.2, fontSize: '0.65rem' }}
-                >
-                  {entry.condition}
-                </Typography>
-                {entry.precipitationProbability !== null && (
-                  <Stack
-                    direction="row"
-                    spacing={0.25}
-                    alignItems="center"
-                    sx={{
-                      color: entry.precipitationProbability > 0 ? (t) => t.md3.accent : 'text.disabled',
-                    }}
-                  >
-                    {getWeatherCondition(entry.code).group === 'snow' ? (
-                      <AcUnitIcon sx={{ fontSize: 13 }} />
-                    ) : (
-                      <WaterDropOutlinedIcon sx={{ fontSize: 13 }} />
-                    )}
-                    <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                      {entry.precipitationProbability}%
-                    </Typography>
-                  </Stack>
-                )}
+                <ConditionCaption>{entry.condition}</ConditionCaption>
+                <PrecipitationBadge code={entry.code} probability={entry.precipitationProbability} />
               </Stack>
               <Box
                 sx={{
                   position: 'relative',
                   height: 6,
-                  borderRadius: 999,
+                  borderRadius: radii.full,
                   backgroundColor: (t) => t.md3.surfaceContainerHigh,
                   display: { xs: 'none', sm: 'block' },
                 }}
@@ -87,8 +61,8 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
                     bottom: 0,
                     left: `${left}%`,
                     width: `${Math.max(width, 6)}%`,
-                    borderRadius: 999,
-                    background: (t) => `linear-gradient(90deg, ${t.palette.secondary.main}, ${t.md3.accent})`,
+                    borderRadius: radii.full,
+                    background: gradients.accentBar,
                   }}
                 />
               </Box>

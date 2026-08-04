@@ -1,11 +1,4 @@
-export type WeatherIntensity = 'light' | 'normal' | 'heavy'
-
-export type WeatherCondition = {
-  label: string
-  group: 'clear' | 'cloudy' | 'rain' | 'snow' | 'thunder' | 'fog'
-  // Only meaningful for precipitation (rain/snow); drives intensity-aware icons.
-  intensity?: WeatherIntensity
-}
+import type { WeatherCondition } from '../types/weather'
 
 const conditions: Record<number, WeatherCondition> = {
   0: { label: 'Clear', group: 'clear' },

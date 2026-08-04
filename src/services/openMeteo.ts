@@ -1,4 +1,5 @@
 import { UNIT_CONFIG, type UnitSystem } from '../config/units'
+import type { ForecastResponse } from '../types/openMeteo'
 import type { GeocodingResult } from '../types/weather'
 
 const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search'
@@ -17,38 +18,6 @@ type RawGeocodingResult = {
 
 type GeocodingResponse = {
   results?: RawGeocodingResult[]
-}
-
-export type ForecastResponse = {
-  latitude: number
-  longitude: number
-  timezone: string
-  current: {
-    time: string
-    temperature_2m: number
-    apparent_temperature: number
-    weather_code: number
-    relative_humidity_2m: number
-    wind_speed_10m: number
-    wind_direction_10m: number
-    uv_index?: number
-    visibility?: number
-  }
-  hourly: {
-    time: string[]
-    temperature_2m: number[]
-    weather_code: number[]
-    precipitation_probability?: number[]
-  }
-  daily: {
-    time: string[]
-    temperature_2m_max: number[]
-    temperature_2m_min: number[]
-    weather_code: number[]
-    sunrise: string[]
-    sunset: string[]
-    precipitation_probability_max?: number[]
-  }
 }
 
 export async function searchCities(query: string, signal?: AbortSignal): Promise<GeocodingResult[]> {
@@ -99,7 +68,6 @@ export async function fetchForecast(
       'wind_speed_10m',
       'wind_direction_10m',
       'uv_index',
-      'visibility',
     ].join(',')
   )
   url.searchParams.set('hourly', 'temperature_2m,weather_code,precipitation_probability')

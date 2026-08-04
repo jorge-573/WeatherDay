@@ -1,6 +1,16 @@
-import type { WeatherCondition } from '../services/weatherCodes'
+import type { TimeOfDay } from './timeOfDay'
 
-export type WeatherGroup = WeatherCondition['group']
+export type WeatherGroup = 'clear' | 'cloudy' | 'rain' | 'snow' | 'thunder' | 'fog'
+
+export type WeatherIntensity = 'light' | 'normal' | 'heavy'
+
+/** One WMO weather code resolved into something presentable. */
+export type WeatherCondition = {
+  label: string
+  group: WeatherGroup
+  // Only meaningful for precipitation (rain/snow); drives intensity-aware icons.
+  intensity?: WeatherIntensity
+}
 
 export type CurrentWeatherSnapshot = {
   location: string
@@ -55,6 +65,16 @@ export type GeocodingResult = {
   countryCode?: string
   admin1?: string
   timezone?: string
+}
+
+/** Everything one location's forecast contributes to the UI. */
+export type WeatherData = {
+  current: CurrentWeatherSnapshot
+  hourly: HourlyForecastEntry[]
+  daily: DailyForecastEntry[]
+  stats: WeatherStats
+  timeOfDay: TimeOfDay
+  alerts: WeatherAlert[]
 }
 
 export type AlertSeverity = 'extreme' | 'severe' | 'moderate' | 'minor' | 'unknown'

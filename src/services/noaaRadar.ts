@@ -1,4 +1,4 @@
-import type { RadarBounds, RadarFrame, RadarWmsParams } from './radar'
+import type { RadarBounds, RadarFrame, RadarWmsParams } from '../types/radar'
 
 // NOAA MRMS (Multi-Radar/Multi-Sensor) base reflectivity, served as a
 // time-enabled OGC WMS over a ~4 hour rolling window.

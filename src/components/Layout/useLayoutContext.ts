@@ -1,7 +1,7 @@
 import { useOutletContext } from 'react-router-dom'
 import type { UnitSystem } from '../../config/units'
 import type { useCityLocation } from '../../hooks/useCityLocation'
-import type { WeatherData } from '../../hooks/useWeather'
+import type { WeatherData } from '../../types/weather'
 
 export type LayoutContext = {
   data: WeatherData | null

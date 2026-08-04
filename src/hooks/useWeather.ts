@@ -1,27 +1,10 @@
 import { useEffect, useState } from 'react'
 import type { UnitSystem } from '../config/units'
-import { toCurrentWeather, toDailyForecast, toHourlyForecast, toWeatherStats } from '../services/mappers'
+import { toCurrentWeather, toDailyForecast, toHourlyForecast, toWeatherStats } from '../domain/mappers'
 import { fetchAlerts } from '../services/nwsAlerts'
 import { fetchForecast } from '../services/openMeteo'
-import type {
-  CurrentWeatherSnapshot,
-  DailyForecastEntry,
-  GeocodingResult,
-  HourlyForecastEntry,
-  WeatherAlert,
-  WeatherStats,
-} from '../types/weather'
-import type { TimeOfDay } from '../types/timeOfDay'
+import type { GeocodingResult, WeatherData } from '../types/weather'
 import { getTimeOfDayFromLocalISO } from '../utils/getTimeOfDay'
-
-export type WeatherData = {
-  current: CurrentWeatherSnapshot
-  hourly: HourlyForecastEntry[]
-  daily: DailyForecastEntry[]
-  stats: WeatherStats
-  timeOfDay: TimeOfDay
-  alerts: WeatherAlert[]
-}
 
 type WeatherState = {
   data: WeatherData | null

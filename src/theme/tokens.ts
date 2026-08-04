@@ -67,3 +67,18 @@ export const radii = {
   xl: '3rem',
   full: '9999px',
 } as const
+
+// Translucent chrome that floats over the page backdrop. These are alpha blends
+// against the scene gradient rather than opaque MD3 surface roles, so they live
+// here instead of in `md3`. Spread straight into an `sx` object.
+export const glass = {
+  header: { backgroundColor: 'rgba(5, 12, 22, 0.62)', backdropFilter: 'blur(18px)' },
+  footer: { backgroundColor: 'rgba(3, 8, 14, 0.82)' },
+  /** Panels layered on top of the radar map. */
+  overlay: { backgroundColor: 'rgba(6, 10, 16, 0.82)', backdropFilter: 'blur(8px)' },
+} as const
+
+export const gradients = {
+  /** Accent sweep for progress and range bars. */
+  accentBar: `linear-gradient(90deg, ${md3.secondary}, ${md3.accent})`,
+} as const

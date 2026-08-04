@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box'
 import { Outlet, useLocation } from 'react-router-dom'
+import { ROUTES } from '../../config/routes'
 import { useCityLocation } from '../../hooks/useCityLocation'
 import { useUnitPreference } from '../../hooks/useUnitPreference'
 import { useWeather } from '../../hooks/useWeather'
@@ -16,7 +17,7 @@ export function Layout() {
   const { data, loading, error } = useWeather(cityLocation.city, units)
   const { pathname } = useLocation()
 
-  const isRadar = pathname === '/radar'
+  const isRadar = pathname === ROUTES.radar
   const timeOfDay = data?.timeOfDay ?? getTimeOfDay(new Date())
 
   const context: LayoutContext = { data, loading, error, units, cityLocation, onUnitChange: setUnits }

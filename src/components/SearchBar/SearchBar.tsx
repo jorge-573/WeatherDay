@@ -10,7 +10,9 @@ import Typography from '@mui/material/Typography'
 import MyLocationIcon from '@mui/icons-material/MyLocation'
 import SearchIcon from '@mui/icons-material/Search'
 import { useCitySearch } from '../../hooks/useCitySearch'
+import { radii } from '../../theme'
 import type { GeocodingResult } from '../../types/weather'
+import { formatCityLabel } from '../../utils/formatCityLabel'
 
 type SearchBarProps = {
   placeholder?: string
@@ -18,10 +20,6 @@ type SearchBarProps = {
   onCurrentLocationClick?: () => void
   locating?: boolean
   locateError?: string | null
-}
-
-function optionLabel(city: GeocodingResult): string {
-  return [city.name, city.admin1, city.country].filter(Boolean).join(', ')
 }
 
 export function SearchBar({
@@ -40,7 +38,7 @@ export function SearchBar({
         options={results}
         loading={loading}
         filterOptions={(options) => options}
-        getOptionLabel={optionLabel}
+        getOptionLabel={formatCityLabel}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         noOptionsText={query.trim().length < 2 ? 'Type to search' : 'No matches'}
         onInputChange={(_, value) => setQuery(value)}
@@ -86,7 +84,7 @@ export function SearchBar({
             }}
             sx={{
               '& .MuiOutlinedInput-root': {
-                borderRadius: 9999,
+                borderRadius: radii.full,
                 backgroundColor: (theme) => theme.md3.surfaceContainerHigh,
               },
             }}

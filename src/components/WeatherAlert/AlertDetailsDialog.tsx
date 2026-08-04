@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded'
 import type { AlertSeverity, WeatherAlert as WeatherAlertData } from '../../types/weather'
+import { formatAlertDateTime, formatAlertUntil } from '../../utils/formatAlertTime'
 
 type AlertDetailsDialogProps = {
   open: boolean
@@ -28,23 +29,6 @@ const SEVERITY_CHIP: Record<AlertSeverity, { bg: string; fg: string }> = {
   moderate: { bg: 'tertiaryContainer', fg: 'onTertiaryContainer' },
   minor: { bg: 'primaryContainer', fg: 'onPrimaryContainer' },
   unknown: { bg: 'surfaceVariant', fg: 'onSurfaceVariant' },
-}
-
-function formatDateTime(iso?: string): string | undefined {
-  if (!iso) return undefined
-  return new Date(iso).toLocaleString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  })
-}
-
-function formatUntil(alert: WeatherAlertData): string | undefined {
-  const until = alert.expires ?? alert.ends
-  if (!until) return undefined
-  return `Until ${new Date(until).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`
 }
 
 function severityLabel(severity: AlertSeverity): string {
@@ -93,9 +77,9 @@ export function AlertDetailsDialog({ open, alerts, onClose }: AlertDetailsDialog
         <Stack spacing={1.5}>
           {alerts.map((alert) => {
             const chip = SEVERITY_CHIP[alert.severity]
-            const until = formatUntil(alert)
-            const effective = formatDateTime(alert.effective ?? alert.onset)
-            const expires = formatDateTime(alert.expires ?? alert.ends)
+            const until = formatAlertUntil(alert)
+            const effective = formatAlertDateTime(alert.effective ?? alert.onset)
+            const expires = formatAlertDateTime(alert.expires ?? alert.ends)
             return (
               <Accordion
                 key={alert.id}

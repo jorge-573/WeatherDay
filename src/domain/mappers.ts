@@ -6,7 +6,7 @@ import type {
   HourlyForecastEntry,
   WeatherStats,
 } from '../types/weather'
-import type { ForecastResponse } from './openMeteo'
+import type { ForecastResponse } from '../types/openMeteo'
 import { getWeatherCondition } from './weatherCodes'
 
 function formatLocation(city: GeocodingResult): string {

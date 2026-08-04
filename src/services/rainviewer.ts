@@ -1,4 +1,4 @@
-import type { RadarFrame } from './radar'
+import type { RadarFrame } from '../types/radar'
 
 const WEATHER_MAPS_URL = 'https://api.rainviewer.com/public/weather-maps.json'
 

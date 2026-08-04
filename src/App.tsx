@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react'
-import Typography from '@mui/material/Typography'
 import { Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
+import { StatusMessage } from './components/shared'
 import { Home } from './pages/Home'
 
 const Radar = lazy(() => import('./pages/Radar').then((module) => ({ default: module.Radar })))
@@ -14,11 +14,7 @@ function App() {
         <Route
           path="radar"
           element={
-            <Suspense
-              fallback={
-                <Typography sx={{ py: 8, textAlign: 'center', color: 'text.secondary' }}>Loading radar…</Typography>
-              }
-            >
+            <Suspense fallback={<StatusMessage>Loading radar…</StatusMessage>}>
               <Radar />
             </Suspense>
           }
