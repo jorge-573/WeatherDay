@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { UnitSystem } from '../config/units'
-import { toCurrentWeather, toDailyForecast, toHourlyForecast, toWeatherStats } from '../domain/mappers'
+import { toAirQuality, toCurrentWeather, toDailyForecast, toHourlyForecast, toWeatherStats } from '../domain/mappers'
+import { fetchAirQuality } from '../services/airQuality'
 import { fetchAlerts } from '../services/nwsAlerts'
 import { fetchForecast } from '../services/openMeteo'
 import type { GeocodingResult, WeatherData } from '../types/weather'
@@ -31,8 +32,9 @@ export function useWeather(city: GeocodingResult | null, units: UnitSystem): Wea
     Promise.all([
       fetchForecast(city.latitude, city.longitude, units, controller.signal),
       fetchAlerts(city.latitude, city.longitude, controller.signal).catch(() => []),
+      fetchAirQuality(city.latitude, city.longitude, controller.signal).catch(() => null),
     ])
-      .then(([response, alerts]) => {
+      .then(([response, alerts, airQuality]) => {
         if (controller.signal.aborted) return
         const data: WeatherData = {
           current: toCurrentWeather(response, city),
@@ -41,6 +43,7 @@ export function useWeather(city: GeocodingResult | null, units: UnitSystem): Wea
           stats: toWeatherStats(response, units),
           timeOfDay: getTimeOfDayFromLocalISO(response.current.time),
           alerts,
+          airQuality: toAirQuality(airQuality),
         }
         setState({ data, loading: false, error: null })
       })

@@ -65,15 +65,29 @@ export async function fetchForecast(
       'apparent_temperature',
       'weather_code',
       'relative_humidity_2m',
+      'dew_point_2m',
       'wind_speed_10m',
       'wind_direction_10m',
+      'wind_gusts_10m',
+      'pressure_msl',
       'uv_index',
     ].join(',')
   )
-  url.searchParams.set('hourly', 'temperature_2m,weather_code,precipitation_probability')
+  url.searchParams.set('hourly', 'temperature_2m,weather_code,precipitation_probability,pressure_msl,visibility')
   url.searchParams.set(
     'daily',
-    'temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset,precipitation_probability_max'
+    [
+      'temperature_2m_max',
+      'temperature_2m_min',
+      'weather_code',
+      'sunrise',
+      'sunset',
+      'precipitation_probability_max',
+      'precipitation_sum',
+      'precipitation_hours',
+      'daylight_duration',
+      'sunshine_duration',
+    ].join(',')
   )
   url.searchParams.set('temperature_unit', unitConfig.temperatureUnit)
   url.searchParams.set('wind_speed_unit', unitConfig.windSpeedUnit)

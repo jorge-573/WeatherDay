@@ -82,3 +82,14 @@ export const gradients = {
   /** Accent sweep for progress and range bars. */
   accentBar: `linear-gradient(90deg, ${md3.secondary}, ${md3.accent})`,
 } as const
+
+// EPA AQI category colors, lightened from the official swatches so they stay
+// legible on the dark stat surfaces.
+export const aqiColors = {
+  good: '#7ce38b',
+  moderate: md3.tertiaryFixedDim,
+  sensitive: '#ffb26b',
+  unhealthy: md3.error,
+  veryUnhealthy: md3.secondary,
+  hazardous: md3.errorDim,
+} as const

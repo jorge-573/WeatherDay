@@ -48,12 +48,35 @@ export type SunStat = {
   sunrise: string
   sunset: string
   progress: number
+  /** Length of day, pre-formatted as e.g. "13h 42m". */
+  daylight: string | null
+  /** Hours of direct sun, pre-formatted the same way. */
+  sunshine: string | null
 }
 
+export type PressureTrend = 'rising' | 'falling' | 'steady'
+
+export type AqiCategory = 'good' | 'moderate' | 'sensitive' | 'unhealthy' | 'veryUnhealthy' | 'hazardous'
+
+export type AirQuality = {
+  aqi: number
+  category: AqiCategory
+  label: string
+  pm25: number | null
+}
+
+/**
+ * Secondary metrics for the stats grid. Values that need fixed decimal places
+ * are pre-formatted as strings; null means the provider had no data.
+ */
 export type WeatherStats = {
   sun: SunStat
-  wind: { value: number; unit: string; direction: string }
+  wind: { value: number; unit: string; direction: string; gusts: number | null }
   uv: { value: number | null; level: string }
+  humidity: { value: number | null; dewPoint: number | null }
+  precipitation: { total: string | null; unit: string; hours: number | null }
+  pressure: { value: string | null; unit: string; trend: PressureTrend }
+  visibility: { value: string | null; unit: string }
 }
 
 export type GeocodingResult = {
@@ -75,6 +98,8 @@ export type WeatherData = {
   stats: WeatherStats
   timeOfDay: TimeOfDay
   alerts: WeatherAlert[]
+  /** Null when the air-quality provider had no data for this point. */
+  airQuality: AirQuality | null
 }
 
 export type AlertSeverity = 'extreme' | 'severe' | 'moderate' | 'minor' | 'unknown'

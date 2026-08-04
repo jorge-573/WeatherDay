@@ -1,5 +1,6 @@
 export { ConditionCaption } from './ConditionCaption'
 export { PrecipitationBadge } from './PrecipitationBadge'
 export { SectionLabel } from './SectionLabel'
+export { StatTile } from './StatTile'
 export { StatusMessage } from './StatusMessage'
 export { WeatherIcon } from './WeatherIcon'

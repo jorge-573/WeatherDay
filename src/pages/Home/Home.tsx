@@ -43,7 +43,7 @@ export function Home() {
         <HourlyForecast data={data.hourly} temperatureLabel={temperatureLabel} />
         <Divider />
         <DailyForecast data={data.daily} temperatureLabel={temperatureLabel} />
-        <WeatherStats data={data.stats} />
+        <WeatherStats data={data.stats} airQuality={data.airQuality} temperatureLabel={temperatureLabel} />
       </Stack>
     </>
   )
