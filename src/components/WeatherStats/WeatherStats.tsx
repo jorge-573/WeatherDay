@@ -18,6 +18,7 @@ import type { AirQuality, PressureTrend, WeatherStats as WeatherStatsData } from
 import { SectionLabel, StatTile } from '../shared'
 import { SunArc } from './SunArc'
 import { sunCountdown } from './sunCountdown'
+import { UvGauge } from './UvGauge'
 import { WindDial } from './WindDial'
 
 type WeatherStatsProps = {
@@ -129,13 +130,9 @@ export function WeatherStats({ data, airQuality, temperatureLabel }: WeatherStat
           </Stack>
         </StatTile>
 
-        <StatTile
-          icon={WbSunnyOutlinedIcon}
-          label="UV Index"
-          value={uv.value}
-          detail={uv.level}
-          valueColor={(t) => t.md3.tertiaryFixedDim}
-        />
+        <StatTile icon={WbSunnyOutlinedIcon} label="UV Index">
+          <UvGauge uv={uv} />
+        </StatTile>
 
         <StatTile
           icon={WaterDropOutlinedIcon}

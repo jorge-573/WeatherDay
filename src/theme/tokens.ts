@@ -93,3 +93,11 @@ export const aqiColors = {
   veryUnhealthy: md3.secondary,
   hazardous: md3.errorDim,
 } as const
+
+export const uvColors = {
+  low: '#7ce38b',
+  moderate: md3.tertiaryFixedDim,
+  high: '#ffb26b',
+  veryHigh: md3.error,
+  extreme: md3.secondary,
+} as const
