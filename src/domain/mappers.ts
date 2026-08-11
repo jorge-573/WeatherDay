@@ -332,6 +332,7 @@ export function toWeatherStats(response: ForecastResponse, units: UnitSystem): W
       value: Math.round(current.wind_speed_10m),
       unit: config.windLabel,
       direction: bearingToCompass(current.wind_direction_10m),
+      bearing: Math.round(current.wind_direction_10m) % 360,
       gusts: roundOrNull(current.wind_gusts_10m),
     },
     uv: {

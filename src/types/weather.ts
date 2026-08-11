@@ -77,7 +77,8 @@ export type AirQuality = {
  */
 export type WeatherStats = {
   sun: SunStat
-  wind: { value: number; unit: string; direction: string; gusts: number | null }
+  /** `bearing` is the compass direction the wind blows *from*, in degrees. */
+  wind: { value: number; unit: string; direction: string; bearing: number; gusts: number | null }
   uv: { value: number | null; level: string }
   humidity: { value: number | null; dewPoint: number | null }
   precipitation: { total: string | null; unit: string; hours: number | null }

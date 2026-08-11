@@ -1,4 +1,6 @@
 import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import AirIcon from '@mui/icons-material/Air'
 import BlurOnIcon from '@mui/icons-material/BlurOn'
 import SpeedIcon from '@mui/icons-material/Speed'
@@ -16,6 +18,7 @@ import type { AirQuality, PressureTrend, WeatherStats as WeatherStatsData } from
 import { SectionLabel, StatTile } from '../shared'
 import { SunArc } from './SunArc'
 import { sunCountdown } from './sunCountdown'
+import { WindDial } from './WindDial'
 
 type WeatherStatsProps = {
   data: WeatherStatsData
@@ -39,15 +42,27 @@ function PressureDetail({ trend }: { trend: PressureTrend }) {
   )
 }
 
-/** The arc already shows the daylight length, so the caption carries the live countdown. */
 function sunDetail(sun: WeatherStatsData['sun']): string | null {
   const countdown = sunCountdown(sun)
   const sunshine = sun.sunshine ? `${sun.sunshine} of sun` : null
   return [countdown, sunshine].filter(Boolean).join(' · ') || null
 }
 
-function windDetail(direction: string, gusts: number | null, unit: string): string {
-  return gusts === null ? `From ${direction}` : `From ${direction} · Gusts ${gusts} ${unit}`
+const DIRECTION_WORDS: Record<string, string> = {
+  N: 'north',
+  NE: 'northeast',
+  E: 'east',
+  SE: 'southeast',
+  S: 'south',
+  SW: 'southwest',
+  W: 'west',
+  NW: 'northwest',
+}
+
+function windFromLabel(wind: WeatherStatsData['wind']): string {
+  const from = `From ${DIRECTION_WORDS[wind.direction] ?? wind.direction}`
+  if (wind.value <= 3) return [`Calm`, from].join(' · ')
+  return from
 }
 
 function precipitationDetail(hours: number | null): string | null {
@@ -78,13 +93,41 @@ export function WeatherStats({ data, airQuality, temperatureLabel }: WeatherStat
           <SunArc sun={sun} />
         </StatTile>
 
-        <StatTile
-          icon={AirIcon}
-          label="Wind"
-          value={wind.value}
-          unit={wind.unit}
-          detail={windDetail(wind.direction, wind.gusts, wind.unit)}
-        />
+        <StatTile icon={AirIcon} label="Wind">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1.25}
+            sx={{ flex: 1, minHeight: 82 }}
+          >
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography variant="h4" component="p" sx={{ fontWeight: 700, lineHeight: 1 }}>
+                {wind.value}
+                <Box component="span" sx={{ ml: 0.5, fontSize: '0.5em', fontWeight: 600, color: 'text.secondary' }}>
+                  {wind.unit}
+                </Box>
+              </Typography>
+              <Typography
+                variant="caption"
+                component="p"
+                sx={{ color: 'text.secondary', fontWeight: 600, mt: 0.8, lineHeight: 1.35 }}
+              >
+                {windFromLabel(wind)}
+              </Typography>
+              {wind.gusts !== null && wind.gusts > wind.value && (
+                <Typography
+                  variant="caption"
+                  component="p"
+                  sx={{ color: 'text.secondary', fontWeight: 600, mt: 0.35, lineHeight: 1.35 }}
+                >
+                  Gusts {wind.gusts} {wind.unit}
+                </Typography>
+              )}
+            </Box>
+            <WindDial wind={wind} />
+          </Stack>
+        </StatTile>
 
         <StatTile
           icon={WbSunnyOutlinedIcon}
