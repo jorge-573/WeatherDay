@@ -23,6 +23,7 @@ import type {
 import { SectionLabel, StatTile } from '../shared'
 import { HumidityMeter } from './HumidityMeter'
 import { PrecipitationTimeline } from './PrecipitationTimeline'
+import { PressureGauge } from './PressureGauge'
 import { SunArc } from './SunArc'
 import { sunCountdown } from './sunCountdown'
 import { UvGauge } from './UvGauge'
@@ -203,13 +204,24 @@ export function WeatherStats({ data, hourly, airQuality, temperatureLabel }: Wea
           <PrecipitationTimeline data={hourly} />
         </StatTile>
 
-        <StatTile
-          icon={SpeedIcon}
-          label="Pressure"
-          value={pressure.value}
-          unit={pressure.unit}
-          detail={<PressureDetail trend={pressure.trend} />}
-        />
+        <StatTile icon={SpeedIcon} label="Pressure">
+          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ flex: 1 }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="h4" component="p" sx={{ fontWeight: 700, lineHeight: 1 }}>
+                {pressure.value ?? '—'}
+                {pressure.value !== null && (
+                  <Box component="span" sx={{ ml: 0.4, fontSize: '0.42em', fontWeight: 600, color: 'text.secondary' }}>
+                    {pressure.unit}
+                  </Box>
+                )}
+              </Typography>
+              <Typography variant="caption" component="div" sx={{ color: 'text.secondary', fontWeight: 600, mt: 0.8 }}>
+                <PressureDetail trend={pressure.trend} />
+              </Typography>
+            </Box>
+            <PressureGauge pressure={pressure} />
+          </Stack>
+        </StatTile>
 
         <StatTile icon={VisibilityOutlinedIcon} label="Visibility" value={visibility.value} unit={visibility.unit} />
 
