@@ -14,9 +14,15 @@ import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined'
 import WbTwilightIcon from '@mui/icons-material/WbTwilight'
 import type { SvgIconComponent } from '@mui/icons-material'
 import { aqiColors } from '../../theme'
-import type { AirQuality, PressureTrend, WeatherStats as WeatherStatsData } from '../../types/weather'
+import type {
+  AirQuality,
+  HourlyForecastEntry,
+  PressureTrend,
+  WeatherStats as WeatherStatsData,
+} from '../../types/weather'
 import { SectionLabel, StatTile } from '../shared'
 import { HumidityMeter } from './HumidityMeter'
+import { PrecipitationTimeline } from './PrecipitationTimeline'
 import { SunArc } from './SunArc'
 import { sunCountdown } from './sunCountdown'
 import { UvGauge } from './UvGauge'
@@ -24,6 +30,7 @@ import { WindDial } from './WindDial'
 
 type WeatherStatsProps = {
   data: WeatherStatsData
+  hourly: HourlyForecastEntry[]
   airQuality: AirQuality | null
   temperatureLabel: string
 }
@@ -84,7 +91,7 @@ function airQualityDetail(airQuality: AirQuality | null): string {
   return airQuality.pm25 === null ? airQuality.label : `${airQuality.label} · PM2.5 ${airQuality.pm25}`
 }
 
-export function WeatherStats({ data, airQuality, temperatureLabel }: WeatherStatsProps) {
+export function WeatherStats({ data, hourly, airQuality, temperatureLabel }: WeatherStatsProps) {
   const { sun, wind, uv, humidity, precipitation, pressure, visibility } = data
   const humidityLabel = humidityComfort(humidity.value)
 
@@ -177,13 +184,24 @@ export function WeatherStats({ data, airQuality, temperatureLabel }: WeatherStat
           </Stack>
         </StatTile>
 
-        <StatTile
-          icon={UmbrellaIcon}
-          label="Precipitation"
-          value={precipitation.total}
-          unit={precipitation.unit}
-          detail={precipitationDetail(precipitation.hours)}
-        />
+        <StatTile icon={UmbrellaIcon} label="Precipitation">
+          <Typography variant="h4" component="p" sx={{ fontWeight: 700, lineHeight: 1 }}>
+            {precipitation.total ?? '—'}
+            {precipitation.total !== null && (
+              <Box component="span" sx={{ ml: 0.5, fontSize: '0.5em', fontWeight: 600, color: 'text.secondary' }}>
+                {precipitation.unit}
+              </Box>
+            )}
+          </Typography>
+          <Typography
+            variant="caption"
+            component="p"
+            sx={{ color: 'text.secondary', fontWeight: 600, mt: 0.6, lineHeight: 1.35 }}
+          >
+            {precipitationDetail(precipitation.hours)}
+          </Typography>
+          <PrecipitationTimeline data={hourly} />
+        </StatTile>
 
         <StatTile
           icon={SpeedIcon}
