@@ -27,6 +27,7 @@ import { PressureGauge } from './PressureGauge'
 import { SunArc } from './SunArc'
 import { sunCountdown } from './sunCountdown'
 import { UvGauge } from './UvGauge'
+import { VisibilityGauge } from './VisibilityGauge'
 import { WindDial } from './WindDial'
 
 type WeatherStatsProps = {
@@ -223,7 +224,9 @@ export function WeatherStats({ data, hourly, airQuality, temperatureLabel }: Wea
           </Stack>
         </StatTile>
 
-        <StatTile icon={VisibilityOutlinedIcon} label="Visibility" value={visibility.value} unit={visibility.unit} />
+        <StatTile icon={VisibilityOutlinedIcon} label="Visibility">
+          <VisibilityGauge visibility={visibility} />
+        </StatTile>
 
         <StatTile
           icon={BlurOnIcon}
