@@ -38,8 +38,8 @@ export function WindTile({ wind }: WindTileProps) {
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-        spacing={1.25}
-        sx={{ flex: 1, minHeight: 82 }}
+        spacing={{ xs: 0.5, sm: 1.25 }}
+        sx={{ flex: 1, minWidth: 0, minHeight: { xs: 64, sm: 82 } }}
       >
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <StatValue value={wind.value} unit={wind.unit} />

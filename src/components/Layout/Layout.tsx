@@ -23,7 +23,16 @@ export function Layout() {
   const context: LayoutContext = { data, loading, error, units, cityLocation, onUnitChange: setUnits }
 
   const shell = (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        minWidth: 0,
+        width: '100%',
+        overflowX: 'hidden',
+      }}
+    >
       <Header units={units} cityLocation={cityLocation} onUnitChange={setUnits} />
 
       <Box
@@ -31,6 +40,7 @@ export function Layout() {
         sx={{
           flex: 1,
           width: '100%',
+          minWidth: 0,
           maxWidth: isRadar ? 1400 : 1080,
           mx: 'auto',
           px: { xs: 2, sm: 3, md: 4 },
@@ -46,7 +56,16 @@ export function Layout() {
 
   if (isRadar) {
     return (
-      <Box sx={{ minHeight: '100vh', backgroundImage: radarBackground, backgroundAttachment: 'fixed' }}>{shell}</Box>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          width: '100%',
+          backgroundImage: radarBackground,
+          backgroundAttachment: { xs: 'scroll', md: 'fixed' },
+        }}
+      >
+        {shell}
+      </Box>
     )
   }
 

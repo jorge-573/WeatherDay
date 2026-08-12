@@ -23,9 +23,10 @@ export function WindDial({ wind }: WindDialProps) {
       aria-hidden
       sx={{
         position: 'relative',
-        width: { xs: 84, sm: 94 },
-        height: { xs: 94, sm: 105 },
-        flexShrink: 0,
+        width: { xs: 56, sm: 94 },
+        height: { xs: 64, sm: 105 },
+        flexShrink: 1,
+        minWidth: 0,
       }}
     >
       <Typography
@@ -89,7 +90,7 @@ export function WindDial({ wind }: WindDialProps) {
             top: '55%',
             left: '50%',
             color: (t) => t.md3.accent,
-            fontSize: { xs: 75, sm: 80 },
+            fontSize: { xs: 46, sm: 80 },
             transform: `translate(-50%, -50%) rotate(${heading}deg)`,
           }}
         />

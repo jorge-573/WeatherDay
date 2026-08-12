@@ -26,9 +26,11 @@ export function StatTile({ icon: Icon, label, value, unit, detail, valueColor, c
   return (
     <Paper
       sx={{
-        p: { xs: 1.75, sm: 2.25 },
+        p: { xs: 1.5, sm: 2.25 },
         height: '100%',
+        minWidth: 0,
         minHeight: 132,
+        overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
       }}

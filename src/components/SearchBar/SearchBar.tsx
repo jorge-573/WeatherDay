@@ -33,8 +33,19 @@ export function SearchBar({
   const { results, loading } = useCitySearch(query)
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, width: { xs: '100%', sm: 300 } }}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 0.5,
+        minWidth: 0,
+        flex: { xs: 1, sm: '0 1 300px' },
+        width: { sm: 300 },
+        maxWidth: '100%',
+      }}
+    >
       <Autocomplete<GeocodingResult>
+        fullWidth
         options={results}
         loading={loading}
         filterOptions={(options) => options}

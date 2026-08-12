@@ -21,16 +21,16 @@ export function VisibilityTile({ visibility }: VisibilityTileProps) {
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-        spacing={1}
+        spacing={{ xs: 0.5, sm: 1 }}
         role="img"
         aria-label={
           numericValue === null
             ? 'Visibility unavailable'
             : `Visibility ${visibility.value} ${visibility.unit}, ${status.label}`
         }
-        sx={{ flex: 1 }}
+        sx={{ flex: 1, minWidth: 0 }}
       >
-        <Box sx={{ minWidth: 0 }}>
+        <Box sx={{ minWidth: 0, flex: 1 }}>
           <StatValue value={visibility.value} unit={visibility.unit} />
           <Typography
             variant="caption"

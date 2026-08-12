@@ -14,6 +14,9 @@ export function Footer() {
       component="footer"
       sx={{
         mt: 'auto',
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: 0,
         px: { xs: 2, md: 4 },
         py: 3,
         ...glass.footer,
@@ -26,7 +29,7 @@ export function Footer() {
         spacing={2}
         alignItems={{ xs: 'flex-start', md: 'center' }}
         justifyContent="space-between"
-        sx={{ maxWidth: 1080, mx: 'auto', width: '100%' }}
+        sx={{ maxWidth: 1080, mx: 'auto', width: '100%', minWidth: 0 }}
       >
         <Box>
           <Typography sx={{ fontWeight: 700 }}>WeatherDay</Typography>
@@ -35,7 +38,14 @@ export function Footer() {
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={3} alignItems="center" flexWrap="wrap">
+        <Stack
+          direction="row"
+          spacing={3}
+          alignItems="center"
+          flexWrap="wrap"
+          useFlexGap
+          sx={{ minWidth: 0, maxWidth: '100%' }}
+        >
           {footerLinks.map((entry) => (
             <Link key={entry} href="#" underline="hover" sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>
               {entry}

@@ -16,7 +16,7 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
   const span = Math.max(1, globalMax - globalMin)
 
   return (
-    <Box>
+    <Box sx={{ minWidth: 0, width: '100%' }}>
       <SectionLabel>10-Day Forecast</SectionLabel>
 
       <Stack divider={<Box sx={{ borderBottom: 1, borderColor: 'divider' }} />} sx={{ mt: 1 }}>
@@ -28,10 +28,14 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
               key={`${entry.day}-${index}`}
               sx={{
                 display: 'grid',
-                gridTemplateColumns: { xs: '1fr auto auto', sm: '1.1fr auto 2fr auto' },
+                gridTemplateColumns: {
+                  xs: 'minmax(0, 1fr) auto auto',
+                  sm: 'minmax(0, 1.1fr) auto minmax(0, 2fr) auto',
+                },
                 alignItems: 'center',
                 gap: 2,
                 py: 1.5,
+                minWidth: 0,
               }}
             >
               <Stack direction="row" spacing={1} alignItems="baseline">

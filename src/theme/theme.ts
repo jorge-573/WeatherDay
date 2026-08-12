@@ -36,6 +36,13 @@ export const theme = createTheme({
     overline: { fontFamily: fontFamily.body, fontWeight: 700, letterSpacing: '0.12em' },
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        html: { maxWidth: '100%', overflowX: 'hidden' },
+        body: { maxWidth: '100%', overflowX: 'hidden' },
+        '#root': { maxWidth: '100%', minHeight: '100vh', overflowX: 'hidden' },
+      },
+    },
     MuiPaper: {
       defaultProps: { elevation: 0 },
       styleOverrides: {

@@ -1,5 +1,4 @@
 import AppBar from '@mui/material/AppBar'
-import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
@@ -54,15 +53,23 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
         disableGutters
         sx={{
           width: '100%',
-          maxWidth: 'none',
-          gap: 2,
+          maxWidth: '100%',
+          minWidth: 0,
+          gap: { xs: 1, sm: 2 },
           py: 1,
           px: { xs: 2, sm: 3, md: 4 },
         }}
       >
         <Typography
           variant="h6"
-          sx={{ fontWeight: 800, letterSpacing: '0.08em', color: 'primary.main', textTransform: 'uppercase' }}
+          sx={{
+            fontWeight: 800,
+            letterSpacing: { xs: '0.04em', sm: '0.08em' },
+            color: 'primary.main',
+            textTransform: 'uppercase',
+            flexShrink: 0,
+            fontSize: { xs: '1rem', sm: undefined },
+          }}
         >
           WeatherDay
         </Typography>
@@ -91,9 +98,12 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
           })}
         </Stack>
 
-        <Box sx={{ flex: 1 }} />
-
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          sx={{ flex: 1, minWidth: 0, justifyContent: 'flex-end' }}
+        >
           <IconButton
             component={RouterLink}
             to={ROUTES.radar}
