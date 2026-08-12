@@ -1,4 +1,4 @@
-import type { SunStat } from '../../types/weather'
+import type { SunStat } from '../../../types/weather'
 
 /** Phrases the time to the next sun event, e.g. "Sunset in 4h 30m". */
 export function sunCountdown(sun: SunStat): string | null {

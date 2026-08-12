@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
-import type { HourlyForecastEntry } from '../../types/weather'
+import type { HourlyForecastEntry } from '../../../types/weather'
 
 const HOURS_SHOWN = 12
 const CHART_WIDTH = 144

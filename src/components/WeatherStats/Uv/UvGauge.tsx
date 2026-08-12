@@ -1,8 +1,8 @@
 import { useId } from 'react'
 import Box from '@mui/material/Box'
 import { useTheme } from '@mui/material/styles'
-import { uvColors } from '../../theme'
-import type { WeatherStats } from '../../types/weather'
+import { uvColors } from '../../../theme'
+import type { WeatherStats } from '../../../types/weather'
 
 const CENTER_X = 70
 const BASELINE_Y = 72

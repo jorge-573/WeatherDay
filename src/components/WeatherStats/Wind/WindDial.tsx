@@ -2,7 +2,7 @@ import NavigationRoundedIcon from '@mui/icons-material/NavigationRounded'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
-import type { WeatherStats } from '../../types/weather'
+import type { WeatherStats } from '../../../types/weather'
 
 const CENTER = 50
 const RING_RADIUS = 45

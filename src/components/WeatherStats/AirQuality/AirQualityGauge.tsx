@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { aqiColors } from '../../theme'
-import type { AirQuality, AqiCategory } from '../../types/weather'
+import { aqiColors } from '../../../theme'
+import type { AirQuality, AqiCategory } from '../../../types/weather'
 
 const MAX_AQI = 500
 

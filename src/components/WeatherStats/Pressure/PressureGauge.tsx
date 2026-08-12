@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import { useTheme } from '@mui/material/styles'
-import type { WeatherStats } from '../../types/weather'
+import type { WeatherStats } from '../../../types/weather'
 
 const CENTER_X = 55
 const CENTER_Y = 48

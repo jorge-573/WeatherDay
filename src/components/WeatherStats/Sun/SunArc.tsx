@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
-import type { SunPhase, SunStat } from '../../types/weather'
+import type { SunPhase, SunStat } from '../../../types/weather'
 import { sunCountdown } from './sunCountdown'
 
 // A semicircle sitting on the horizon line: the sun enters at the left end
