@@ -16,6 +16,7 @@ import type { SvgIconComponent } from '@mui/icons-material'
 import { aqiColors } from '../../theme'
 import type { AirQuality, PressureTrend, WeatherStats as WeatherStatsData } from '../../types/weather'
 import { SectionLabel, StatTile } from '../shared'
+import { HumidityMeter } from './HumidityMeter'
 import { SunArc } from './SunArc'
 import { sunCountdown } from './sunCountdown'
 import { UvGauge } from './UvGauge'
@@ -66,6 +67,13 @@ function windFromLabel(wind: WeatherStatsData['wind']): string {
   return from
 }
 
+function humidityComfort(value: number | null): string | null {
+  if (value === null) return null
+  if (value < 30) return 'Dry'
+  if (value <= 60) return 'Comfortable'
+  return 'Humid'
+}
+
 function precipitationDetail(hours: number | null): string | null {
   if (hours === null) return null
   return hours === 0 ? 'Dry all day' : `${hours} h with precipitation`
@@ -78,6 +86,7 @@ function airQualityDetail(airQuality: AirQuality | null): string {
 
 export function WeatherStats({ data, airQuality, temperatureLabel }: WeatherStatsProps) {
   const { sun, wind, uv, humidity, precipitation, pressure, visibility } = data
+  const humidityLabel = humidityComfort(humidity.value)
 
   return (
     <Box>
@@ -134,13 +143,39 @@ export function WeatherStats({ data, airQuality, temperatureLabel }: WeatherStat
           <UvGauge uv={uv} />
         </StatTile>
 
-        <StatTile
-          icon={WaterDropOutlinedIcon}
-          label="Humidity"
-          value={humidity.value}
-          unit="%"
-          detail={humidity.dewPoint === null ? null : `Dew point ${humidity.dewPoint}${temperatureLabel}`}
-        />
+        <StatTile icon={WaterDropOutlinedIcon} label="Humidity">
+          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ flex: 1 }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="h4" component="p" sx={{ fontWeight: 700, lineHeight: 1 }}>
+                {humidity.value ?? '—'}
+                {humidity.value !== null && (
+                  <Box component="span" sx={{ ml: 0.35, fontSize: '0.5em', fontWeight: 600, color: 'text.secondary' }}>
+                    %
+                  </Box>
+                )}
+              </Typography>
+              <Typography
+                variant="caption"
+                component="p"
+                sx={{ color: 'text.secondary', fontWeight: 600, mt: 0.8, lineHeight: 1.35 }}
+              >
+                {humidity.dewPoint === null
+                  ? 'Dew point unavailable'
+                  : `Dew point ${humidity.dewPoint}${temperatureLabel}`}
+              </Typography>
+              {humidityLabel && (
+                <Typography
+                  variant="caption"
+                  component="p"
+                  sx={{ color: (t) => t.md3.accent, fontWeight: 700, mt: 0.35, lineHeight: 1.35 }}
+                >
+                  {humidityLabel}
+                </Typography>
+              )}
+            </Box>
+            <HumidityMeter value={humidity.value} />
+          </Stack>
+        </StatTile>
 
         <StatTile
           icon={UmbrellaIcon}
