@@ -13,7 +13,6 @@ import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined'
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined'
 import WbTwilightIcon from '@mui/icons-material/WbTwilight'
 import type { SvgIconComponent } from '@mui/icons-material'
-import { aqiColors } from '../../theme'
 import type {
   AirQuality,
   HourlyForecastEntry,
@@ -21,6 +20,7 @@ import type {
   WeatherStats as WeatherStatsData,
 } from '../../types/weather'
 import { SectionLabel, StatTile } from '../shared'
+import { AirQualityGauge } from './AirQualityGauge'
 import { HumidityMeter } from './HumidityMeter'
 import { PrecipitationTimeline } from './PrecipitationTimeline'
 import { PressureGauge } from './PressureGauge'
@@ -86,11 +86,6 @@ function humidityComfort(value: number | null): string | null {
 function precipitationDetail(hours: number | null): string | null {
   if (hours === null) return null
   return hours === 0 ? 'Dry all day' : `${hours} h with precipitation`
-}
-
-function airQualityDetail(airQuality: AirQuality | null): string {
-  if (!airQuality) return 'No data'
-  return airQuality.pm25 === null ? airQuality.label : `${airQuality.label} · PM2.5 ${airQuality.pm25}`
 }
 
 export function WeatherStats({ data, hourly, airQuality, temperatureLabel }: WeatherStatsProps) {
@@ -228,13 +223,9 @@ export function WeatherStats({ data, hourly, airQuality, temperatureLabel }: Wea
           <VisibilityGauge visibility={visibility} />
         </StatTile>
 
-        <StatTile
-          icon={BlurOnIcon}
-          label="Air Quality"
-          value={airQuality?.aqi}
-          detail={airQualityDetail(airQuality)}
-          valueColor={airQuality ? aqiColors[airQuality.category] : undefined}
-        />
+        <StatTile icon={BlurOnIcon} label="Air Quality">
+          <AirQualityGauge airQuality={airQuality} />
+        </StatTile>
       </Box>
     </Box>
   )
