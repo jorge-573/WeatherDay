@@ -1,8 +1,7 @@
 import UmbrellaIcon from '@mui/icons-material/Umbrella'
-import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import type { HourlyForecastEntry, WeatherStats } from '../../../types/weather'
-import { StatTile } from '../../shared'
+import { StatTile, StatValue } from '../../shared'
 import { PrecipitationTimeline } from './PrecipitationTimeline'
 
 type PrecipitationTileProps = {
@@ -18,14 +17,7 @@ function precipitationDetail(hours: number | null): string | null {
 export function PrecipitationTile({ precipitation, hourly }: PrecipitationTileProps) {
   return (
     <StatTile icon={UmbrellaIcon} label="Precipitation">
-      <Typography variant="h4" component="p" sx={{ fontWeight: 700, lineHeight: 1 }}>
-        {precipitation.total ?? '—'}
-        {precipitation.total !== null && (
-          <Box component="span" sx={{ ml: 0.5, fontSize: '0.5em', fontWeight: 600, color: 'text.secondary' }}>
-            {precipitation.unit}
-          </Box>
-        )}
-      </Typography>
+      <StatValue value={precipitation.total} unit={precipitation.unit} />
       <Typography
         variant="caption"
         component="p"

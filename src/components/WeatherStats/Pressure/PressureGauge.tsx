@@ -10,7 +10,18 @@ const POINTER_LENGTH = 5
 const START_ANGLE = 135
 const SWEEP_ANGLE = 270
 const ARC_LENGTH = (SWEEP_ANGLE / 360) * 2 * Math.PI * RADIUS
-const ARC_PATH = 'M 31 72 A 34 34 0 1 1 79 72'
+
+function pointOnCircle(angleDegrees: number) {
+  const angleRadians = (angleDegrees * Math.PI) / 180
+  return {
+    x: Math.round(CENTER_X + RADIUS * Math.cos(angleRadians)),
+    y: Math.round(CENTER_Y + RADIUS * Math.sin(angleRadians)),
+  }
+}
+
+const arcStart = pointOnCircle(START_ANGLE)
+const arcEnd = pointOnCircle(START_ANGLE + SWEEP_ANGLE)
+const ARC_PATH = `M ${arcStart.x} ${arcStart.y} A ${RADIUS} ${RADIUS} 0 ${SWEEP_ANGLE > 180 ? 1 : 0} 1 ${arcEnd.x} ${arcEnd.y}`
 
 type PressureGaugeProps = {
   pressure: WeatherStats['pressure']

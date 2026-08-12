@@ -7,7 +7,7 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { PressureTrend, WeatherStats } from '../../../types/weather'
-import { StatTile } from '../../shared'
+import { StatTile, StatValue } from '../../shared'
 import { PressureGauge } from './PressureGauge'
 
 type PressureTileProps = {
@@ -35,14 +35,7 @@ export function PressureTile({ pressure }: PressureTileProps) {
     <StatTile icon={SpeedIcon} label="Pressure">
       <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ flex: 1 }}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h4" component="p" sx={{ fontWeight: 700, lineHeight: 1 }}>
-            {pressure.value ?? '—'}
-            {pressure.value !== null && (
-              <Box component="span" sx={{ ml: 0.4, fontSize: '0.42em', fontWeight: 600, color: 'text.secondary' }}>
-                {pressure.unit}
-              </Box>
-            )}
-          </Typography>
+          <StatValue value={pressure.value} unit={pressure.unit} />
           <Typography variant="caption" component="div" sx={{ color: 'text.secondary', fontWeight: 600, mt: 0.8 }}>
             <PressureDetail trend={pressure.trend} />
           </Typography>

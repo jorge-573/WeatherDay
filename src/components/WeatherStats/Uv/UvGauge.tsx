@@ -2,7 +2,7 @@ import { useId } from 'react'
 import Box from '@mui/material/Box'
 import { useTheme } from '@mui/material/styles'
 import { uvColors } from '../../../theme'
-import type { WeatherStats } from '../../../types/weather'
+import type { UvLevel, WeatherStats } from '../../../types/weather'
 
 const CENTER_X = 70
 const BASELINE_Y = 72
@@ -11,16 +11,17 @@ const ARC_LENGTH = Math.PI * RADIUS
 const ARC_PATH = `M ${CENTER_X - RADIUS} ${BASELINE_Y} A ${RADIUS} ${RADIUS} 0 0 1 ${CENTER_X + RADIUS} ${BASELINE_Y}`
 const MAX_UV = 11
 
-type UvGaugeProps = {
-  uv: WeatherStats['uv']
+const MARKER_COLORS: Record<UvLevel, string> = {
+  'No data': uvColors.low,
+  Low: uvColors.low,
+  Moderate: uvColors.moderate,
+  High: uvColors.high,
+  'Very High': uvColors.veryHigh,
+  Extreme: uvColors.extreme,
 }
 
-function markerColor(value: number) {
-  if (value < 3) return uvColors.low
-  if (value < 6) return uvColors.moderate
-  if (value < 8) return uvColors.high
-  if (value < 11) return uvColors.veryHigh
-  return uvColors.extreme
+type UvGaugeProps = {
+  uv: WeatherStats['uv']
 }
 
 export function UvGauge({ uv }: UvGaugeProps) {
@@ -67,7 +68,7 @@ export function UvGauge({ uv }: UvGaugeProps) {
             cx={marker.x}
             cy={marker.y}
             r={5}
-            fill={markerColor(uv.value)}
+            fill={MARKER_COLORS[uv.level]}
             stroke={theme.md3.surfaceContainer}
             strokeWidth={2.5}
           />

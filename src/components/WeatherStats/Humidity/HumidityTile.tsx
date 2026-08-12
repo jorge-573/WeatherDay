@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { WeatherStats } from '../../../types/weather'
-import { StatTile } from '../../shared'
+import { StatTile, StatValue } from '../../shared'
 import { HumidityMeter } from './HumidityMeter'
 
 type HumidityTileProps = {
@@ -25,14 +25,7 @@ export function HumidityTile({ humidity, temperatureLabel }: HumidityTileProps) 
     <StatTile icon={WaterDropOutlinedIcon} label="Humidity">
       <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ flex: 1 }}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h4" component="p" sx={{ fontWeight: 700, lineHeight: 1 }}>
-            {humidity.value ?? '—'}
-            {humidity.value !== null && (
-              <Box component="span" sx={{ ml: 0.35, fontSize: '0.5em', fontWeight: 600, color: 'text.secondary' }}>
-                %
-              </Box>
-            )}
-          </Typography>
+          <StatValue value={humidity.value} unit="%" />
           <Typography
             variant="caption"
             component="p"

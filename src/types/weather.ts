@@ -64,6 +64,8 @@ export type PressureTrend = 'rising' | 'falling' | 'steady'
 
 export type AqiCategory = 'good' | 'moderate' | 'sensitive' | 'unhealthy' | 'veryUnhealthy' | 'hazardous'
 
+export type UvLevel = 'No data' | 'Low' | 'Moderate' | 'High' | 'Very High' | 'Extreme'
+
 export type AirQuality = {
   aqi: number
   category: AqiCategory
@@ -79,7 +81,7 @@ export type WeatherStats = {
   sun: SunStat
   /** `bearing` is the compass direction the wind blows *from*, in degrees. */
   wind: { value: number; unit: string; direction: string; bearing: number; gusts: number | null }
-  uv: { value: number | null; level: string }
+  uv: { value: number | null; level: UvLevel }
   humidity: { value: number | null; dewPoint: number | null }
   precipitation: { total: string | null; unit: string; hours: number | null }
   pressure: { value: string | null; unit: string; trend: PressureTrend }

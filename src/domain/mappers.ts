@@ -9,6 +9,7 @@ import type {
   PressureTrend,
   SunPhase,
   SunStat,
+  UvLevel,
   WeatherStats,
 } from '../types/weather'
 import type { AirQualityResponse, ForecastResponse } from '../types/openMeteo'
@@ -176,7 +177,7 @@ function bearingToCompass(bearing: number): string {
   return directions[idx]
 }
 
-function uvLevel(uv: number | undefined): string {
+function uvLevel(uv: number | undefined): UvLevel {
   if (uv === undefined) return 'No data'
   if (uv < 3) return 'Low'
   if (uv < 6) return 'Moderate'

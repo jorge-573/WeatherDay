@@ -17,14 +17,16 @@ type PrecipitationTimelineProps = {
 export function PrecipitationTimeline({ data }: PrecipitationTimelineProps) {
   const theme = useTheme()
   const hours = data.slice(0, HOURS_SHOWN)
+  const forecastUnavailable = hours.every((entry) => entry.precipitationProbability === null)
   const highest = hours.reduce<HourlyForecastEntry | null>((best, entry) => {
     if (entry.precipitationProbability === null) return best
     if (!best || entry.precipitationProbability > (best.precipitationProbability ?? 0)) return entry
     return best
   }, null)
   const highestChance = highest?.precipitationProbability ?? 0
-  const summary =
-    highestChance === 0
+  const summary = forecastUnavailable
+    ? 'Forecast unavailable'
+    : highestChance === 0
       ? 'No rain expected'
       : `Highest ${highestChance}% ${highest?.isNow ? 'now' : `at ${highest?.hour}`}`
 

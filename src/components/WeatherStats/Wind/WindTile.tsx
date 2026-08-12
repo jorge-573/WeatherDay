@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { WeatherStats } from '../../../types/weather'
-import { StatTile } from '../../shared'
+import { StatTile, StatValue } from '../../shared'
 import { WindDial } from './WindDial'
 
 type WindTileProps = {
@@ -21,9 +21,13 @@ const DIRECTION_WORDS: Record<string, string> = {
   NW: 'northwest',
 }
 
+const CALM_WIND_SPEED = 0
+const LIGHT_WIND_MAX_SPEED = 3
+
 function windFromLabel(wind: WeatherStats['wind']): string {
   const from = `From ${DIRECTION_WORDS[wind.direction] ?? wind.direction}`
-  if (wind.value <= 3) return [`Calm`, from].join(' · ')
+  if (wind.value === CALM_WIND_SPEED) return 'Calm'
+  if (wind.value <= LIGHT_WIND_MAX_SPEED) return `Light · ${from}`
   return from
 }
 
@@ -38,12 +42,7 @@ export function WindTile({ wind }: WindTileProps) {
         sx={{ flex: 1, minHeight: 82 }}
       >
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography variant="h4" component="p" sx={{ fontWeight: 700, lineHeight: 1 }}>
-            {wind.value}
-            <Box component="span" sx={{ ml: 0.5, fontSize: '0.5em', fontWeight: 600, color: 'text.secondary' }}>
-              {wind.unit}
-            </Box>
-          </Typography>
+          <StatValue value={wind.value} unit={wind.unit} />
           <Typography
             variant="caption"
             component="p"
