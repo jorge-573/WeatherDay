@@ -6,6 +6,9 @@ export type UnitConfig = {
   precipitationUnit: 'inch' | 'mm'
   temperatureLabel: string
   windLabel: string
+  precipitationLabel: string
+  pressureLabel: string
+  visibilityLabel: string
 }
 
 export const UNIT_CONFIG: Record<UnitSystem, UnitConfig> = {
@@ -15,6 +18,9 @@ export const UNIT_CONFIG: Record<UnitSystem, UnitConfig> = {
     precipitationUnit: 'inch',
     temperatureLabel: '°F',
     windLabel: 'mph',
+    precipitationLabel: 'in',
+    pressureLabel: 'inHg',
+    visibilityLabel: 'mi',
   },
   metric: {
     temperatureUnit: 'celsius',
@@ -22,5 +28,8 @@ export const UNIT_CONFIG: Record<UnitSystem, UnitConfig> = {
     precipitationUnit: 'mm',
     temperatureLabel: '°C',
     windLabel: 'km/h',
+    precipitationLabel: 'mm',
+    pressureLabel: 'hPa',
+    visibilityLabel: 'km',
   },
 }

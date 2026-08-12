@@ -1,95 +1,45 @@
 import Box from '@mui/material/Box'
-import LinearProgress from '@mui/material/LinearProgress'
-import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
-import AirIcon from '@mui/icons-material/Air'
-import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined'
-import WbTwilightIcon from '@mui/icons-material/WbTwilight'
-import type { SvgIconComponent } from '@mui/icons-material'
-import { gradients, radii } from '../../theme'
-import type { WeatherStats as WeatherStatsData } from '../../types/weather'
+import type { AirQuality, HourlyForecastEntry, WeatherStats as WeatherStatsData } from '../../types/weather'
+import { SectionLabel } from '../shared'
+import { AirQualityTile } from './AirQuality/AirQualityTile'
+import { HumidityTile } from './Humidity/HumidityTile'
+import { PrecipitationTile } from './Precipitation/PrecipitationTile'
+import { PressureTile } from './Pressure/PressureTile'
+import { SunTile } from './Sun/SunTile'
+import { UvTile } from './Uv/UvTile'
+import { VisibilityTile } from './Visibility/VisibilityTile'
+import { WindTile } from './Wind/WindTile'
 
 type WeatherStatsProps = {
   data: WeatherStatsData
+  hourly: HourlyForecastEntry[]
+  airQuality: AirQuality | null
+  temperatureLabel: string
 }
 
-type TileProps = {
-  icon: SvgIconComponent
-  label: string
-  children: React.ReactNode
-}
-
-function Tile({ icon: Icon, label, children }: TileProps) {
-  return (
-    <Paper sx={{ p: 2.5, height: '100%' }}>
-      <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'text.secondary', mb: 1.5 }}>
-        <Icon fontSize="small" />
-        <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: '0.1em' }}>
-          {label}
-        </Typography>
-      </Stack>
-      {children}
-    </Paper>
-  )
-}
-
-export function WeatherStats({ data }: WeatherStatsProps) {
-  const { sun, wind, uv } = data
+export function WeatherStats({ data, hourly, airQuality, temperatureLabel }: WeatherStatsProps) {
+  const { sun, wind, uv, humidity, precipitation, pressure, visibility } = data
 
   return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
-        gap: 2,
-      }}
-    >
-      <Tile icon={WbTwilightIcon} label="Sunrise & Sunset">
-        <Stack spacing={1}>
-          <Stack direction="row" justifyContent="space-between">
-            <Typography sx={{ fontWeight: 700 }}>{sun.sunrise}</Typography>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Sunrise
-            </Typography>
-          </Stack>
-          <LinearProgress
-            variant="determinate"
-            value={Math.round(sun.progress * 100)}
-            sx={{
-              height: 6,
-              borderRadius: radii.full,
-              backgroundColor: (t) => t.md3.surfaceContainerHighest,
-              '& .MuiLinearProgress-bar': {
-                borderRadius: radii.full,
-                background: gradients.accentBar,
-              },
-            }}
-          />
-          <Stack direction="row" justifyContent="space-between">
-            <Typography sx={{ fontWeight: 700 }}>{sun.sunset}</Typography>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Sunset
-            </Typography>
-          </Stack>
-        </Stack>
-      </Tile>
-
-      <Tile icon={AirIcon} label="Wind Speed">
-        <Typography variant="h3" sx={{ fontWeight: 700 }}>
-          {wind.value}
-        </Typography>
-        <Typography sx={{ color: 'primary.main', fontWeight: 600 }}>
-          {wind.unit} {wind.direction}
-        </Typography>
-      </Tile>
-
-      <Tile icon={WbSunnyOutlinedIcon} label="UV Index">
-        <Typography variant="h3" sx={{ fontWeight: 700, color: (t) => t.md3.tertiaryFixedDim }}>
-          {uv.value ?? '—'}
-        </Typography>
-        <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{uv.level}</Typography>
-      </Tile>
+    <Box>
+      <SectionLabel>Conditions</SectionLabel>
+      <Box
+        sx={{
+          mt: 1.5,
+          display: 'grid',
+          gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)' },
+          gap: { xs: 1.5, sm: 2 },
+        }}
+      >
+        <SunTile sun={sun} />
+        <WindTile wind={wind} />
+        <UvTile uv={uv} />
+        <HumidityTile humidity={humidity} temperatureLabel={temperatureLabel} />
+        <PrecipitationTile precipitation={precipitation} hourly={hourly} />
+        <PressureTile pressure={pressure} />
+        <VisibilityTile visibility={visibility} />
+        <AirQualityTile airQuality={airQuality} />
+      </Box>
     </Box>
   )
 }
