@@ -1,29 +1,19 @@
+import { useState } from 'react'
 import AppBar from '@mui/material/AppBar'
 import IconButton from '@mui/material/IconButton'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import RadarRoundedIcon from '@mui/icons-material/RadarRounded'
+import MenuIcon from '@mui/icons-material/Menu'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
-import { ROUTES } from '../../config/routes'
+import { navLinks } from '../../config/nav'
 import type { UnitSystem } from '../../config/units'
 import type { useCityLocation } from '../../hooks/useCityLocation'
 import { glass } from '../../theme'
+import { NavDrawer } from '../NavDrawer'
 import { SearchBar } from '../SearchBar'
 import { SettingsMenu } from '../SettingsMenu'
-
-type NavLinkItem = {
-  label: string
-  to?: string
-}
-
-const navLinks: NavLinkItem[] = [
-  { label: 'Dashboard', to: ROUTES.home },
-  { label: 'Radar', to: ROUTES.radar },
-  { label: 'Forecasts' },
-  { label: 'Historical' },
-]
 
 type HeaderProps = {
   units: UnitSystem
@@ -33,7 +23,7 @@ type HeaderProps = {
 
 export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
   const { pathname } = useLocation()
-  const isRadar = pathname === ROUTES.radar
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   return (
     <AppBar
@@ -60,6 +50,14 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
           px: { xs: 2, sm: 3, md: 4 },
         }}
       >
+        <IconButton
+          aria-label="Open menu"
+          onClick={() => setDrawerOpen(true)}
+          sx={{ display: { xs: 'inline-flex', md: 'none' }, color: 'text.secondary', ml: -0.5 }}
+        >
+          <MenuIcon />
+        </IconButton>
+
         <Typography
           variant="h6"
           sx={{
@@ -104,31 +102,32 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
           alignItems="center"
           sx={{ flex: 1, minWidth: 0, justifyContent: 'flex-end' }}
         >
-          <IconButton
-            component={RouterLink}
-            to={ROUTES.radar}
-            aria-label="Open radar"
-            sx={{
-              display: { xs: 'inline-flex', md: 'none' },
-              color: isRadar ? 'primary.main' : 'text.secondary',
-            }}
-          >
-            <RadarRoundedIcon />
-          </IconButton>
           <SearchBar
             onSearchSelect={cityLocation.selectFromSearch}
             onCurrentLocationClick={cityLocation.requestCurrentLocation}
             locating={cityLocation.locating}
             locateError={cityLocation.locateError}
           />
-          <SettingsMenu
-            units={units}
-            onUnitsChange={onUnitChange}
-            locationOnStartup={cityLocation.locationOnStartup}
-            onLocationOnStartupChange={cityLocation.setLocationOnStartup}
-          />
+          <Stack sx={{ display: { xs: 'none', md: 'block' } }}>
+            <SettingsMenu
+              units={units}
+              onUnitsChange={onUnitChange}
+              locationOnStartup={cityLocation.locationOnStartup}
+              onLocationOnStartupChange={cityLocation.setLocationOnStartup}
+            />
+          </Stack>
         </Stack>
       </Toolbar>
+
+      <NavDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        pathname={pathname}
+        units={units}
+        onUnitsChange={onUnitChange}
+        locationOnStartup={cityLocation.locationOnStartup}
+        onLocationOnStartupChange={cityLocation.setLocationOnStartup}
+      />
     </AppBar>
   )
 }
