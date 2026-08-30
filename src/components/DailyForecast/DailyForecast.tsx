@@ -23,6 +23,11 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
         {data.map((entry, index) => {
           const left = ((entry.low - globalMin) / span) * 100
           const width = ((entry.high - entry.low) / span) * 100
+          const precipitationLabel =
+            entry.precipitationProbability === null
+              ? ''
+              : `, ${entry.precipitationProbability}% chance of precipitation`
+          const weatherLabel = `${entry.condition}${precipitationLabel}`
           return (
             <Box
               key={`${entry.day}-${index}`}
@@ -57,6 +62,8 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
                 direction={{ xs: 'row', sm: 'column' }}
                 alignItems="center"
                 spacing={{ xs: 0.5, sm: 0.25 }}
+                role="img"
+                aria-label={weatherLabel}
                 sx={{
                   gridArea: 'weather',
                   width: { xs: '100%', sm: 88 },
@@ -65,27 +72,9 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
                 }}
               >
                 <WeatherIcon code={entry.code} size={24} sx={{ color: 'text.primary' }} />
-                <Stack
-                  direction="row"
-                  spacing={0.5}
-                  alignItems="center"
-                  sx={{ display: { xs: 'flex', sm: 'none' }, minWidth: 0 }}
-                >
-                  <Box
-                    sx={{
-                      minWidth: 0,
-                      overflow: 'hidden',
-                      '& .MuiTypography-root': {
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      },
-                    }}
-                  >
-                    <ConditionCaption>{entry.condition}</ConditionCaption>
-                  </Box>
+                <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
                   <PrecipitationBadge code={entry.code} probability={entry.precipitationProbability} size="sm" />
-                </Stack>
+                </Box>
                 <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                   <ConditionCaption>{entry.condition}</ConditionCaption>
                 </Box>
