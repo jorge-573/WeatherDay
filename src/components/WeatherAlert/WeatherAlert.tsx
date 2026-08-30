@@ -9,6 +9,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded'
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded'
+import { useIsMobile } from '../../hooks/useIsMobile'
 import type { AlertSeverity, WeatherAlert as WeatherAlertData } from '../../types/weather'
 import { formatAlertUntil } from '../../utils/formatAlertTime'
 import { AlertDetailsDialog } from './AlertDetailsDialog'
@@ -41,6 +42,7 @@ export function WeatherAlert({ alerts, rotateMs = 6000 }: WeatherAlertProps) {
   )
 
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+  const isMobile = useIsMobile()
   const [index, setIndex] = useState(0)
   const [visible, setVisible] = useState(true)
   const [paused, setPaused] = useState(false)
@@ -80,14 +82,37 @@ export function WeatherAlert({ alerts, rotateMs = 6000 }: WeatherAlertProps) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       sx={{
-        px: { xs: 2, md: 3 },
+        position: 'relative',
+        px: { xs: 1.5, md: 3 },
         py: 1.5,
-        borderRadius: 3,
+        borderRadius: { xs: 2, sm: 3 },
         backgroundColor: (t) => t.md3.errorContainer,
         color: (t) => t.md3.onErrorContainer,
       }}
     >
-      <Stack direction="row" alignItems="center" spacing={2}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={{ xs: 1.25, sm: 2 }}
+        {...(isMobile
+          ? {
+              component: 'button' as const,
+              type: 'button' as const,
+              onClick: () => setDetailsOpen(true),
+            }
+          : {})}
+        sx={{
+          width: '100%',
+          minWidth: 0,
+          p: 0,
+          border: 0,
+          background: 'none',
+          color: 'inherit',
+          font: 'inherit',
+          textAlign: 'left',
+          cursor: { xs: 'pointer', sm: 'default' },
+        }}
+      >
         <WarningAmberRoundedIcon sx={{ flexShrink: 0 }} />
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -100,17 +125,28 @@ export function WeatherAlert({ alerts, rotateMs = 6000 }: WeatherAlertProps) {
             }}
           >
             <Box>
-              <Typography sx={{ fontWeight: 700 }} noWrap>
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  ...(isMobile && {
+                    display: '-webkit-box',
+                    overflow: 'hidden',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 2,
+                  }),
+                }}
+                noWrap={!isMobile}
+              >
                 {currentAlert.event}
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.85 }} noWrap>
-                {formatAlertDetail(currentAlert)}
+                {isMobile ? (formatAlertUntil(currentAlert) ?? 'Details available') : formatAlertDetail(currentAlert)}
               </Typography>
             </Box>
           </Fade>
         </Box>
 
-        {hasMultiple && (
+        {hasMultiple && !isMobile && (
           <Stack direction="row" spacing={0.5} sx={{ flexShrink: 0 }}>
             <IconButton
               size="small"
@@ -126,45 +162,71 @@ export function WeatherAlert({ alerts, rotateMs = 6000 }: WeatherAlertProps) {
           </Stack>
         )}
 
-        <Button
-          variant="text"
-          onClick={() => setDetailsOpen(true)}
-          sx={{
-            flexShrink: 0,
-            color: 'inherit',
-            fontWeight: 700,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-          }}
-        >
-          View Details
-        </Button>
+        {isMobile ? (
+          <ChevronRightRoundedIcon sx={{ flexShrink: 0 }} />
+        ) : (
+          <Button
+            variant="text"
+            onClick={() => setDetailsOpen(true)}
+            sx={{
+              flexShrink: 0,
+              color: 'inherit',
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+            }}
+          >
+            View Details
+          </Button>
+        )}
       </Stack>
 
       {hasMultiple && (
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ pl: 5 }}>
-          <Stack direction="row" spacing={0.75}>
-            {sortedAlerts.map((alert, dotIndex) => (
-              <Box
-                key={`${alert.id}-${dotIndex}`}
-                role="button"
-                aria-label={`Show alert ${dotIndex + 1}`}
-                onClick={() => goTo(dotIndex)}
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  cursor: 'pointer',
-                  backgroundColor: 'currentColor',
-                  opacity: dotIndex === index ? 1 : 0.35,
-                  transition: 'opacity 0.2s',
-                }}
-              />
-            ))}
+        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ pl: 5 }}>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack direction="row" spacing={0.75}>
+              {sortedAlerts.map((alert, dotIndex) => (
+                <Box
+                  key={`${alert.id}-${dotIndex}`}
+                  role="button"
+                  aria-label={`Show alert ${dotIndex + 1}`}
+                  onClick={() => goTo(dotIndex)}
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    cursor: 'pointer',
+                    backgroundColor: 'currentColor',
+                    opacity: dotIndex === index ? 1 : 0.35,
+                    transition: 'opacity 0.2s',
+                  }}
+                />
+              ))}
+            </Stack>
+            <Typography variant="caption" sx={{ opacity: 0.8 }}>
+              {index + 1} of {count}
+            </Typography>
           </Stack>
-          <Typography variant="caption" sx={{ opacity: 0.8 }}>
-            {index + 1} of {count}
-          </Typography>
+          {isMobile && (
+            <Stack direction="row" spacing={0.5}>
+              <IconButton
+                size="small"
+                aria-label="Previous alert"
+                onClick={() => goTo(index - 1)}
+                sx={{ color: 'inherit' }}
+              >
+                <ChevronLeftRoundedIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                size="small"
+                aria-label="Next alert"
+                onClick={() => goTo(index + 1)}
+                sx={{ color: 'inherit' }}
+              >
+                <ChevronRightRoundedIcon fontSize="small" />
+              </IconButton>
+            </Stack>
+          )}
         </Stack>
       )}
 
