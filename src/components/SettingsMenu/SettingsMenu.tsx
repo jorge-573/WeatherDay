@@ -3,15 +3,9 @@ import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
-import type { UnitSystem } from '../../config/units'
-import { SettingsControls } from './SettingsControls'
+import { SettingsControls, type SettingsControlsProps } from './SettingsControls'
 
-type SettingsMenuProps = {
-  units: UnitSystem
-  onUnitsChange: (units: UnitSystem) => void
-  locationOnStartup: boolean
-  onLocationOnStartupChange: (enabled: boolean) => void
-}
+type SettingsMenuProps = SettingsControlsProps
 
 export function SettingsMenu({
   units,

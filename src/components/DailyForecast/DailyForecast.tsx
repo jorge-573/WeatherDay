@@ -21,8 +21,10 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
 
       <Stack divider={<Box sx={{ borderBottom: 1, borderColor: 'divider' }} />} sx={{ mt: 1 }}>
         {data.map((entry, index) => {
-          const left = ((entry.low - globalMin) / span) * 100
-          const width = ((entry.high - entry.low) / span) * 100
+          const rawLeft = ((entry.low - globalMin) / span) * 100
+          const rawWidth = ((entry.high - entry.low) / span) * 100
+          const segmentLeft = Math.min(rawLeft, 94)
+          const segmentWidth = Math.min(Math.max(rawWidth, 6), 100 - segmentLeft)
           const precipitationLabel =
             entry.precipitationProbability === null
               ? ''
@@ -100,8 +102,8 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
                     position: 'absolute',
                     top: 0,
                     bottom: 0,
-                    left: `${left}%`,
-                    width: `${Math.max(width, 6)}%`,
+                    left: `${segmentLeft}%`,
+                    width: `${segmentWidth}%`,
                     borderRadius: radii.full,
                     background: gradients.accentBar,
                   }}

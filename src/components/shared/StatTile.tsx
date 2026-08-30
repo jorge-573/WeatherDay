@@ -30,7 +30,6 @@ export function StatTile({ icon: Icon, label, value, unit, detail, valueColor, c
         height: '100%',
         minWidth: 0,
         minHeight: 132,
-        overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
       }}

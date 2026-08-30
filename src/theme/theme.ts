@@ -38,9 +38,8 @@ export const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        html: { maxWidth: '100%', overflowX: 'hidden' },
-        body: { maxWidth: '100%', overflowX: 'hidden' },
-        '#root': { maxWidth: '100%', minHeight: '100vh', overflowX: 'hidden' },
+        body: { overflowX: 'clip' },
+        '#root': { minHeight: '100vh' },
       },
     },
     MuiPaper: {

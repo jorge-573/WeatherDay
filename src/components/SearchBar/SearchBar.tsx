@@ -1,36 +1,16 @@
 import { useState } from 'react'
 import Autocomplete from '@mui/material/Autocomplete'
 import Box from '@mui/material/Box'
-import CircularProgress from '@mui/material/CircularProgress'
 import InputAdornment from '@mui/material/InputAdornment'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import MyLocationIcon from '@mui/icons-material/MyLocation'
 import SearchIcon from '@mui/icons-material/Search'
 import { useCitySearch } from '../../hooks/useCitySearch'
 import { radii } from '../../theme'
 import type { GeocodingResult } from '../../types/weather'
 import { formatCityLabel } from '../../utils/formatCityLabel'
-
-const CURRENT_LOCATION_ID = 'current-location' as const
-
-type CurrentLocationOption = {
-  id: typeof CURRENT_LOCATION_ID
-  name: string
-}
-
-type SearchOption = GeocodingResult | CurrentLocationOption
-
-const CURRENT_LOCATION_OPTION: CurrentLocationOption = {
-  id: CURRENT_LOCATION_ID,
-  name: 'Use current location',
-}
-
-function isCurrentLocationOption(option: SearchOption): option is CurrentLocationOption {
-  return option.id === CURRENT_LOCATION_ID
-}
+import { CurrentLocationOptionContent } from './CurrentLocationOption'
+import { CURRENT_LOCATION_OPTION, isCurrentLocationOption, type SearchOption } from './searchOptions'
 
 type SearchBarProps = {
   placeholder?: string
@@ -69,9 +49,12 @@ export function SearchBar({
         isOptionEqualToValue={(option, value) => option.id === value.id}
         getOptionDisabled={(option) => isCurrentLocationOption(option) && locating}
         noOptionsText={query.trim().length < 2 ? 'Type to search' : 'No matches'}
-        onInputChange={(_, value) => setQuery(value)}
+        onInputChange={(_, value, reason) => {
+          if (reason === 'input' || reason === 'clear') setQuery(value)
+        }}
         onChange={(_, option) => {
           if (!option) return
+          setQuery('')
           if (isCurrentLocationOption(option)) {
             onCurrentLocationClick?.()
             return
@@ -87,15 +70,7 @@ export function SearchBar({
           if (isCurrentLocationOption(option)) {
             return (
               <li key={key} {...rest}>
-                <ListItemIcon sx={{ minWidth: 36, color: locateError ? 'error.main' : 'text.secondary' }}>
-                  {locating ? <CircularProgress size={18} color="inherit" /> : <MyLocationIcon fontSize="small" />}
-                </ListItemIcon>
-                <ListItemText
-                  primary={option.name}
-                  secondary={locateError}
-                  primaryTypographyProps={{ fontWeight: 600 }}
-                  secondaryTypographyProps={{ color: 'error.main' }}
-                />
+                <CurrentLocationOptionContent locating={locating} error={locateError} />
               </li>
             )
           }

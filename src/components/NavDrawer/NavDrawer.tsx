@@ -7,18 +7,13 @@ import ListItemText from '@mui/material/ListItemText'
 import Typography from '@mui/material/Typography'
 import { Link as RouterLink } from 'react-router-dom'
 import { navLinks } from '../../config/nav'
-import type { UnitSystem } from '../../config/units'
 import { glass } from '../../theme'
-import { SettingsControls } from '../SettingsMenu/SettingsControls'
+import { SettingsControls, type SettingsControlsProps } from '../SettingsMenu'
 
-type NavDrawerProps = {
+type NavDrawerProps = SettingsControlsProps & {
   open: boolean
   onClose: () => void
   pathname: string
-  units: UnitSystem
-  onUnitsChange: (units: UnitSystem) => void
-  locationOnStartup: boolean
-  onLocationOnStartupChange: (enabled: boolean) => void
 }
 
 export function NavDrawer({
@@ -62,11 +57,11 @@ export function NavDrawer({
 
       <List sx={{ px: 1 }}>
         {navLinks.map((entry) => {
-          const active = entry.to !== undefined && entry.to === pathname
+          const active = !entry.disabled && entry.to === pathname
           return (
             <ListItemButton
               key={entry.label}
-              {...(entry.to ? { component: RouterLink, to: entry.to, onClick: onClose } : { disabled: true })}
+              {...(entry.disabled ? { disabled: true } : { component: RouterLink, to: entry.to, onClick: onClose })}
               selected={active}
               sx={{
                 borderRadius: 2,

@@ -15,7 +15,7 @@ const CALM_WIND_SPEED = 0
 const LIGHT_WIND_MAX_SPEED = 3
 
 function windFromLabel(wind: WeatherStats['wind']): string {
-  const from = formatWindFrom(wind.bearing, wind.direction)
+  const from = formatWindFrom(wind.bearing)
   if (wind.value === CALM_WIND_SPEED) return 'Calm'
   if (wind.value <= LIGHT_WIND_MAX_SPEED) return `Light · ${from}`
   return from

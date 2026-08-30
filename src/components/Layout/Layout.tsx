@@ -30,7 +30,6 @@ export function Layout() {
         flexDirection: 'column',
         minWidth: 0,
         width: '100%',
-        overflowX: 'hidden',
       }}
     >
       <Header units={units} cityLocation={cityLocation} onUnitChange={setUnits} />

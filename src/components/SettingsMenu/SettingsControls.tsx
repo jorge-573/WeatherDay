@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import type { UnitSystem } from '../../config/units'
 import { UnitToggle } from '../UnitToggle'
 
-type SettingsControlsProps = {
+export type SettingsControlsProps = {
   units: UnitSystem
   onUnitsChange: (units: UnitSystem) => void
   locationOnStartup: boolean

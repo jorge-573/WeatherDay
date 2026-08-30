@@ -13,7 +13,7 @@ import type { useCityLocation } from '../../hooks/useCityLocation'
 import { glass } from '../../theme'
 import { NavDrawer } from '../NavDrawer'
 import { SearchBar } from '../SearchBar'
-import { SettingsMenu } from '../SettingsMenu'
+import { SettingsMenu, type SettingsControlsProps } from '../SettingsMenu'
 
 type HeaderProps = {
   units: UnitSystem
@@ -21,9 +21,26 @@ type HeaderProps = {
   onUnitChange: (units: UnitSystem) => void
 }
 
+function desktopNavItemSx(active: boolean) {
+  return {
+    fontSize: '0.9rem',
+    fontWeight: active ? 700 : 500,
+    color: active ? 'text.primary' : 'text.secondary',
+    borderBottom: active ? 2 : 0,
+    borderColor: 'primary.main',
+    pb: 0.5,
+  } as const
+}
+
 export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
   const { pathname } = useLocation()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const settingsProps = {
+    units,
+    onUnitsChange: onUnitChange,
+    locationOnStartup: cityLocation.locationOnStartup,
+    onLocationOnStartupChange: cityLocation.setLocationOnStartup,
+  } satisfies SettingsControlsProps
 
   return (
     <AppBar
@@ -74,19 +91,28 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
 
         <Stack direction="row" spacing={2.5} sx={{ display: { xs: 'none', md: 'flex' }, ml: 2 }}>
           {navLinks.map((entry) => {
-            const active = entry.to !== undefined && entry.to === pathname
+            const active = !entry.disabled && entry.to === pathname
+            if (entry.disabled) {
+              return (
+                <Typography
+                  key={entry.label}
+                  component="span"
+                  aria-disabled
+                  sx={{ ...desktopNavItemSx(false), opacity: 0.5 }}
+                >
+                  {entry.label}
+                </Typography>
+              )
+            }
+
             return (
               <Link
                 key={entry.label}
-                {...(entry.to ? { component: RouterLink, to: entry.to } : { href: '#' })}
+                component={RouterLink}
+                to={entry.to}
                 underline="none"
                 sx={{
-                  fontSize: '0.9rem',
-                  fontWeight: active ? 700 : 500,
-                  color: active ? 'text.primary' : 'text.secondary',
-                  borderBottom: active ? 2 : 0,
-                  borderColor: 'primary.main',
-                  pb: 0.5,
+                  ...desktopNavItemSx(active),
                   '&:hover': { color: 'text.primary' },
                 }}
               >
@@ -109,25 +135,12 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
             locateError={cityLocation.locateError}
           />
           <Stack sx={{ display: { xs: 'none', md: 'block' } }}>
-            <SettingsMenu
-              units={units}
-              onUnitsChange={onUnitChange}
-              locationOnStartup={cityLocation.locationOnStartup}
-              onLocationOnStartupChange={cityLocation.setLocationOnStartup}
-            />
+            <SettingsMenu {...settingsProps} />
           </Stack>
         </Stack>
       </Toolbar>
 
-      <NavDrawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        pathname={pathname}
-        units={units}
-        onUnitsChange={onUnitChange}
-        locationOnStartup={cityLocation.locationOnStartup}
-        onLocationOnStartupChange={cityLocation.setLocationOnStartup}
-      />
+      <NavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} pathname={pathname} {...settingsProps} />
     </AppBar>
   )
 }
