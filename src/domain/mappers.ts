@@ -14,6 +14,7 @@ import type {
 } from '../types/weather'
 import type { AirQualityResponse, ForecastResponse } from '../types/openMeteo'
 import { getWeatherCondition } from './weatherCodes'
+import { bearingToCompass } from './windDirection'
 
 function formatLocation(city: GeocodingResult): string {
   const parts = [city.name]
@@ -168,13 +169,6 @@ export function toDailyForecast(response: ForecastResponse): DailyForecastEntry[
       precipitationProbability: roundOrNull(response.daily.precipitation_probability_max?.[i]),
     }
   })
-}
-
-const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
-
-function bearingToCompass(bearing: number): string {
-  const idx = Math.round((bearing % 360) / 45) % 8
-  return directions[idx]
 }
 
 function uvLevel(uv: number | undefined): UvLevel {

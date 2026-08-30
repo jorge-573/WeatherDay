@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { WeatherStats } from '../../../types/weather'
+import { formatWindFrom } from '../../../domain/windDirection'
 import { StatTile, StatValue } from '../../shared'
 import { WindDial } from './WindDial'
 
@@ -10,22 +11,11 @@ type WindTileProps = {
   wind: WeatherStats['wind']
 }
 
-const DIRECTION_WORDS: Record<string, string> = {
-  N: 'north',
-  NE: 'northeast',
-  E: 'east',
-  SE: 'southeast',
-  S: 'south',
-  SW: 'southwest',
-  W: 'west',
-  NW: 'northwest',
-}
-
 const CALM_WIND_SPEED = 0
 const LIGHT_WIND_MAX_SPEED = 3
 
 function windFromLabel(wind: WeatherStats['wind']): string {
-  const from = `From ${DIRECTION_WORDS[wind.direction] ?? wind.direction}`
+  const from = formatWindFrom(wind.bearing, wind.direction)
   if (wind.value === CALM_WIND_SPEED) return 'Calm'
   if (wind.value <= LIGHT_WIND_MAX_SPEED) return `Light · ${from}`
   return from
