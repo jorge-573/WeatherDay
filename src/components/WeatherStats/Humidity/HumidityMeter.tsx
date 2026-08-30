@@ -27,9 +27,11 @@ export function HumidityMeter({ value }: HumidityMeterProps) {
       aria-label={value === null ? 'Humidity unavailable' : `Humidity ${value} percent`}
       sx={{
         display: 'block',
-        width: { xs: 70, sm: 80 },
-        height: { xs: 106, sm: 118 },
-        flexShrink: 0,
+        width: { xs: 44, sm: 80 },
+        height: 'auto',
+        flexShrink: 1,
+        minWidth: 0,
+        maxWidth: { xs: 52, sm: 80 },
       }}
     >
       <defs>

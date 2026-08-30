@@ -34,7 +34,7 @@ export function Home() {
         </Box>
       )}
 
-      <Stack spacing={{ xs: 3, md: 4 }}>
+      <Stack spacing={{ xs: 3, md: 4 }} sx={{ minWidth: 0, width: '100%' }}>
         <CurrentWeather
           data={data.current}
           temperatureLabel={temperatureLabel}

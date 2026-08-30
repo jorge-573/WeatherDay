@@ -12,8 +12,9 @@ export function BackgroundScene({ children, timeOfDay }: BackgroundSceneProps) {
     <Box
       sx={{
         minHeight: '100vh',
+        width: '100%',
         backgroundImage: backgroundsByTime[timeOfDay],
-        backgroundAttachment: 'fixed',
+        backgroundAttachment: { xs: 'scroll', md: 'fixed' },
         transition: 'background-image 600ms ease',
       }}
     >

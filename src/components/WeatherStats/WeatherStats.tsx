@@ -27,7 +27,11 @@ export function WeatherStats({ data, hourly, airQuality, temperatureLabel }: Wea
         sx={{
           mt: 1.5,
           display: 'grid',
-          gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)' },
+          gridTemplateColumns: {
+            xs: 'repeat(2, minmax(0, 1fr))',
+            sm: 'repeat(3, minmax(0, 1fr))',
+            md: 'repeat(4, minmax(0, 1fr))',
+          },
           gap: { xs: 1.5, sm: 2 },
         }}
       >

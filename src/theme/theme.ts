@@ -36,6 +36,12 @@ export const theme = createTheme({
     overline: { fontFamily: fontFamily.body, fontWeight: 700, letterSpacing: '0.12em' },
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: { overflowX: 'clip' },
+        '#root': { minHeight: '100vh' },
+      },
+    },
     MuiPaper: {
       defaultProps: { elevation: 0 },
       styleOverrides: {

@@ -22,7 +22,14 @@ export function VisibilityGauge({ clarity }: VisibilityGaugeProps) {
       component="svg"
       viewBox="0 0 110 100"
       aria-hidden
-      sx={{ display: 'block', width: 102, height: 92, flexShrink: 0 }}
+      sx={{
+        display: 'block',
+        width: { xs: 58, sm: 102 },
+        height: 'auto',
+        flexShrink: 1,
+        minWidth: 0,
+        maxWidth: { xs: 64, sm: 102 },
+      }}
     >
       <circle cx={83} cy={23} r={8} fill={theme.md3.tertiaryFixedDim} opacity={0.08 + clarity * 0.2} />
       <line

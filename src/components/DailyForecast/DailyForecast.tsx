@@ -16,42 +16,85 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
   const span = Math.max(1, globalMax - globalMin)
 
   return (
-    <Box>
+    <Box sx={{ minWidth: 0, width: '100%' }}>
       <SectionLabel>10-Day Forecast</SectionLabel>
 
       <Stack divider={<Box sx={{ borderBottom: 1, borderColor: 'divider' }} />} sx={{ mt: 1 }}>
         {data.map((entry, index) => {
-          const left = ((entry.low - globalMin) / span) * 100
-          const width = ((entry.high - entry.low) / span) * 100
+          const rawLeft = ((entry.low - globalMin) / span) * 100
+          const rawWidth = ((entry.high - entry.low) / span) * 100
+          const segmentLeft = Math.min(rawLeft, 94)
+          const segmentWidth = Math.min(Math.max(rawWidth, 6), 100 - segmentLeft)
+          const precipitationLabel =
+            entry.precipitationProbability === null
+              ? ''
+              : `, ${entry.precipitationProbability}% chance of precipitation`
+          const weatherLabel = `${entry.condition}${precipitationLabel}`
           return (
             <Box
               key={`${entry.day}-${index}`}
               sx={{
                 display: 'grid',
-                gridTemplateColumns: { xs: '1fr auto auto', sm: '1.1fr auto 2fr auto' },
+                gridTemplateColumns: {
+                  xs: 'minmax(44px, 0.8fr) minmax(64px, 1fr) auto minmax(48px, 1.3fr) auto',
+                  sm: 'minmax(0, 1.1fr) auto auto minmax(0, 2fr) auto',
+                },
+                gridTemplateAreas: {
+                  xs: '"day weather low bar high"',
+                  sm: '"day weather low bar high"',
+                },
                 alignItems: 'center',
-                gap: 2,
-                py: 1.5,
+                columnGap: { xs: 0.75, sm: 2 },
+                py: { xs: 1.25, sm: 1.5 },
+                minWidth: 0,
               }}
             >
-              <Stack direction="row" spacing={1} alignItems="baseline">
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={{ xs: 0, sm: 1 }}
+                alignItems={{ xs: 'flex-start', sm: 'baseline' }}
+                sx={{ gridArea: 'day', minWidth: 0, justifySelf: 'start' }}
+              >
                 <Typography sx={{ fontWeight: 600 }}>{entry.day}</Typography>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   {entry.date}
                 </Typography>
               </Stack>
-              <Stack alignItems="center" spacing={0.25} sx={{ width: 88 }}>
+              <Stack
+                direction={{ xs: 'row', sm: 'column' }}
+                alignItems="center"
+                spacing={{ xs: 0.5, sm: 0.25 }}
+                role="img"
+                aria-label={weatherLabel}
+                sx={{
+                  gridArea: 'weather',
+                  width: { xs: '100%', sm: 88 },
+                  minWidth: 0,
+                  justifySelf: 'center',
+                }}
+              >
                 <WeatherIcon code={entry.code} size={24} sx={{ color: 'text.primary' }} />
-                <ConditionCaption>{entry.condition}</ConditionCaption>
-                <PrecipitationBadge code={entry.code} probability={entry.precipitationProbability} />
+                <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+                  <PrecipitationBadge code={entry.code} probability={entry.precipitationProbability} size="sm" />
+                </Box>
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                  <ConditionCaption>{entry.condition}</ConditionCaption>
+                </Box>
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                  <PrecipitationBadge code={entry.code} probability={entry.precipitationProbability} />
+                </Box>
               </Stack>
+              <Typography sx={{ gridArea: 'low', color: 'text.secondary' }}>
+                {entry.low}
+                {temperatureLabel}
+              </Typography>
               <Box
                 sx={{
+                  gridArea: 'bar',
                   position: 'relative',
                   height: 6,
                   borderRadius: radii.full,
                   backgroundColor: (t) => t.md3.surfaceContainerHigh,
-                  display: { xs: 'none', sm: 'block' },
                 }}
               >
                 <Box
@@ -59,23 +102,17 @@ export function DailyForecast({ data, temperatureLabel }: DailyForecastProps) {
                     position: 'absolute',
                     top: 0,
                     bottom: 0,
-                    left: `${left}%`,
-                    width: `${Math.max(width, 6)}%`,
+                    left: `${segmentLeft}%`,
+                    width: `${segmentWidth}%`,
                     borderRadius: radii.full,
                     background: gradients.accentBar,
                   }}
                 />
               </Box>
-              <Stack direction="row" spacing={1} justifyContent="flex-end">
-                <Typography sx={{ fontWeight: 700 }}>
-                  {entry.high}
-                  {temperatureLabel}
-                </Typography>
-                <Typography sx={{ color: 'text.secondary' }}>
-                  {entry.low}
-                  {temperatureLabel}
-                </Typography>
-              </Stack>
+              <Typography sx={{ gridArea: 'high', fontWeight: 700, justifySelf: 'center' }}>
+                {entry.high}
+                {temperatureLabel}
+              </Typography>
             </Box>
           )
         })}

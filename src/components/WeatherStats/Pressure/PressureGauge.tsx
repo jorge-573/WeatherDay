@@ -6,7 +6,6 @@ const CENTER_X = 55
 const CENTER_Y = 48
 const RADIUS = 34
 const RING_STROKE = 9
-const POINTER_LENGTH = 5
 const START_ANGLE = 135
 const SWEEP_ANGLE = 270
 const ARC_LENGTH = (SWEEP_ANGLE / 360) * 2 * Math.PI * RADIUS
@@ -39,15 +38,6 @@ export function PressureGauge({ pressure }: PressureGaugeProps) {
     numericValue === null || Number.isNaN(numericValue)
       ? 0
       : Math.min(Math.max((numericValue - range.low) / (range.high - range.low), 0), 1)
-  const markerAngleDegrees = START_ANGLE + SWEEP_ANGLE * progress
-  const markerAngle = (markerAngleDegrees * Math.PI) / 180
-  // Keep the pointer entirely inside the hollow area. Its tip stops one unit
-  // before the ring's inner edge instead of cutting through the gauge stroke.
-  const markerRadius = RADIUS - RING_STROKE / 2 - POINTER_LENGTH - 1
-  const marker = {
-    x: CENTER_X + markerRadius * Math.cos(markerAngle),
-    y: CENTER_Y + markerRadius * Math.sin(markerAngle),
-  }
 
   return (
     <Box
@@ -59,7 +49,13 @@ export function PressureGauge({ pressure }: PressureGaugeProps) {
           ? 'Pressure unavailable'
           : `Pressure ${pressure.value} ${pressure.unit}, ${pressure.trend}`
       }
-      sx={{ display: 'block', width: 102, height: 90, flexShrink: 0 }}
+      sx={{
+        display: 'block',
+        width: '100%',
+        height: 'auto',
+        maxWidth: 180,
+        mx: 'auto',
+      }}
     >
       <path
         d={ARC_PATH}
@@ -70,22 +66,41 @@ export function PressureGauge({ pressure }: PressureGaugeProps) {
       />
 
       {numericValue !== null && !Number.isNaN(numericValue) && (
-        <>
-          <path
-            d={ARC_PATH}
-            fill="none"
-            stroke={theme.md3.accent}
-            strokeWidth={RING_STROKE}
-            strokeLinecap="round"
-            strokeDasharray={`${ARC_LENGTH * progress} ${ARC_LENGTH}`}
-          />
-          <path
-            d="M 5 0 L -3.5 -4 L -3.5 4 Z"
-            fill={theme.palette.text.primary}
-            strokeLinejoin="round"
-            transform={`translate(${marker.x} ${marker.y}) rotate(${markerAngleDegrees})`}
-          />
-        </>
+        <path
+          d={ARC_PATH}
+          fill="none"
+          stroke={theme.md3.accent}
+          strokeWidth={RING_STROKE}
+          strokeLinecap="round"
+          strokeDasharray={`${ARC_LENGTH * progress} ${ARC_LENGTH}`}
+        />
+      )}
+
+      <text
+        x={CENTER_X}
+        y={50}
+        textAnchor="middle"
+        fill={
+          numericValue === null || Number.isNaN(numericValue) ? theme.palette.text.disabled : theme.palette.text.primary
+        }
+        fontFamily={theme.typography.h4.fontFamily}
+        fontSize={18}
+        fontWeight={700}
+      >
+        {pressure.value ?? '—'}
+      </text>
+      {pressure.value !== null && (
+        <text
+          x={CENTER_X}
+          y={62}
+          textAnchor="middle"
+          fill={theme.palette.text.secondary}
+          fontFamily={theme.typography.fontFamily}
+          fontSize={8}
+          fontWeight={600}
+        >
+          {pressure.unit}
+        </text>
       )}
 
       <text

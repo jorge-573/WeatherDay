@@ -23,8 +23,14 @@ export function HumidityTile({ humidity, temperatureLabel }: HumidityTileProps) 
 
   return (
     <StatTile icon={WaterDropOutlinedIcon} label="Humidity">
-      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ flex: 1 }}>
-        <Box sx={{ minWidth: 0 }}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        spacing={{ xs: 0.5, sm: 1 }}
+        sx={{ flex: 1, minWidth: 0 }}
+      >
+        <Box sx={{ minWidth: 0, flex: 1 }}>
           <StatValue value={humidity.value} unit="%" />
           <Typography
             variant="caption"

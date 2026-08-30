@@ -12,7 +12,7 @@ type HourlyForecastProps = {
 
 export function HourlyForecast({ data, temperatureLabel }: HourlyForecastProps) {
   return (
-    <Box>
+    <Box sx={{ minWidth: 0, width: '100%' }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.5 }}>
         <SectionLabel>Hourly Forecast</SectionLabel>
       </Stack>
@@ -20,6 +20,8 @@ export function HourlyForecast({ data, temperatureLabel }: HourlyForecastProps) 
         direction="row"
         spacing={1}
         sx={{
+          minWidth: 0,
+          width: '100%',
           overflowX: 'auto',
           pb: 1,
           scrollbarWidth: 'thin',

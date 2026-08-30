@@ -1,30 +1,19 @@
+import { useState } from 'react'
 import AppBar from '@mui/material/AppBar'
-import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import RadarRoundedIcon from '@mui/icons-material/RadarRounded'
+import MenuIcon from '@mui/icons-material/Menu'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
-import { ROUTES } from '../../config/routes'
+import { navLinks } from '../../config/nav'
 import type { UnitSystem } from '../../config/units'
 import type { useCityLocation } from '../../hooks/useCityLocation'
 import { glass } from '../../theme'
+import { NavDrawer } from '../NavDrawer'
 import { SearchBar } from '../SearchBar'
-import { SettingsMenu } from '../SettingsMenu'
-
-type NavLinkItem = {
-  label: string
-  to?: string
-}
-
-const navLinks: NavLinkItem[] = [
-  { label: 'Dashboard', to: ROUTES.home },
-  { label: 'Radar', to: ROUTES.radar },
-  { label: 'Forecasts' },
-  { label: 'Historical' },
-]
+import { SettingsMenu, type SettingsControlsProps } from '../SettingsMenu'
 
 type HeaderProps = {
   units: UnitSystem
@@ -32,9 +21,26 @@ type HeaderProps = {
   onUnitChange: (units: UnitSystem) => void
 }
 
+function desktopNavItemSx(active: boolean) {
+  return {
+    fontSize: '0.9rem',
+    fontWeight: active ? 700 : 500,
+    color: active ? 'text.primary' : 'text.secondary',
+    borderBottom: active ? 2 : 0,
+    borderColor: 'primary.main',
+    pb: 0.5,
+  } as const
+}
+
 export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
   const { pathname } = useLocation()
-  const isRadar = pathname === ROUTES.radar
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const settingsProps = {
+    units,
+    onUnitsChange: onUnitChange,
+    locationOnStartup: cityLocation.locationOnStartup,
+    onLocationOnStartupChange: cityLocation.setLocationOnStartup,
+  } satisfies SettingsControlsProps
 
   return (
     <AppBar
@@ -54,34 +60,59 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
         disableGutters
         sx={{
           width: '100%',
-          maxWidth: 'none',
-          gap: 2,
+          maxWidth: '100%',
+          minWidth: 0,
+          gap: { xs: 1, sm: 2 },
           py: 1,
           px: { xs: 2, sm: 3, md: 4 },
         }}
       >
+        <IconButton
+          aria-label="Open menu"
+          onClick={() => setDrawerOpen(true)}
+          sx={{ display: { xs: 'inline-flex', md: 'none' }, color: 'text.secondary', ml: -0.5 }}
+        >
+          <MenuIcon />
+        </IconButton>
+
         <Typography
           variant="h6"
-          sx={{ fontWeight: 800, letterSpacing: '0.08em', color: 'primary.main', textTransform: 'uppercase' }}
+          sx={{
+            fontWeight: 800,
+            letterSpacing: { xs: '0.04em', sm: '0.08em' },
+            color: 'primary.main',
+            textTransform: 'uppercase',
+            flexShrink: 0,
+            fontSize: { xs: '1rem', sm: undefined },
+          }}
         >
           WeatherDay
         </Typography>
 
         <Stack direction="row" spacing={2.5} sx={{ display: { xs: 'none', md: 'flex' }, ml: 2 }}>
           {navLinks.map((entry) => {
-            const active = entry.to !== undefined && entry.to === pathname
+            const active = !entry.disabled && entry.to === pathname
+            if (entry.disabled) {
+              return (
+                <Typography
+                  key={entry.label}
+                  component="span"
+                  aria-disabled
+                  sx={{ ...desktopNavItemSx(false), opacity: 0.5 }}
+                >
+                  {entry.label}
+                </Typography>
+              )
+            }
+
             return (
               <Link
                 key={entry.label}
-                {...(entry.to ? { component: RouterLink, to: entry.to } : { href: '#' })}
+                component={RouterLink}
+                to={entry.to}
                 underline="none"
                 sx={{
-                  fontSize: '0.9rem',
-                  fontWeight: active ? 700 : 500,
-                  color: active ? 'text.primary' : 'text.secondary',
-                  borderBottom: active ? 2 : 0,
-                  borderColor: 'primary.main',
-                  pb: 0.5,
+                  ...desktopNavItemSx(active),
                   '&:hover': { color: 'text.primary' },
                 }}
               >
@@ -91,34 +122,25 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
           })}
         </Stack>
 
-        <Box sx={{ flex: 1 }} />
-
-        <Stack direction="row" spacing={1} alignItems="center">
-          <IconButton
-            component={RouterLink}
-            to={ROUTES.radar}
-            aria-label="Open radar"
-            sx={{
-              display: { xs: 'inline-flex', md: 'none' },
-              color: isRadar ? 'primary.main' : 'text.secondary',
-            }}
-          >
-            <RadarRoundedIcon />
-          </IconButton>
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          sx={{ flex: 1, minWidth: 0, justifyContent: 'flex-end' }}
+        >
           <SearchBar
             onSearchSelect={cityLocation.selectFromSearch}
             onCurrentLocationClick={cityLocation.requestCurrentLocation}
             locating={cityLocation.locating}
             locateError={cityLocation.locateError}
           />
-          <SettingsMenu
-            units={units}
-            onUnitsChange={onUnitChange}
-            locationOnStartup={cityLocation.locationOnStartup}
-            onLocationOnStartupChange={cityLocation.setLocationOnStartup}
-          />
+          <Stack sx={{ display: { xs: 'none', md: 'block' } }}>
+            <SettingsMenu {...settingsProps} />
+          </Stack>
         </Stack>
       </Toolbar>
+
+      <NavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} pathname={pathname} {...settingsProps} />
     </AppBar>
   )
 }
