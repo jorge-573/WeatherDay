@@ -1,4 +1,5 @@
 import type { LatLngBoundsExpression, LatLngExpression } from 'leaflet'
+import type { FeatureCollection, Geometry } from 'geojson'
 
 export type OutlookProduct = 'severe' | 'temperature'
 export type SpcDay = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
@@ -8,9 +9,21 @@ export type TemperatureDay = 1 | 2 | 3
 
 export type SpcLayerDefinition = {
   layerId: number
-  wmsLayerId: number
+  significantLayerId?: number
   label: string
 }
+
+export type SpcFeatureProperties = {
+  objectid?: number
+  fill?: string
+  stroke?: string
+  label?: string
+  label2?: string
+  valid?: string
+  expire?: string
+}
+
+export type SpcFeatureCollection = FeatureCollection<Geometry, SpcFeatureProperties>
 
 export type TemperatureLayerDefinition = {
   layerId: number

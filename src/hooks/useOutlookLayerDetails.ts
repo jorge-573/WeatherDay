@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { fetchSpcLayerDetails, fetchTemperatureLayerDetails } from '../services/noaaOutlooks'
 import type { OutlookLayerDetails } from '../types/outlooks'
 
-type LayerRequest = { source: 'spc'; layerId: number } | { source: 'temperature'; timingLayerId: number }
+type LayerRequest =
+  | { source: 'spc'; layerId: number; significantLayerId?: number }
+  | { source: 'temperature'; timingLayerId: number }
 
 type LayerDetailsState = {
   details: OutlookLayerDetails | null
@@ -14,6 +16,7 @@ export function useOutlookLayerDetails(request: LayerRequest): LayerDetailsState
   const [state, setState] = useState<LayerDetailsState>({ details: null, loading: true, error: null })
   const source = request.source
   const layerId = request.source === 'spc' ? request.layerId : null
+  const significantLayerId = request.source === 'spc' ? request.significantLayerId : undefined
   const timingLayerId = request.source === 'temperature' ? request.timingLayerId : null
 
   useEffect(() => {
@@ -22,7 +25,7 @@ export function useOutlookLayerDetails(request: LayerRequest): LayerDetailsState
 
     const promise =
       source === 'spc' && layerId !== null
-        ? fetchSpcLayerDetails(layerId, controller.signal)
+        ? fetchSpcLayerDetails(layerId, significantLayerId, controller.signal)
         : fetchTemperatureLayerDetails(timingLayerId!, controller.signal)
 
     promise
@@ -39,7 +42,7 @@ export function useOutlookLayerDetails(request: LayerRequest): LayerDetailsState
       })
 
     return () => controller.abort()
-  }, [layerId, source, timingLayerId])
+  }, [layerId, significantLayerId, source, timingLayerId])
 
   return state
 }

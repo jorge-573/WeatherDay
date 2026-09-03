@@ -1,16 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import { WMSTileLayer } from 'react-leaflet'
 import { defaultSpcType, SPC_LAYERS, TEMPERATURE_LAYERS, temperatureDaysForKind } from '../../config/outlooks'
 import { CONUS_BOUNDS, STATE_BOUNDS } from '../../config/stateBounds'
 import { useOutlookLayerDetails } from '../../hooks/useOutlookLayerDetails'
-import {
-  SPC_ATTRIBUTION,
-  SPC_WMS_URL,
-  TEMPERATURE_ATTRIBUTION,
-  TEMPERATURE_MAPSERVER_URL,
-} from '../../services/noaaOutlooks'
+import { useSpcOutlook } from '../../hooks/useSpcOutlook'
+import { SPC_ATTRIBUTION, TEMPERATURE_ATTRIBUTION, TEMPERATURE_MAPSERVER_URL } from '../../services/noaaOutlooks'
 import type {
   MapViewport,
   MapViewportTarget,
@@ -26,6 +21,7 @@ import { ArcGisExportLayer, WeatherMap } from '../WeatherMap'
 import { MAP_OVERLAY_Z_INDEX, MAP_PANEL_SX } from '../WeatherMap/panel'
 import { OutlookControls } from './OutlookControls'
 import { OutlookLegend } from './OutlookLegend'
+import { SpcOutlookLayer } from './SpcOutlookLayer'
 
 type OutlookMapProps = {
   city: GeocodingResult
@@ -50,7 +46,12 @@ export function OutlookMap({ city }: OutlookMapProps) {
   const temperatureLayer =
     TEMPERATURE_LAYERS[temperatureKind][temperatureDay] ?? TEMPERATURE_LAYERS[temperatureKind][1]!
   const activeLayer = product === 'severe' ? spcLayer : temperatureLayer
-  const layerKey = `${product}-${product === 'severe' ? spcLayer.wmsLayerId : temperatureLayer.layerId}`
+  const layerKey = `${product}-${activeLayer.layerId}-${spcLayer.significantLayerId ?? 'base'}`
+  const {
+    data: spcData,
+    loading: spcLoading,
+    error: spcError,
+  } = useSpcOutlook(spcLayer.layerId, spcLayer.significantLayerId)
 
   useEffect(() => {
     setLayerLoading(true)
@@ -60,14 +61,20 @@ export function OutlookMap({ city }: OutlookMapProps) {
   const detailsRequest = useMemo(
     () =>
       product === 'severe'
-        ? ({ source: 'spc', layerId: spcLayer.layerId } as const)
+        ? ({
+            source: 'spc',
+            layerId: spcLayer.layerId,
+            significantLayerId: spcLayer.significantLayerId,
+          } as const)
         : ({
             source: 'temperature',
             timingLayerId: temperatureLayer.timingLayerId,
           } as const),
-    [product, spcLayer.layerId, temperatureLayer.timingLayerId]
+    [product, spcLayer.layerId, spcLayer.significantLayerId, temperatureLayer.timingLayerId]
   )
   const { details, loading: detailsLoading, error: detailsError } = useOutlookLayerDetails(detailsRequest)
+  const mapLoading = product === 'severe' ? spcLoading : layerLoading
+  const mapError = product === 'severe' ? spcError : layerError
 
   const changeViewport = (next: MapViewportTarget) => {
     setViewport((current) => ({ ...next, revision: current.revision + 1 }))
@@ -131,32 +138,7 @@ export function OutlookMap({ city }: OutlookMapProps) {
       >
         <WeatherMap viewport={viewport} attribution={product === 'severe' ? SPC_ATTRIBUTION : TEMPERATURE_ATTRIBUTION}>
           {product === 'severe' ? (
-            <WMSTileLayer
-              key={layerKey}
-              url={SPC_WMS_URL}
-              params={{
-                layers: String(spcLayer.wmsLayerId),
-                format: 'image/png',
-                transparent: true,
-                version: '1.3.0',
-              }}
-              bounds={CONUS_BOUNDS}
-              opacity={0.68}
-              zIndex={5}
-              updateWhenZooming={false}
-              updateWhenIdle
-              eventHandlers={{
-                loading: () => {
-                  setLayerLoading(true)
-                  setLayerError(null)
-                },
-                load: () => setLayerLoading(false),
-                tileerror: () => {
-                  setLayerLoading(false)
-                  setLayerError('NOAA map imagery could not be loaded.')
-                },
-              }}
-            />
+            spcData && <SpcOutlookLayer key={layerKey} data={spcData} />
           ) : (
             <ArcGisExportLayer
               key={layerKey}
@@ -189,7 +171,7 @@ export function OutlookMap({ city }: OutlookMapProps) {
           />
         </Box>
 
-        {(layerLoading || layerError) && (
+        {(mapLoading || mapError) && (
           <Box
             sx={{
               position: 'absolute',
@@ -203,7 +185,7 @@ export function OutlookMap({ city }: OutlookMapProps) {
             }}
           >
             <StatusMessage inline>
-              {layerError ?? `Loading ${product === 'severe' ? 'SPC outlook' : 'temperature forecast'}…`}
+              {mapError ?? `Loading ${product === 'severe' ? 'SPC outlook' : 'temperature forecast'}…`}
             </StatusMessage>
           </Box>
         )}

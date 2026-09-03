@@ -20,26 +20,26 @@ export const SPC_TYPE_LABELS: Record<SpcOutlookType, string> = {
 
 export const SPC_LAYERS: Record<SpcDay, Partial<Record<SpcOutlookType, SpcLayerDefinition>>> = {
   1: {
-    categorical: { layerId: 1, wmsLayerId: 25, label: 'Day 1 Categorical Outlook' },
-    tornado: { layerId: 3, wmsLayerId: 23, label: 'Day 1 Tornado Probability' },
-    hail: { layerId: 5, wmsLayerId: 21, label: 'Day 1 Hail Probability' },
-    wind: { layerId: 7, wmsLayerId: 19, label: 'Day 1 Wind Probability' },
+    categorical: { layerId: 1, label: 'Day 1 Categorical Outlook' },
+    tornado: { layerId: 3, significantLayerId: 2, label: 'Day 1 Tornado Probability' },
+    hail: { layerId: 5, significantLayerId: 4, label: 'Day 1 Hail Probability' },
+    wind: { layerId: 7, significantLayerId: 6, label: 'Day 1 Wind Probability' },
   },
   2: {
-    categorical: { layerId: 9, wmsLayerId: 17, label: 'Day 2 Categorical Outlook' },
-    tornado: { layerId: 11, wmsLayerId: 15, label: 'Day 2 Tornado Probability' },
-    hail: { layerId: 13, wmsLayerId: 13, label: 'Day 2 Hail Probability' },
-    wind: { layerId: 15, wmsLayerId: 11, label: 'Day 2 Wind Probability' },
+    categorical: { layerId: 9, label: 'Day 2 Categorical Outlook' },
+    tornado: { layerId: 11, significantLayerId: 10, label: 'Day 2 Tornado Probability' },
+    hail: { layerId: 13, significantLayerId: 12, label: 'Day 2 Hail Probability' },
+    wind: { layerId: 15, significantLayerId: 14, label: 'Day 2 Wind Probability' },
   },
   3: {
-    categorical: { layerId: 17, wmsLayerId: 9, label: 'Day 3 Categorical Outlook' },
-    probabilistic: { layerId: 19, wmsLayerId: 7, label: 'Day 3 Severe Probability' },
+    categorical: { layerId: 17, label: 'Day 3 Categorical Outlook' },
+    probabilistic: { layerId: 19, significantLayerId: 18, label: 'Day 3 Severe Probability' },
   },
-  4: { probabilistic: { layerId: 21, wmsLayerId: 5, label: 'Day 4 Severe Probability' } },
-  5: { probabilistic: { layerId: 22, wmsLayerId: 4, label: 'Day 5 Severe Probability' } },
-  6: { probabilistic: { layerId: 23, wmsLayerId: 3, label: 'Day 6 Severe Probability' } },
-  7: { probabilistic: { layerId: 24, wmsLayerId: 2, label: 'Day 7 Severe Probability' } },
-  8: { probabilistic: { layerId: 25, wmsLayerId: 1, label: 'Day 8 Severe Probability' } },
+  4: { probabilistic: { layerId: 21, label: 'Day 4 Severe Probability' } },
+  5: { probabilistic: { layerId: 22, label: 'Day 5 Severe Probability' } },
+  6: { probabilistic: { layerId: 23, label: 'Day 6 Severe Probability' } },
+  7: { probabilistic: { layerId: 24, label: 'Day 7 Severe Probability' } },
+  8: { probabilistic: { layerId: 25, label: 'Day 8 Severe Probability' } },
 }
 
 export const TEMPERATURE_KIND_LABELS: Record<TemperatureKind, string> = {

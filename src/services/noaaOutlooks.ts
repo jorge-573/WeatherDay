@@ -1,10 +1,8 @@
-import type { OutlookLayerDetails, OutlookLegendItem } from '../types/outlooks'
+import type { OutlookLayerDetails, OutlookLegendItem, SpcFeatureCollection } from '../types/outlooks'
 
 const SPC_REST_URL = 'https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/SPC_wx_outlks/MapServer'
 const TEMPERATURE_REST_URL = 'https://mapservices.weather.noaa.gov/raster/rest/services/NDFD/NDFD_temp/MapServer'
 
-export const SPC_WMS_URL =
-  'https://mapservices.weather.noaa.gov/vector/services/outlooks/SPC_wx_outlks/MapServer/WMSServer'
 export const TEMPERATURE_MAPSERVER_URL = TEMPERATURE_REST_URL
 
 export const SPC_ATTRIBUTION =
@@ -96,8 +94,42 @@ async function loadLayerDetails(
   }
 }
 
-export function fetchSpcLayerDetails(layerId: number, signal?: AbortSignal): Promise<OutlookLayerDetails> {
-  return loadLayerDetails(SPC_REST_URL, layerId, layerId, 'valid', 'expire', signal)
+export async function fetchSpcLayerDetails(
+  layerId: number,
+  significantLayerId?: number,
+  signal?: AbortSignal
+): Promise<OutlookLayerDetails> {
+  const details = await loadLayerDetails(SPC_REST_URL, layerId, layerId, 'valid', 'expire', signal)
+  if (!significantLayerId) return details
+
+  const significantLegend = await fetchLegend(SPC_REST_URL, significantLayerId).catch(() => [])
+  return { ...details, legend: [...details.legend, ...significantLegend] }
+}
+
+async function fetchSpcGeoJsonLayer(layerId: number, signal?: AbortSignal): Promise<SpcFeatureCollection> {
+  const url = new URL(`${SPC_REST_URL}/${layerId}/query`)
+  url.searchParams.set('where', '1=1')
+  url.searchParams.set('outFields', '*')
+  url.searchParams.set('returnGeometry', 'true')
+  url.searchParams.set('outSR', '4326')
+  url.searchParams.set('f', 'geojson')
+
+  const response = await fetch(url, { signal })
+  if (!response.ok) throw new Error(`SPC outlook request failed: ${response.status}`)
+  return (await response.json()) as SpcFeatureCollection
+}
+
+export async function fetchSpcGeoJson(
+  layerId: number,
+  significantLayerId?: number,
+  signal?: AbortSignal
+): Promise<SpcFeatureCollection> {
+  const layerIds = significantLayerId ? [layerId, significantLayerId] : [layerId]
+  const collections = await Promise.all(layerIds.map((id) => fetchSpcGeoJsonLayer(id, signal)))
+  return {
+    type: 'FeatureCollection',
+    features: collections.flatMap((collection) => collection.features),
+  }
 }
 
 export async function fetchTemperatureLayerDetails(
