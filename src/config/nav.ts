@@ -7,6 +7,6 @@ export type NavLinkItem =
 export const navLinks: NavLinkItem[] = [
   { label: 'Dashboard', to: ROUTES.home },
   { label: 'Radar', to: ROUTES.radar },
-  { label: 'Forecasts', disabled: true },
+  { label: 'Outlooks', to: ROUTES.outlooks },
   { label: 'Historical', disabled: true },
 ]

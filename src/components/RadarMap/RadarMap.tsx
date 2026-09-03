@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack'
 import { CircleMarker, MapContainer, TileLayer, Tooltip, useMap } from 'react-leaflet'
 import { useRadarFrames } from '../../hooks/useRadarFrames'
 import type { RadarSource } from '../../types/radar'
-import { OVERLAY_Z_INDEX } from './panel'
+import { MAP_OVERLAY_Z_INDEX } from '../WeatherMap/panel'
 import { RadarFrameLayers } from './RadarFrameLayers'
 import { RadarLegend } from './RadarLegend'
 import { RadarSourceToggle } from './RadarSourceToggle'
@@ -121,7 +121,7 @@ export function RadarMap({ latitude, longitude, locationName }: RadarMapProps) {
           position: 'absolute',
           top: { xs: 8, sm: 16 },
           right: { xs: 8, sm: 16 },
-          zIndex: OVERLAY_Z_INDEX,
+          zIndex: MAP_OVERLAY_Z_INDEX,
           width: { xs: 148, sm: 176 },
         }}
       >
