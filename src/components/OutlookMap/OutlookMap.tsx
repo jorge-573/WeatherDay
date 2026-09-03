@@ -1,23 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import { defaultSpcType, SPC_LAYERS, TEMPERATURE_LAYERS, temperatureDaysForKind } from '../../config/outlooks'
-import { CONUS_BOUNDS, STATE_BOUNDS } from '../../config/stateBounds'
+import { defaultSpcType, SPC_LAYERS } from '../../config/outlooks'
+import { CONUS_BOUNDS } from '../../config/stateBounds'
 import { useOutlookLayerDetails } from '../../hooks/useOutlookLayerDetails'
 import { useSpcOutlook } from '../../hooks/useSpcOutlook'
-import { SPC_ATTRIBUTION, TEMPERATURE_ATTRIBUTION, TEMPERATURE_MAPSERVER_URL } from '../../services/noaaOutlooks'
-import type {
-  MapViewport,
-  MapViewportTarget,
-  OutlookProduct,
-  SpcDay,
-  SpcOutlookType,
-  TemperatureDay,
-  TemperatureKind,
-} from '../../types/outlooks'
+import { SPC_ATTRIBUTION } from '../../services/noaaOutlooks'
+import type { MapViewport, MapViewportTarget, SpcDay, SpcOutlookType } from '../../types/outlooks'
 import type { GeocodingResult } from '../../types/weather'
 import { StatusMessage } from '../shared'
-import { ArcGisExportLayer, WeatherMap } from '../WeatherMap'
+import { WeatherMap } from '../WeatherMap'
 import { MAP_OVERLAY_Z_INDEX, MAP_PANEL_SX } from '../WeatherMap/panel'
 import { OutlookControls } from './OutlookControls'
 import { OutlookLegend } from './OutlookLegend'
@@ -28,53 +19,25 @@ type OutlookMapProps = {
 }
 
 export function OutlookMap({ city }: OutlookMapProps) {
-  const [product, setProduct] = useState<OutlookProduct>('severe')
   const [spcDay, setSpcDay] = useState<SpcDay>(1)
   const [spcType, setSpcType] = useState<SpcOutlookType>('categorical')
-  const [temperatureKind, setTemperatureKind] = useState<TemperatureKind>('high')
-  const [temperatureDay, setTemperatureDay] = useState<TemperatureDay>(1)
-  const [region, setRegion] = useState('us')
   const [viewport, setViewport] = useState<MapViewport>({
     kind: 'bounds',
     bounds: CONUS_BOUNDS,
     revision: 0,
   })
-  const [layerLoading, setLayerLoading] = useState(true)
-  const [layerError, setLayerError] = useState<string | null>(null)
 
   const spcLayer = SPC_LAYERS[spcDay][spcType] ?? SPC_LAYERS[spcDay][defaultSpcType(spcDay)]!
-  const temperatureLayer =
-    TEMPERATURE_LAYERS[temperatureKind][temperatureDay] ?? TEMPERATURE_LAYERS[temperatureKind][1]!
-  const activeLayer = product === 'severe' ? spcLayer : temperatureLayer
-  const layerKey = `${product}-${activeLayer.layerId}-${spcLayer.significantLayerId ?? 'base'}`
   const {
     data: spcData,
     loading: spcLoading,
     error: spcError,
   } = useSpcOutlook(spcLayer.layerId, spcLayer.significantLayerId)
-
-  useEffect(() => {
-    setLayerLoading(true)
-    setLayerError(null)
-  }, [layerKey])
-
-  const detailsRequest = useMemo(
-    () =>
-      product === 'severe'
-        ? ({
-            source: 'spc',
-            layerId: spcLayer.layerId,
-            significantLayerId: spcLayer.significantLayerId,
-          } as const)
-        : ({
-            source: 'temperature',
-            timingLayerId: temperatureLayer.timingLayerId,
-          } as const),
-    [product, spcLayer.layerId, spcLayer.significantLayerId, temperatureLayer.timingLayerId]
-  )
-  const { details, loading: detailsLoading, error: detailsError } = useOutlookLayerDetails(detailsRequest)
-  const mapLoading = product === 'severe' ? spcLoading : layerLoading
-  const mapError = product === 'severe' ? spcError : layerError
+  const {
+    details,
+    loading: detailsLoading,
+    error: detailsError,
+  } = useOutlookLayerDetails(spcLayer.layerId, spcLayer.significantLayerId)
 
   const changeViewport = (next: MapViewportTarget) => {
     setViewport((current) => ({ ...next, revision: current.revision + 1 }))
@@ -85,35 +48,14 @@ export function OutlookMap({ city }: OutlookMapProps) {
     if (!SPC_LAYERS[day][spcType]) setSpcType(defaultSpcType(day))
   }
 
-  const handleTemperatureKindChange = (kind: TemperatureKind) => {
-    setTemperatureKind(kind)
-    if (!TEMPERATURE_LAYERS[kind][temperatureDay]) {
-      setTemperatureDay(temperatureDaysForKind(kind)[0])
-    }
-  }
-
-  const handleRegionChange = (nextRegion: string) => {
-    setRegion(nextRegion)
-    const bounds = nextRegion === 'us' ? CONUS_BOUNDS : STATE_BOUNDS.find((state) => state.code === nextRegion)?.bounds
-    if (bounds) changeViewport({ kind: 'bounds', bounds })
-  }
-
   return (
     <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden' }}>
       <Box sx={{ p: { xs: 1.5, sm: 2 }, bgcolor: 'rgba(6, 10, 16, 0.78)' }}>
         <OutlookControls
-          product={product}
           spcDay={spcDay}
           spcType={spcType}
-          temperatureDay={temperatureDay}
-          temperatureKind={temperatureKind}
-          region={region}
-          onProductChange={setProduct}
           onSpcDayChange={handleSpcDayChange}
           onSpcTypeChange={setSpcType}
-          onTemperatureDayChange={setTemperatureDay}
-          onTemperatureKindChange={handleTemperatureKindChange}
-          onRegionChange={handleRegionChange}
           onMyLocation={() =>
             changeViewport({
               kind: 'center',
@@ -121,10 +63,7 @@ export function OutlookMap({ city }: OutlookMapProps) {
               zoom: 7,
             })
           }
-          onFullUs={() => {
-            setRegion('us')
-            changeViewport({ kind: 'bounds', bounds: CONUS_BOUNDS })
-          }}
+          onFullUs={() => changeViewport({ kind: 'bounds', bounds: CONUS_BOUNDS })}
         />
       </Box>
 
@@ -136,21 +75,9 @@ export function OutlookMap({ city }: OutlookMapProps) {
           maxHeight: 760,
         }}
       >
-        <WeatherMap viewport={viewport} attribution={product === 'severe' ? SPC_ATTRIBUTION : TEMPERATURE_ATTRIBUTION}>
-          {product === 'severe' ? (
-            spcData && <SpcOutlookLayer key={layerKey} data={spcData} />
-          ) : (
-            <ArcGisExportLayer
-              key={layerKey}
-              url={TEMPERATURE_MAPSERVER_URL}
-              layerId={activeLayer.layerId}
-              opacity={0.78}
-              onLoad={() => setLayerLoading(false)}
-              onError={() => {
-                setLayerLoading(false)
-                setLayerError('NOAA map imagery could not be loaded.')
-              }}
-            />
+        <WeatherMap viewport={viewport} attribution={SPC_ATTRIBUTION}>
+          {spcData && (
+            <SpcOutlookLayer key={`${spcLayer.layerId}-${spcLayer.significantLayerId ?? 'base'}`} data={spcData} />
           )}
         </WeatherMap>
 
@@ -162,16 +89,10 @@ export function OutlookMap({ city }: OutlookMapProps) {
             zIndex: MAP_OVERLAY_Z_INDEX,
           }}
         >
-          <OutlookLegend
-            title={activeLayer.label}
-            details={details}
-            loading={detailsLoading}
-            error={detailsError}
-            temperatureScale={product === 'temperature'}
-          />
+          <OutlookLegend title={spcLayer.label} details={details} loading={detailsLoading} error={detailsError} />
         </Box>
 
-        {(mapLoading || mapError) && (
+        {(spcLoading || spcError) && (
           <Box
             sx={{
               position: 'absolute',
@@ -184,21 +105,10 @@ export function OutlookMap({ city }: OutlookMapProps) {
               ...MAP_PANEL_SX,
             }}
           >
-            <StatusMessage inline>
-              {mapError ?? `Loading ${product === 'severe' ? 'SPC outlook' : 'temperature forecast'}…`}
-            </StatusMessage>
+            <StatusMessage inline>{spcError ?? 'Loading SPC outlook…'}</StatusMessage>
           </Box>
         )}
       </Box>
-
-      {product === 'temperature' && (
-        <Typography
-          variant="caption"
-          sx={{ display: 'block', px: { xs: 1.5, sm: 2 }, py: 1.25, color: 'text.secondary' }}
-        >
-          NOAA/NWS NDFD forecast shown in Fahrenheit. Coverage is limited to the contiguous United States.
-        </Typography>
-      )}
     </Box>
   )
 }

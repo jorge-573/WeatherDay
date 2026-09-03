@@ -10,7 +10,6 @@ type OutlookLegendProps = {
   details: OutlookLayerDetails | null
   loading: boolean
   error: string | null
-  temperatureScale?: boolean
 }
 
 function formatTime(value: string | number | null): string | null {
@@ -38,7 +37,7 @@ function formatTime(value: string | number | null): string | null {
   })
 }
 
-export function OutlookLegend({ title, details, loading, error, temperatureScale = false }: OutlookLegendProps) {
+export function OutlookLegend({ title, details, loading, error }: OutlookLegendProps) {
   const validTime = formatTime(details?.validTime ?? null)
   const expireTime = formatTime(details?.expireTime ?? null)
 
@@ -70,25 +69,7 @@ export function OutlookLegend({ title, details, loading, error, temperatureScale
         </Typography>
       ) : (
         <>
-          {temperatureScale ? (
-            <Box sx={{ mt: 1 }}>
-              <Box
-                sx={{
-                  height: 10,
-                  borderRadius: 99,
-                  background: 'linear-gradient(90deg, #8b48c7, #4169e1, #4cc9f0, #63d471, #f5dd42, #ff9f43, #e63946)',
-                }}
-              />
-              <Stack direction="row" justifyContent="space-between" sx={{ mt: 0.5 }}>
-                <Typography variant="caption" color="text.secondary">
-                  Colder
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Warmer
-                </Typography>
-              </Stack>
-            </Box>
-          ) : details?.legend.length ? (
+          {details?.legend.length ? (
             <Stack spacing={0.75} sx={{ mt: 1 }}>
               {details.legend.map((item) => (
                 <Stack key={`${item.label}-${item.imageData}`} direction="row" spacing={1} alignItems="center">
@@ -106,7 +87,7 @@ export function OutlookLegend({ title, details, loading, error, temperatureScale
             </Stack>
           ) : (
             <Typography variant="caption" color="text.secondary">
-              NOAA rendered color scale
+              Official SPC colors
             </Typography>
           )}
 
