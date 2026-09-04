@@ -91,20 +91,7 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
 
         <Stack direction="row" spacing={2.5} sx={{ display: { xs: 'none', md: 'flex' }, ml: 2 }}>
           {navLinks.map((entry) => {
-            const active = !entry.disabled && entry.to === pathname
-            if (entry.disabled) {
-              return (
-                <Typography
-                  key={entry.label}
-                  component="span"
-                  aria-disabled
-                  sx={{ ...desktopNavItemSx(false), opacity: 0.5 }}
-                >
-                  {entry.label}
-                </Typography>
-              )
-            }
-
+            const active = entry.to === pathname
             return (
               <Link
                 key={entry.label}
