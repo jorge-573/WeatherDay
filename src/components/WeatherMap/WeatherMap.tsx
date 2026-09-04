@@ -1,12 +1,8 @@
 import { useEffect, type PropsWithChildren } from 'react'
 import Box from '@mui/material/Box'
-import { MapContainer, TileLayer, useMap } from 'react-leaflet'
+import { MapContainer, useMap } from 'react-leaflet'
 import type { MapViewport } from '../../types/outlooks'
-
-const ESRI_DARK_URL =
-  'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
-const ESRI_ATTRIBUTION =
-  'Tiles &copy; <a href="https://www.esri.com/">Esri</a>, HERE, Garmin, FAO, NOAA, USGS, OpenStreetMap contributors'
+import { DarkBasemap } from './DarkBasemap'
 
 type WeatherMapProps = PropsWithChildren<{
   viewport: MapViewport
@@ -50,8 +46,7 @@ export function WeatherMap({ viewport, attribution, children }: WeatherMapProps)
         scrollWheelZoom
         style={{ height: '100%', width: '100%', backgroundColor: '#03060a' }}
       >
-        <TileLayer url={ESRI_DARK_URL} attribution={ESRI_ATTRIBUTION} />
-        {children}
+        <DarkBasemap>{children}</DarkBasemap>
         <ViewportController viewport={viewport} />
         <ProviderAttribution attribution={attribution} />
       </MapContainer>
