@@ -57,11 +57,13 @@ export function NavDrawer({
 
       <List sx={{ px: 1 }}>
         {navLinks.map((entry) => {
-          const active = !entry.disabled && entry.to === pathname
+          const active = entry.to === pathname
           return (
             <ListItemButton
               key={entry.label}
-              {...(entry.disabled ? { disabled: true } : { component: RouterLink, to: entry.to, onClick: onClose })}
+              component={RouterLink}
+              to={entry.to}
+              onClick={onClose}
               selected={active}
               sx={{
                 borderRadius: 2,

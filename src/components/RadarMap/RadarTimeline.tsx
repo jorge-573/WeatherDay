@@ -8,7 +8,7 @@ import PauseRoundedIcon from '@mui/icons-material/PauseRounded'
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded'
 import type { RadarFrame } from '../../types/radar'
 import { StatusMessage } from '../shared'
-import { OVERLAY_Z_INDEX, PANEL_SX } from './panel'
+import { MAP_OVERLAY_Z_INDEX, MAP_PANEL_SX } from '../WeatherMap/panel'
 
 type RadarTimelineProps = {
   loading: boolean
@@ -44,10 +44,10 @@ export function RadarTimeline({
         left: { xs: 8, sm: 16 },
         right: { xs: 8, sm: 16 },
         bottom: { xs: 8, sm: 16 },
-        zIndex: OVERLAY_Z_INDEX,
+        zIndex: MAP_OVERLAY_Z_INDEX,
         px: { xs: 1.5, sm: 2 },
         py: 1,
-        ...PANEL_SX,
+        ...MAP_PANEL_SX,
       }}
     >
       {error ? (

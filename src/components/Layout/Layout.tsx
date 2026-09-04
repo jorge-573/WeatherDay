@@ -17,7 +17,7 @@ export function Layout() {
   const { data, loading, error } = useWeather(cityLocation.city, units)
   const { pathname } = useLocation()
 
-  const isRadar = pathname === ROUTES.radar
+  const isMapPage = pathname === ROUTES.radar || pathname === ROUTES.outlooks
   const timeOfDay = data?.timeOfDay ?? getTimeOfDay(new Date())
 
   const context: LayoutContext = { data, loading, error, units, cityLocation, onUnitChange: setUnits }
@@ -40,7 +40,7 @@ export function Layout() {
           flex: 1,
           width: '100%',
           minWidth: 0,
-          maxWidth: isRadar ? 1400 : 1080,
+          maxWidth: isMapPage ? 1400 : 1080,
           mx: 'auto',
           px: { xs: 2, sm: 3, md: 4 },
           py: { xs: 3, md: 4 },
@@ -53,7 +53,7 @@ export function Layout() {
     </Box>
   )
 
-  if (isRadar) {
+  if (isMapPage) {
     return (
       <Box
         sx={{

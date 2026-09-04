@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { radii } from '../../theme'
-import { PANEL_SX } from './panel'
+import { MAP_PANEL_SX } from '../WeatherMap/panel'
 import type { LegendRow } from './sources'
 
 const CAPTION_SX = { color: 'text.secondary', fontSize: '0.6rem', lineHeight: 1 } as const
@@ -10,7 +10,7 @@ const CAPTION_SX = { color: 'text.secondary', fontSize: '0.6rem', lineHeight: 1 
 /** Color key for precipitation intensity, matched to the active tile palette. */
 export function RadarLegend({ rows }: { rows: LegendRow[] }) {
   return (
-    <Box sx={{ px: 1.5, py: 1, ...PANEL_SX }}>
+    <Box sx={{ px: 1.5, py: 1, ...MAP_PANEL_SX }}>
       <Stack spacing={1}>
         {rows.map((row) => (
           <Box key={row.label}>

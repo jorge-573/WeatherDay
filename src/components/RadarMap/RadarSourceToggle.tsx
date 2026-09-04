@@ -3,7 +3,7 @@ import ToggleButton from '@mui/material/ToggleButton'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
 import type { RadarSource } from '../../types/radar'
-import { PANEL_SX } from './panel'
+import { MAP_PANEL_SX } from '../WeatherMap/panel'
 import { SOURCE_META, SOURCE_ORDER } from './sources'
 
 type RadarSourceToggleProps = {
@@ -15,7 +15,7 @@ type RadarSourceToggleProps = {
 
 export function RadarSourceToggle({ source, coverageFallback, onChange }: RadarSourceToggleProps) {
   return (
-    <Box sx={{ px: 1, py: 0.75, ...PANEL_SX }}>
+    <Box sx={{ px: 1, py: 0.75, ...MAP_PANEL_SX }}>
       <ToggleButtonGroup
         exclusive
         fullWidth
