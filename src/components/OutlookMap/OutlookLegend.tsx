@@ -5,6 +5,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { CIG_LEGEND_LABELS, isCigLegendLabel } from '../../config/outlooks'
 import type { OutlookLayerDetails, OutlookLegendItem } from '../../types/outlooks'
+import { formatSpcTime } from '../../utils/formatSpcTime'
 import { MAP_PANEL_SX } from '../WeatherMap/panel'
 
 type OutlookLegendProps = {
@@ -31,31 +32,6 @@ const CIG_HATCH: Record<string, string> = {
     'repeating-linear-gradient(-45deg, #1b1f24 0 1.5px, transparent 1.5px 5px)',
     'repeating-linear-gradient(45deg, #1b1f24 0 1.5px, transparent 1.5px 5px)',
   ].join(', '),
-}
-
-function formatTime(value: string | number | null): string | null {
-  if (value === null) return null
-  const compactUtc = typeof value === 'string' ? value.match(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})$/) : null
-  const normalizedValue = compactUtc
-    ? Date.UTC(
-        Number(compactUtc[1]),
-        Number(compactUtc[2]) - 1,
-        Number(compactUtc[3]),
-        Number(compactUtc[4]),
-        Number(compactUtc[5])
-      )
-    : value
-  if (typeof normalizedValue === 'string' && Number.isNaN(Date.parse(normalizedValue))) return normalizedValue
-
-  const date = new Date(normalizedValue)
-  if (Number.isNaN(date.getTime())) return String(value)
-  return date.toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZoneName: 'short',
-  })
 }
 
 function legendLabel(label: string): string {
@@ -88,8 +64,8 @@ function LegendSwatch({ item }: { item: OutlookLegendItem }) {
 }
 
 export function OutlookLegend({ title, details, loading, error }: OutlookLegendProps) {
-  const validTime = formatTime(details?.validTime ?? null)
-  const expireTime = formatTime(details?.expireTime ?? null)
+  const validTime = formatSpcTime(details?.validTime ?? null)
+  const expireTime = formatSpcTime(details?.expireTime ?? null)
   const firstCigIndex = details?.legend.findIndex((item) => isCigLegendLabel(item.label)) ?? -1
 
   return (

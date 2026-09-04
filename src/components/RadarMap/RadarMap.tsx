@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
-import { CircleMarker, MapContainer, Tooltip, useMap } from 'react-leaflet'
+import { CircleMarker, MapContainer, Tooltip } from 'react-leaflet'
 import { useRadarFrames } from '../../hooks/useRadarFrames'
 import type { RadarSource } from '../../types/radar'
 import { DarkBasemap } from '../WeatherMap/DarkBasemap'
+import { MapAttribution, MapCenter } from '../WeatherMap/mapEffects'
 import { MAP_OVERLAY_Z_INDEX } from '../WeatherMap/panel'
 import { RadarFrameLayers } from './RadarFrameLayers'
 import { RadarLegend } from './RadarLegend'
@@ -23,28 +24,6 @@ const FRAME_INTERVAL_MS = 800
 const DEFAULT_ZOOM = 7
 // Start animating once at least this many frames are available.
 const MIN_PLAYABLE_FRAMES = 2
-
-/** Keeps the map centered on the active city when it changes. */
-function Recenter({ latitude, longitude, zoom }: { latitude: number; longitude: number; zoom: number }) {
-  const map = useMap()
-  useEffect(() => {
-    map.setView([latitude, longitude], zoom)
-  }, [map, latitude, longitude, zoom])
-  return null
-}
-
-/** Credits the active radar provider, swapping the entry when the source changes. */
-function RadarAttribution({ credit }: { credit: string }) {
-  const map = useMap()
-  useEffect(() => {
-    const control = map.attributionControl
-    control.addAttribution(credit)
-    return () => {
-      control.removeAttribution(credit)
-    }
-  }, [map, credit])
-  return null
-}
 
 export function RadarMap({ latitude, longitude, locationName }: RadarMapProps) {
   const [source, setSource] = useState<RadarSource>('noaa')
@@ -110,8 +89,8 @@ export function RadarMap({ latitude, longitude, locationName }: RadarMapProps) {
             <Tooltip>{locationName}</Tooltip>
           </CircleMarker>
         </DarkBasemap>
-        <Recenter latitude={latitude} longitude={longitude} zoom={DEFAULT_ZOOM} />
-        <RadarAttribution credit={SOURCE_META[effectiveSource].attribution} />
+        <MapCenter latitude={latitude} longitude={longitude} zoom={DEFAULT_ZOOM} />
+        <MapAttribution attribution={SOURCE_META[effectiveSource].attribution} />
       </MapContainer>
 
       {/* Kept to the right so Leaflet's zoom control owns the top-left corner. */}

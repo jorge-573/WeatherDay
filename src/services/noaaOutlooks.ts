@@ -1,4 +1,9 @@
-import type { OutlookLayerDetails, OutlookLegendItem, SpcFeatureCollection } from '../types/outlooks'
+import type {
+  OutlookLayerDetails,
+  OutlookLegendItem,
+  SpcFeatureCollection,
+  SpcFeatureProperties,
+} from '../types/outlooks'
 
 const SPC_REST_URL = 'https://mapservices.weather.noaa.gov/vector/rest/services/outlooks/SPC_wx_outlks/MapServer'
 
@@ -12,21 +17,21 @@ type LegendResponse = {
   }>
 }
 
-type QueryResponse = {
-  features?: Array<{
-    attributes?: Record<string, unknown>
-  }>
-}
-
 let legendRequest: Promise<LegendResponse> | null = null
 
 function fetchLegendDocument(): Promise<LegendResponse> {
   if (legendRequest) return legendRequest
 
-  legendRequest = fetch(`${SPC_REST_URL}/legend?f=json`).then(async (response) => {
-    if (!response.ok) throw new Error(`NOAA legend request failed: ${response.status}`)
-    return (await response.json()) as LegendResponse
-  })
+  legendRequest = fetch(`${SPC_REST_URL}/legend?f=json`)
+    .then(async (response) => {
+      if (!response.ok) throw new Error(`NOAA legend request failed: ${response.status}`)
+      return (await response.json()) as LegendResponse
+    })
+    .catch((error: unknown) => {
+      legendRequest = null
+      throw error
+    })
+
   return legendRequest
 }
 
@@ -35,49 +40,36 @@ async function fetchLegend(layerId: number): Promise<OutlookLegendItem[]> {
   return document.layers?.find((layer) => layer.layerId === layerId)?.legend ?? []
 }
 
-function timingValue(attributes: Record<string, unknown> | undefined, field: string): string | number | null {
-  const value = attributes?.[field]
+function timingValue(properties: SpcFeatureProperties | undefined, field: 'valid' | 'expire'): string | number | null {
+  const value = properties?.[field]
   return typeof value === 'string' || typeof value === 'number' ? value : null
 }
 
-async function fetchTiming(
-  layerId: number,
-  signal?: AbortSignal
-): Promise<Pick<OutlookLayerDetails, 'validTime' | 'expireTime'>> {
-  const url = new URL(`${SPC_REST_URL}/${layerId}/query`)
-  url.searchParams.set('where', '1=1')
-  url.searchParams.set('outFields', 'valid,expire')
-  url.searchParams.set('returnGeometry', 'false')
-  url.searchParams.set('resultRecordCount', '1')
-  url.searchParams.set('f', 'json')
+export async function fetchSpcLegend(layerId: number, significantLayerId?: number): Promise<OutlookLegendItem[]> {
+  const [legend, significantLegend] = await Promise.all([
+    fetchLegend(layerId),
+    significantLayerId ? fetchLegend(significantLayerId) : Promise.resolve([]),
+  ])
+  return [...legend, ...significantLegend]
+}
 
-  const response = await fetch(url, { signal })
-  if (!response.ok) throw new Error(`NOAA timing request failed: ${response.status}`)
-
-  const data = (await response.json()) as QueryResponse
-  const attributes = data.features?.[0]?.attributes
+function timingFromCollection(
+  data: SpcFeatureCollection | null
+): Pick<OutlookLayerDetails, 'validTime' | 'expireTime'> {
+  const properties = data?.features[0]?.properties
   return {
-    validTime: timingValue(attributes, 'valid'),
-    expireTime: timingValue(attributes, 'expire'),
+    validTime: timingValue(properties, 'valid'),
+    expireTime: timingValue(properties, 'expire'),
   }
 }
 
-export async function fetchSpcLayerDetails(
-  layerId: number,
-  significantLayerId?: number,
-  signal?: AbortSignal
-): Promise<OutlookLayerDetails> {
-  const [legendResult, timingResult] = await Promise.allSettled([fetchLegend(layerId), fetchTiming(layerId, signal)])
-
-  if (signal?.aborted) throw new DOMException('Request aborted', 'AbortError')
-
-  const legend = legendResult.status === 'fulfilled' ? legendResult.value : []
-  const significantLegend = significantLayerId ? await fetchLegend(significantLayerId).catch(() => []) : []
-
+export function detailsFromOutlook(
+  data: SpcFeatureCollection | null,
+  legend: OutlookLegendItem[]
+): OutlookLayerDetails {
   return {
-    legend: [...legend, ...significantLegend],
-    validTime: timingResult.status === 'fulfilled' ? timingResult.value.validTime : null,
-    expireTime: timingResult.status === 'fulfilled' ? timingResult.value.expireTime : null,
+    legend,
+    ...timingFromCollection(data),
   }
 }
 

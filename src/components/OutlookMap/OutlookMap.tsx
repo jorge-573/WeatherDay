@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import Box from '@mui/material/Box'
-import { defaultSpcType, SPC_LAYERS } from '../../config/outlooks'
-import { CONUS_BOUNDS } from '../../config/stateBounds'
-import { useOutlookLayerDetails } from '../../hooks/useOutlookLayerDetails'
+import { CONUS_BOUNDS } from '../../config/mapBounds'
+import { defaultSpcType, getSpcLayer, SPC_LAYERS } from '../../config/outlooks'
 import { useSpcOutlook } from '../../hooks/useSpcOutlook'
 import { SPC_ATTRIBUTION } from '../../services/noaaOutlooks'
-import type { MapViewport, MapViewportTarget, SpcDay, SpcOutlookType } from '../../types/outlooks'
+import { glass } from '../../theme'
+import type { MapViewport, MapViewportTarget } from '../../types/map'
+import type { SpcDay, SpcOutlookType } from '../../types/outlooks'
 import type { GeocodingResult } from '../../types/weather'
 import { StatusMessage } from '../shared'
 import { WeatherMap } from '../WeatherMap'
@@ -27,17 +28,8 @@ export function OutlookMap({ city }: OutlookMapProps) {
     revision: 0,
   })
 
-  const spcLayer = SPC_LAYERS[spcDay][spcType] ?? SPC_LAYERS[spcDay][defaultSpcType(spcDay)]!
-  const {
-    data: spcData,
-    loading: spcLoading,
-    error: spcError,
-  } = useSpcOutlook(spcLayer.layerId, spcLayer.significantLayerId)
-  const {
-    details,
-    loading: detailsLoading,
-    error: detailsError,
-  } = useOutlookLayerDetails(spcLayer.layerId, spcLayer.significantLayerId)
+  const spcLayer = getSpcLayer(spcDay, spcType)
+  const { data, details, loading, error, detailsError } = useSpcOutlook(spcLayer.layerId, spcLayer.significantLayerId)
 
   const changeViewport = (next: MapViewportTarget) => {
     setViewport((current) => ({ ...next, revision: current.revision + 1 }))
@@ -50,7 +42,7 @@ export function OutlookMap({ city }: OutlookMapProps) {
 
   return (
     <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden' }}>
-      <Box sx={{ p: { xs: 1.5, sm: 2 }, bgcolor: 'rgba(6, 10, 16, 0.78)' }}>
+      <Box sx={{ p: { xs: 1.5, sm: 2 }, ...glass.overlay }}>
         <OutlookControls
           spcDay={spcDay}
           spcType={spcType}
@@ -76,9 +68,7 @@ export function OutlookMap({ city }: OutlookMapProps) {
         }}
       >
         <WeatherMap viewport={viewport} attribution={SPC_ATTRIBUTION}>
-          {spcData && (
-            <SpcOutlookLayer key={`${spcLayer.layerId}-${spcLayer.significantLayerId ?? 'base'}`} data={spcData} />
-          )}
+          {data && <SpcOutlookLayer key={`${spcLayer.layerId}-${spcLayer.significantLayerId ?? 'base'}`} data={data} />}
         </WeatherMap>
 
         <Box
@@ -89,10 +79,10 @@ export function OutlookMap({ city }: OutlookMapProps) {
             zIndex: MAP_OVERLAY_Z_INDEX,
           }}
         >
-          <OutlookLegend title={spcLayer.label} details={details} loading={detailsLoading} error={detailsError} />
+          <OutlookLegend title={spcLayer.label} details={details} loading={loading} error={detailsError} />
         </Box>
 
-        {(spcLoading || spcError) && (
+        {(loading || error) && (
           <Box
             sx={{
               position: 'absolute',
@@ -105,7 +95,7 @@ export function OutlookMap({ city }: OutlookMapProps) {
               ...MAP_PANEL_SX,
             }}
           >
-            <StatusMessage inline>{spcError ?? 'Loading SPC outlook…'}</StatusMessage>
+            <StatusMessage inline>{error ?? 'Loading SPC outlook…'}</StatusMessage>
           </Box>
         )}
       </Box>

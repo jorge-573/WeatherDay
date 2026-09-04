@@ -1,4 +1,3 @@
-import type { LatLngBoundsExpression, LatLngExpression } from 'leaflet'
 import type { FeatureCollection, Geometry } from 'geojson'
 
 export type SpcDay = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
@@ -33,9 +32,3 @@ export type OutlookLayerDetails = {
   validTime: string | number | null
   expireTime: string | number | null
 }
-
-export type MapViewportTarget =
-  | { kind: 'center'; center: LatLngExpression; zoom: number }
-  | { kind: 'bounds'; bounds: LatLngBoundsExpression }
-
-export type MapViewport = MapViewportTarget & { revision: number }

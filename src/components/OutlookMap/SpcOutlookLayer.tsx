@@ -1,11 +1,12 @@
 import type { Feature } from 'geojson'
 import type { Layer, PathOptions } from 'leaflet'
 import { GeoJSON } from 'react-leaflet'
+import { isCigLegendLabel } from '../../config/outlooks'
 import type { SpcFeatureCollection, SpcFeatureProperties } from '../../types/outlooks'
 
 function featureStyle(feature?: Feature): PathOptions {
   const properties = feature?.properties as SpcFeatureProperties | undefined
-  const significant = properties?.label?.startsWith('CIG') ?? false
+  const significant = isCigLegendLabel(properties?.label ?? '')
 
   return {
     color: properties?.stroke ?? '#ffffff',

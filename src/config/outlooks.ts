@@ -38,8 +38,14 @@ export function defaultSpcType(day: SpcDay): SpcOutlookType {
   return day <= 3 ? 'categorical' : 'probabilistic'
 }
 
+export function getSpcLayer(day: SpcDay, type: SpcOutlookType): SpcLayerDefinition {
+  const layer = SPC_LAYERS[day][type] ?? SPC_LAYERS[day][defaultSpcType(day)]
+  if (!layer) throw new Error(`Missing SPC layer for day ${day}`)
+  return layer
+}
+
 export function spcTypesForDay(day: SpcDay): SpcOutlookType[] {
-  return (Object.keys(SPC_LAYERS[day]) as SpcOutlookType[]).filter((type) => SPC_LAYERS[day][type])
+  return Object.keys(SPC_LAYERS[day]) as SpcOutlookType[]
 }
 
 export const CIG_LEGEND_LABELS: Record<string, string> = {
