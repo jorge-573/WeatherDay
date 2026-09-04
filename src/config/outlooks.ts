@@ -41,3 +41,13 @@ export function defaultSpcType(day: SpcDay): SpcOutlookType {
 export function spcTypesForDay(day: SpcDay): SpcOutlookType[] {
   return (Object.keys(SPC_LAYERS[day]) as SpcOutlookType[]).filter((type) => SPC_LAYERS[day][type])
 }
+
+export const CIG_LEGEND_LABELS: Record<string, string> = {
+  CIG1: 'Intensity 1',
+  CIG2: 'Intensity 2',
+  CIG3: 'Intensity 3',
+}
+
+export function isCigLegendLabel(label: string): boolean {
+  return label in CIG_LEGEND_LABELS
+}

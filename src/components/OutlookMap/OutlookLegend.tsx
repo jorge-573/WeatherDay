@@ -1,8 +1,10 @@
+import { Fragment } from 'react'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import type { OutlookLayerDetails } from '../../types/outlooks'
+import { CIG_LEGEND_LABELS, isCigLegendLabel } from '../../config/outlooks'
+import type { OutlookLayerDetails, OutlookLegendItem } from '../../types/outlooks'
 import { MAP_PANEL_SX } from '../WeatherMap/panel'
 
 type OutlookLegendProps = {
@@ -10,6 +12,25 @@ type OutlookLegendProps = {
   details: OutlookLayerDetails | null
   loading: boolean
   error: string | null
+}
+
+const SWATCH_WELL_SX = {
+  width: 22,
+  height: 22,
+  flexShrink: 0,
+  borderRadius: 0.5,
+  bgcolor: '#eef2f6',
+  overflow: 'hidden',
+  border: '1px solid rgba(255,255,255,0.16)',
+} as const
+
+const CIG_HATCH: Record<string, string> = {
+  CIG1: 'repeating-linear-gradient(-45deg, #1b1f24 0 1.5px, transparent 1.5px 5px)',
+  CIG2: 'repeating-linear-gradient(45deg, #1b1f24 0 1.5px, transparent 1.5px 5px)',
+  CIG3: [
+    'repeating-linear-gradient(-45deg, #1b1f24 0 1.5px, transparent 1.5px 5px)',
+    'repeating-linear-gradient(45deg, #1b1f24 0 1.5px, transparent 1.5px 5px)',
+  ].join(', '),
 }
 
 function formatTime(value: string | number | null): string | null {
@@ -37,9 +58,39 @@ function formatTime(value: string | number | null): string | null {
   })
 }
 
+function legendLabel(label: string): string {
+  return CIG_LEGEND_LABELS[label] || label || 'Forecast area'
+}
+
+function LegendSwatch({ item }: { item: OutlookLegendItem }) {
+  if (isCigLegendLabel(item.label)) {
+    return (
+      <Box
+        aria-hidden
+        sx={{
+          ...SWATCH_WELL_SX,
+          backgroundImage: CIG_HATCH[item.label],
+        }}
+      />
+    )
+  }
+
+  return (
+    <Box sx={SWATCH_WELL_SX}>
+      <Box
+        component="img"
+        src={`data:${item.contentType};base64,${item.imageData}`}
+        alt=""
+        sx={{ display: 'block', width: '100%', height: '100%' }}
+      />
+    </Box>
+  )
+}
+
 export function OutlookLegend({ title, details, loading, error }: OutlookLegendProps) {
   const validTime = formatTime(details?.validTime ?? null)
   const expireTime = formatTime(details?.expireTime ?? null)
+  const firstCigIndex = details?.legend.findIndex((item) => isCigLegendLabel(item.label)) ?? -1
 
   return (
     <Box
@@ -71,18 +122,30 @@ export function OutlookLegend({ title, details, loading, error }: OutlookLegendP
         <>
           {details?.legend.length ? (
             <Stack spacing={0.75} sx={{ mt: 1 }}>
-              {details.legend.map((item) => (
-                <Stack key={`${item.label}-${item.imageData}`} direction="row" spacing={1} alignItems="center">
-                  <Box
-                    component="img"
-                    src={`data:${item.contentType};base64,${item.imageData}`}
-                    alt=""
-                    sx={{ width: 20, height: 20, flexShrink: 0 }}
-                  />
-                  <Typography variant="caption" sx={{ lineHeight: 1.2 }}>
-                    {item.label || 'Forecast area'}
-                  </Typography>
-                </Stack>
+              {details.legend.map((item, index) => (
+                <Fragment key={`${item.label}-${item.imageData}`}>
+                  {index === firstCigIndex && (
+                    <Typography
+                      variant="overline"
+                      sx={{
+                        display: 'block',
+                        pt: 0.5,
+                        color: 'text.secondary',
+                        fontWeight: 800,
+                        letterSpacing: '0.08em',
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      Conditional intensity
+                    </Typography>
+                  )}
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <LegendSwatch item={item} />
+                    <Typography variant="caption" sx={{ lineHeight: 1.2, fontWeight: 600 }}>
+                      {legendLabel(item.label)}
+                    </Typography>
+                  </Stack>
+                </Fragment>
               ))}
             </Stack>
           ) : (
