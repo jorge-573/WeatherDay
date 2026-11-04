@@ -36,6 +36,21 @@ export function Footer() {
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             © 2026 WeatherDay Atmospheric Systems
           </Typography>
+          <Typography variant="caption" component="p" sx={{ color: 'text.secondary' }}>
+            Weather data by{' '}
+            <Link href="https://open-meteo.com/" color="inherit">
+              Open-Meteo
+            </Link>{' '}
+            · Alerts by{' '}
+            <Link href="https://www.weather.gov/" color="inherit">
+              NWS
+            </Link>{' '}
+            · Location names ©{' '}
+            <Link href="https://www.openstreetmap.org/copyright" color="inherit">
+              OpenStreetMap
+            </Link>{' '}
+            contributors
+          </Typography>
         </Box>
 
         <Stack
