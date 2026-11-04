@@ -5,7 +5,6 @@ export type LatLng = [number, number]
 export type LatLngBounds = [LatLng, LatLng]
 
 export type MapViewportTarget =
-  | { kind: 'center'; center: LatLng; zoom: number }
-  | { kind: 'bounds'; bounds: LatLngBounds }
+  { kind: 'center'; center: LatLng; zoom: number } | { kind: 'bounds'; bounds: LatLngBounds }
 
 export type MapViewport = MapViewportTarget & { revision: number }

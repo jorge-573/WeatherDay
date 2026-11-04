@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: node:22
+      image: node:24
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -22,7 +22,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     container:
-      image: node:22
+      image: node:24
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -32,7 +32,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: node:22
+      image: node:24
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
