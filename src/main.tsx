@@ -13,7 +13,11 @@ import '@fontsource/manrope/600.css'
 import '@fontsource/manrope/700.css'
 import 'leaflet/dist/leaflet.css'
 import App from './App.tsx'
+import { configurePlatform } from './platform'
+import { webPlatform } from './platform/web'
 import { theme } from './theme'
+
+configurePlatform(webPlatform)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

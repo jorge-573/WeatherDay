@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { DEFAULT_CITY } from '../config/defaultCity'
+import { getPlatform } from '../platform'
 import { fetchCurrentLocationCity } from '../services/currentLocation'
 import type { GeocodingResult } from '../types/weather'
 
@@ -21,9 +22,8 @@ function isGeocodingResult(value: unknown): value is GeocodingResult {
 }
 
 function readStoredCity(): GeocodingResult {
-  if (typeof window === 'undefined') return DEFAULT_CITY
   try {
-    const raw = window.localStorage.getItem(CITY_STORAGE_KEY)
+    const raw = getPlatform().storage.getItem(CITY_STORAGE_KEY)
     if (!raw) return DEFAULT_CITY
     const parsed: unknown = JSON.parse(raw)
     if (isGeocodingResult(parsed)) return parsed
@@ -34,14 +34,12 @@ function readStoredCity(): GeocodingResult {
 }
 
 function readStoredSource(): CitySource | null {
-  if (typeof window === 'undefined') return null
-  const raw = window.localStorage.getItem(SOURCE_STORAGE_KEY)
+  const raw = getPlatform().storage.getItem(SOURCE_STORAGE_KEY)
   return raw === 'search' || raw === 'geolocation' ? raw : null
 }
 
 function readStartupEnabled(): boolean {
-  if (typeof window === 'undefined') return false
-  return window.localStorage.getItem(STARTUP_STORAGE_KEY) === 'true'
+  return getPlatform().storage.getItem(STARTUP_STORAGE_KEY) === 'true'
 }
 
 /** City selection, GPS, persistence, and startup preference in one place. */
@@ -81,19 +79,20 @@ export function useCityLocation() {
   }, [selectCity])
 
   useEffect(() => {
-    window.localStorage.setItem(CITY_STORAGE_KEY, JSON.stringify(city))
+    getPlatform().storage.setItem(CITY_STORAGE_KEY, JSON.stringify(city))
   }, [city])
 
   useEffect(() => {
+    const { storage } = getPlatform()
     if (source) {
-      window.localStorage.setItem(SOURCE_STORAGE_KEY, source)
+      storage.setItem(SOURCE_STORAGE_KEY, source)
     } else {
-      window.localStorage.removeItem(SOURCE_STORAGE_KEY)
+      storage.removeItem(SOURCE_STORAGE_KEY)
     }
   }, [source])
 
   useEffect(() => {
-    window.localStorage.setItem(STARTUP_STORAGE_KEY, String(locationOnStartup))
+    getPlatform().storage.setItem(STARTUP_STORAGE_KEY, String(locationOnStartup))
   }, [locationOnStartup])
 
   useEffect(() => {
