@@ -37,6 +37,7 @@ export function useWeather(city: GeocodingResult | null, units: UnitSystem): Wea
       .then(([response, alerts, airQuality]) => {
         if (controller.signal.aborted) return
         const data: WeatherData = {
+          units,
           current: toCurrentWeather(response, city),
           hourly: toHourlyForecast(response),
           daily: toDailyForecast(response),
