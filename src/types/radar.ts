@@ -1,13 +1,18 @@
-import type { WMSParams } from 'leaflet'
+import type { LatLngBounds } from './map'
 
 /** Upstream provider for the radar imagery. */
 export type RadarSource = 'rainviewer' | 'noaa'
 
-/** WMS request params for one time step. Leaflet's `WMSParams` has no `time`. */
-export type RadarWmsParams = WMSParams & { time: string }
+/** WMS request params for one time step. */
+export type RadarWmsParams = {
+  layers: string
+  format: string
+  transparent: boolean
+  version: string
+  time: string
+}
 
-/** `[[southLat, westLng], [northLat, eastLng]]`. */
-export type RadarBounds = [[number, number], [number, number]]
+export type RadarBounds = LatLngBounds
 
 type RadarLayerOptions = {
   /** Tile edge length in pixels. Larger tiles cover the view in fewer requests. */
