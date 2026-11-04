@@ -78,6 +78,8 @@ export function useCityLocation() {
       .finally(() => setLocating(false))
   }, [selectCity])
 
+  const clearLocateError = useCallback(() => setLocateError(null), [])
+
   useEffect(() => {
     getPlatform().storage.setItem(CITY_STORAGE_KEY, JSON.stringify(city))
   }, [city])
@@ -119,6 +121,7 @@ export function useCityLocation() {
     requestCurrentLocation,
     locating,
     locateError,
+    clearLocateError,
     locationOnStartup,
     setLocationOnStartup,
   }
