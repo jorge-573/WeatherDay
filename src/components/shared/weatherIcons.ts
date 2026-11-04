@@ -1,19 +1,6 @@
-import { Sunny } from '@material-symbols-svg/react/rounded/icons/sunny'
-import { Bedtime } from '@material-symbols-svg/react/rounded/icons/bedtime'
-import { PartlyCloudyDay } from '@material-symbols-svg/react/rounded/icons/partly-cloudy-day'
-import { PartlyCloudyNight } from '@material-symbols-svg/react/rounded/icons/partly-cloudy-night'
-import { Cloud } from '@material-symbols-svg/react/rounded/icons/cloud'
-import { RainyLight } from '@material-symbols-svg/react/rounded/icons/rainy-light'
-import { Rainy } from '@material-symbols-svg/react/rounded/icons/rainy'
-import { RainyHeavy } from '@material-symbols-svg/react/rounded/icons/rainy-heavy'
-import { Snowing } from '@material-symbols-svg/react/rounded/icons/snowing'
-import { WeatherSnowy } from '@material-symbols-svg/react/rounded/icons/weather-snowy'
-import { SnowingHeavy } from '@material-symbols-svg/react/rounded/icons/snowing-heavy'
-import { Thunderstorm } from '@material-symbols-svg/react/rounded/icons/thunderstorm'
-import { Foggy } from '@material-symbols-svg/react/rounded/icons/foggy'
-import type { MaterialSymbolsComponent } from '@material-symbols-svg/react/rounded'
 import { getWeatherCondition } from '../../domain/weatherCodes'
 import type { WeatherIntensity } from '../../types/weather'
+import type { WeatherIconName } from './weatherIconPaths'
 
 // WMO weather interpretation codes (the numbers Open-Meteo returns). The coarse
 // `WeatherCondition.group` can't tell partly cloudy from overcast (both are
@@ -42,24 +29,24 @@ type IconKey =
 
 // A day glyph and its night counterpart (identical when there's no night variant).
 type IconSet = {
-  day: MaterialSymbolsComponent
-  night: MaterialSymbolsComponent
+  day: WeatherIconName
+  night: WeatherIconName
 }
 
-const sameDayAndNight = (icon: MaterialSymbolsComponent): IconSet => ({ day: icon, night: icon })
+const sameDayAndNight = (icon: WeatherIconName): IconSet => ({ day: icon, night: icon })
 
 const ICONS: Record<IconKey, IconSet> = {
-  clear: { day: Sunny, night: Bedtime },
-  partlyCloudy: { day: PartlyCloudyDay, night: PartlyCloudyNight },
-  overcast: sameDayAndNight(Cloud),
-  fog: sameDayAndNight(Foggy),
-  rainLight: sameDayAndNight(RainyLight),
-  rain: sameDayAndNight(Rainy),
-  rainHeavy: sameDayAndNight(RainyHeavy),
-  snowLight: sameDayAndNight(Snowing),
-  snow: sameDayAndNight(WeatherSnowy),
-  snowHeavy: sameDayAndNight(SnowingHeavy),
-  thunder: sameDayAndNight(Thunderstorm),
+  clear: { day: 'sunny', night: 'bedtime' },
+  partlyCloudy: { day: 'partlyCloudyDay', night: 'partlyCloudyNight' },
+  overcast: sameDayAndNight('cloud'),
+  fog: sameDayAndNight('foggy'),
+  rainLight: sameDayAndNight('rainyLight'),
+  rain: sameDayAndNight('rainy'),
+  rainHeavy: sameDayAndNight('rainyHeavy'),
+  snowLight: sameDayAndNight('snowing'),
+  snow: sameDayAndNight('weatherSnowy'),
+  snowHeavy: sameDayAndNight('snowingHeavy'),
+  thunder: sameDayAndNight('thunderstorm'),
 }
 
 function byIntensity(
@@ -104,7 +91,7 @@ function resolveIconKey(code: number): IconKey {
   }
 }
 
-export function getWeatherIcon(code: number, isNight = false): MaterialSymbolsComponent {
+export function getWeatherIcon(code: number, isNight = false): WeatherIconName {
   const icons = ICONS[resolveIconKey(code)]
   return isNight ? icons.night : icons.day
 }
