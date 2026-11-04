@@ -14,6 +14,7 @@ import '@fontsource/manrope/600.css'
 import '@fontsource/manrope/700.css'
 import 'leaflet/dist/leaflet.css'
 import App from './App.tsx'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { configurePlatform } from './platform'
 import { webPlatform } from './platform/web'
 import { theme } from './theme'
@@ -32,7 +33,9 @@ createRoot(document.getElementById('root')!).render(
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter>
-          <App />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
         </BrowserRouter>
       </ThemeProvider>
     </QueryClientProvider>
