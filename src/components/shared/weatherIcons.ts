@@ -1,6 +1,24 @@
 import { getWeatherCondition } from '../../domain/weatherCodes'
 import type { WeatherIntensity } from '../../types/weather'
-import type { WeatherIconName } from './weatherIconPaths'
+
+/** Material Symbols glyphs (camelCased) the app draws; each platform maps them to its own components. */
+export const WEATHER_ICON_NAMES = [
+  'sunny',
+  'bedtime',
+  'partlyCloudyDay',
+  'partlyCloudyNight',
+  'cloud',
+  'foggy',
+  'rainyLight',
+  'rainy',
+  'rainyHeavy',
+  'snowing',
+  'weatherSnowy',
+  'snowingHeavy',
+  'thunderstorm',
+] as const
+
+export type WeatherIconName = (typeof WEATHER_ICON_NAMES)[number]
 
 // WMO weather interpretation codes (the numbers Open-Meteo returns). The coarse
 // `WeatherCondition.group` can't tell partly cloudy from overcast (both are

@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { WEATHER_ICON_PATHS } from './weatherIconPaths'
-import { getWeatherIcon } from './weatherIcons'
+import { getWeatherIcon, WEATHER_ICON_NAMES } from './weatherIcons'
 
 describe('getWeatherIcon', () => {
-  it('resolves every WMO code to an icon with path data, day and night', () => {
+  it('resolves every WMO code to a known icon, day and night', () => {
     for (let code = 0; code <= 99; code++) {
       for (const isNight of [false, true]) {
-        expect(WEATHER_ICON_PATHS[getWeatherIcon(code, isNight)]).toMatch(/^M/)
+        expect(WEATHER_ICON_NAMES).toContain(getWeatherIcon(code, isNight))
       }
     }
   })
