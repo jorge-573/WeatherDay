@@ -1,57 +1,50 @@
-# WeatherDay
+# React + TypeScript + Vite
 
-A weather web app: current conditions, hourly and 10-day forecasts, detail tiles (wind, UV, humidity, precipitation, pressure, visibility, air quality, sun), NWS alerts, an animated radar map, and Storm Prediction Center convective outlooks.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Built with React 19, TypeScript, Vite, MUI, TanStack Query, and Leaflet. No API keys are needed; every data source is free and public.
+Currently, two official plugins are available:
 
-## Getting started
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-Requires Node.js 24.22.1 or newer (see `.nvmrc`).
+## Expanding the ESLint configuration
 
-```bash
-nvm use          # picks up the version from .nvmrc
-npm ci
-npm run dev      # http://localhost:5173
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+
+- Configure the top-level `parserOptions` property like this:
+
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-## Scripts
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-| Command           | What it does                                     |
-| ----------------- | ------------------------------------------------ |
-| `npm run dev`     | Start the Vite dev server                        |
-| `npm run build`   | Type-check and build for production into `dist/` |
-| `npm run preview` | Serve the production build locally               |
-| `npm test`        | Run the Vitest unit tests                        |
-| `npm run lint`    | ESLint and Prettier checks                       |
-| `npm run format`  | Rewrite files with Prettier                      |
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
 
-CI runs build, lint, and tests on every push and pull request to `main`.
-
-## Project layout
-
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
 ```
-src/
-  services/   API clients, one per data source
-  domain/     Pure mapping from API payloads to UI-ready data
-  hooks/      Data and preference hooks (TanStack Query)
-  platform/   Storage and geolocation behind an interface (web implementation in web.ts)
-  types/, utils/, config/
-  components/, pages/, theme/   Web UI (MUI, Leaflet)
-```
-
-`services`, `domain`, `types`, `utils`, `config`, `platform` (except `web.ts`), and most `hooks` contain no browser- or MUI-specific code, so they can be shared with a future React Native app. ESLint enforces this: those folders can't import Leaflet, MUI, or Emotion, or use `window`, `document`, `localStorage`, or `navigator`.
-
-## Data sources
-
-| Data                               | Provider                                                                                       | Terms                                                                       |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Forecast, city search, air quality | [Open-Meteo](https://open-meteo.com/)                                                          | [CC BY 4.0](https://open-meteo.com/en/license); free for non-commercial use |
-| Weather alerts                     | [National Weather Service API](https://www.weather.gov/documentation/services-web-api)         | US government public domain                                                 |
-| Radar (US)                         | [NOAA MRMS](https://mapservices.weather.noaa.gov/) base reflectivity                           | US government public domain                                                 |
-| Radar (worldwide)                  | [RainViewer](https://www.rainviewer.com/api.html)                                              | Free API; attribution required                                              |
-| Convective outlooks                | [NOAA Storm Prediction Center](https://www.spc.noaa.gov/)                                      | US government public domain                                                 |
-| Location names (reverse geocoding) | [Nominatim](https://nominatim.org/) / [OpenStreetMap](https://www.openstreetmap.org/copyright) | [ODbL](https://www.openstreetmap.org/copyright); max 1 request/second       |
-| Basemap tiles                      | [Esri](https://www.esri.com/) World Dark Gray Canvas                                           | Esri terms of use; attribution required                                     |
-| Weather icons                      | [Material Symbols](https://fonts.google.com/icons) (Google)                                    | Apache License 2.0                                                          |
-
-Attribution for each source is shown in the app: map credits on the radar and outlook maps, and data credits in the footer.
