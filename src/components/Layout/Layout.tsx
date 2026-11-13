@@ -7,6 +7,7 @@ import { useWeather } from '../../hooks/useWeather'
 import { radarBackground } from '../../theme/backgrounds'
 import { getTimeOfDay } from '../../utils/getTimeOfDay'
 import { BackgroundScene } from '../BackgroundScene'
+import { ErrorBoundary } from '../ErrorBoundary'
 import { Footer } from '../Footer'
 import { Header } from '../Header'
 import type { LayoutContext } from './useLayoutContext'
@@ -46,7 +47,9 @@ export function Layout() {
           py: { xs: 3, md: 4 },
         }}
       >
-        <Outlet context={context} />
+        <ErrorBoundary resetKey={pathname}>
+          <Outlet context={context} />
+        </ErrorBoundary>
       </Box>
 
       <Footer />

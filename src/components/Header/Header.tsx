@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import Alert from '@mui/material/Alert'
 import AppBar from '@mui/material/AppBar'
 import IconButton from '@mui/material/IconButton'
 import Link from '@mui/material/Link'
+import Snackbar from '@mui/material/Snackbar'
 import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
@@ -35,6 +37,11 @@ function desktopNavItemSx(active: boolean) {
 export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
   const { pathname } = useLocation()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  // Keeps the text visible while the snackbar animates out after the error clears.
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
+  if (cityLocation.locateError && cityLocation.locateError !== toastMessage) {
+    setToastMessage(cityLocation.locateError)
+  }
   const settingsProps = {
     units,
     onUnitsChange: onUnitChange,
@@ -43,91 +50,107 @@ export function Header({ units, cityLocation, onUnitChange }: HeaderProps) {
   } satisfies SettingsControlsProps
 
   return (
-    <AppBar
-      position="sticky"
-      elevation={0}
-      sx={{
-        width: '100%',
-        left: 0,
-        right: 0,
-        borderRadius: 0,
-        ...glass.header,
-        borderBottom: 1,
-        borderColor: 'divider',
-      }}
-    >
-      <Toolbar
-        disableGutters
+    <>
+      <AppBar
+        position="sticky"
+        elevation={0}
         sx={{
           width: '100%',
-          maxWidth: '100%',
-          minWidth: 0,
-          gap: { xs: 1, sm: 2 },
-          py: 1,
-          px: { xs: 2, sm: 3, md: 4 },
+          left: 0,
+          right: 0,
+          borderRadius: 0,
+          ...glass.header,
+          borderBottom: 1,
+          borderColor: 'divider',
         }}
       >
-        <IconButton
-          aria-label="Open menu"
-          onClick={() => setDrawerOpen(true)}
-          sx={{ display: { xs: 'inline-flex', md: 'none' }, color: 'text.secondary', ml: -0.5 }}
-        >
-          <MenuIcon />
-        </IconButton>
-
-        <Typography
-          variant="h6"
+        <Toolbar
+          disableGutters
           sx={{
-            fontWeight: 800,
-            letterSpacing: { xs: '0.04em', sm: '0.08em' },
-            color: 'primary.main',
-            textTransform: 'uppercase',
-            flexShrink: 0,
-            fontSize: { xs: '1rem', sm: undefined },
+            width: '100%',
+            maxWidth: '100%',
+            minWidth: 0,
+            gap: { xs: 1, sm: 2 },
+            py: 1,
+            px: { xs: 2, sm: 3, md: 4 },
           }}
         >
-          WeatherDay
-        </Typography>
+          <IconButton
+            aria-label="Open menu"
+            onClick={() => setDrawerOpen(true)}
+            sx={{ display: { xs: 'inline-flex', md: 'none' }, color: 'text.secondary', ml: -0.5 }}
+          >
+            <MenuIcon />
+          </IconButton>
 
-        <Stack direction="row" spacing={2.5} sx={{ display: { xs: 'none', md: 'flex' }, ml: 2 }}>
-          {navLinks.map((entry) => {
-            const active = entry.to === pathname
-            return (
-              <Link
-                key={entry.label}
-                component={RouterLink}
-                to={entry.to}
-                underline="none"
-                sx={{
-                  ...desktopNavItemSx(active),
-                  '&:hover': { color: 'text.primary' },
-                }}
-              >
-                {entry.label}
-              </Link>
-            )
-          })}
-        </Stack>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 800,
+              letterSpacing: { xs: '0.04em', sm: '0.08em' },
+              color: 'primary.main',
+              textTransform: 'uppercase',
+              flexShrink: 0,
+              fontSize: { xs: '1rem', sm: undefined },
+            }}
+          >
+            WeatherDay
+          </Typography>
 
-        <Stack
-          direction="row"
-          spacing={1}
-          alignItems="center"
-          sx={{ flex: 1, minWidth: 0, justifyContent: 'flex-end' }}
-        >
-          <SearchBar
-            onSearchSelect={cityLocation.selectFromSearch}
-            onCurrentLocationClick={cityLocation.requestCurrentLocation}
-            locating={cityLocation.locating}
-            locateError={cityLocation.locateError}
-          />
-          <Stack sx={{ display: { xs: 'none', md: 'block' } }}>
-            <SettingsMenu {...settingsProps} />
+          <Stack direction="row" spacing={2.5} sx={{ display: { xs: 'none', md: 'flex' }, ml: 2 }}>
+            {navLinks.map((entry) => {
+              const active = entry.to === pathname
+              return (
+                <Link
+                  key={entry.label}
+                  component={RouterLink}
+                  to={entry.to}
+                  underline="none"
+                  sx={{
+                    ...desktopNavItemSx(active),
+                    '&:hover': { color: 'text.primary' },
+                  }}
+                >
+                  {entry.label}
+                </Link>
+              )
+            })}
           </Stack>
-        </Stack>
-      </Toolbar>
 
-      <NavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} pathname={pathname} {...settingsProps} />
-    </AppBar>
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            sx={{ flex: 1, minWidth: 0, justifyContent: 'flex-end' }}
+          >
+            <SearchBar
+              onSearchSelect={cityLocation.selectFromSearch}
+              onCurrentLocationClick={cityLocation.requestCurrentLocation}
+              locating={cityLocation.locating}
+              locateError={cityLocation.locateError}
+            />
+            <Stack sx={{ display: { xs: 'none', md: 'block' } }}>
+              <SettingsMenu {...settingsProps} />
+            </Stack>
+          </Stack>
+        </Toolbar>
+
+        <NavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} pathname={pathname} {...settingsProps} />
+      </AppBar>
+
+      {/* Outside the AppBar: its backdrop-filter would anchor this fixed element to the header. */}
+      <Snackbar
+        open={cityLocation.locateError !== null}
+        autoHideDuration={6000}
+        onClose={(_, reason) => {
+          if (reason !== 'clickaway') cityLocation.clearLocateError()
+        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="error" variant="filled" onClose={cityLocation.clearLocateError}>
+          {toastMessage}
+        </Alert>
+      </Snackbar>
+    </>
   )
 }

@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { buildNoaaFrames, findNoaaRegion } from '../services/noaaRadar'
 import type { RadarFrame, RadarSource } from '../types/radar'
 import { fetchRainviewerFrames } from '../services/rainviewer'
 
-type FetchState = {
+/** Both providers publish new scans every few minutes; refreshing restarts the animation, so not too often. */
+const REFRESH_INTERVAL_MS = 10 * 60_000
+const STALE_TIME_MS = 5 * 60_000
+/** Stable so the radar map's frame-reset effect doesn't fire on every render while loading. */
+const EMPTY_FRAMES: RadarFrame[] = []
+
+type RadarFramesState = {
   frames: RadarFrame[]
   loading: boolean
   error: string | null
-}
-
-type RadarFramesState = FetchState & {
   /** Source actually rendered, which differs from `source` outside NOAA coverage. */
   effectiveSource: RadarSource
   /** True when NOAA was requested but the location falls outside its coverage. */
@@ -25,30 +28,21 @@ export function useRadarFrames(source: RadarSource, latitude: number, longitude:
   const coverageFallback = source === 'noaa' && region === null
   const effectiveSource: RadarSource = coverageFallback ? 'rainviewer' : source
 
-  const [state, setState] = useState<FetchState>({ frames: [], loading: true, error: null })
-
   // Frames only depend on the resolved source and, for NOAA, which regional
   // domain applies; moving between cities inside one domain reuses them.
-  useEffect(() => {
-    const controller = new AbortController()
-    setState({ frames: [], loading: true, error: null })
-
+  const query = useQuery({
+    queryKey: ['radarFrames', effectiveSource, region],
     // NOAA frames are derived from the clock, so only RainViewer needs a request.
-    const request = region ? Promise.resolve(buildNoaaFrames(region)) : fetchRainviewerFrames(controller.signal)
+    queryFn: ({ signal }) => (region ? buildNoaaFrames(region) : fetchRainviewerFrames(signal)),
+    staleTime: STALE_TIME_MS,
+    refetchInterval: REFRESH_INTERVAL_MS,
+  })
 
-    request
-      .then((frames) => {
-        if (controller.signal.aborted) return
-        setState({ frames, loading: false, error: null })
-      })
-      .catch((err: unknown) => {
-        if (controller.signal.aborted) return
-        const message = err instanceof Error ? err.message : 'Could not load radar'
-        setState({ frames: [], loading: false, error: message })
-      })
-
-    return () => controller.abort()
-  }, [effectiveSource, region])
-
-  return { ...state, effectiveSource, coverageFallback }
+  return {
+    frames: query.data ?? EMPTY_FRAMES,
+    loading: query.isPending,
+    error: query.error ? query.error.message || 'Could not load radar' : null,
+    effectiveSource,
+    coverageFallback,
+  }
 }

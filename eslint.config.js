@@ -22,5 +22,30 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
+  },
+  {
+    // Shared with the mobile app: no DOM globals or web-only UI and map libraries.
+    files: [
+      'src/{services,domain,types,utils,config}/**/*.{ts,tsx}',
+      'src/platform/{index,types}.ts',
+      'src/hooks/**/*.{ts,tsx}',
+    ],
+    ignores: ['src/hooks/useIsMobile.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: ['leaflet', 'react-leaflet'],
+          patterns: ['@mui/*', '@emotion/*'],
+        },
+      ],
+      'no-restricted-globals': [
+        'error',
+        { name: 'window', message: 'Use getPlatform() or a standard global instead.' },
+        { name: 'document', message: 'Shared code must not touch the DOM.' },
+        { name: 'localStorage', message: 'Use getPlatform().storage instead.' },
+        { name: 'navigator', message: 'Use getPlatform().geolocation instead.' },
+      ],
+    },
   }
 )

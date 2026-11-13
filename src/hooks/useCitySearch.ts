@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { searchCities } from '../services/openMeteo'
 import type { GeocodingResult } from '../types/weather'
 import { useDebouncedValue } from './useDebouncedValue'
+
+const MIN_QUERY_LENGTH = 2
+const STALE_TIME_MS = 60 * 60_000
 
 type CitySearchState = {
   results: GeocodingResult[]
@@ -9,34 +12,24 @@ type CitySearchState = {
   error: string | null
 }
 
-const initialState: CitySearchState = { results: [], loading: false, error: null }
-
 export function useCitySearch(query: string): CitySearchState {
-  const debouncedQuery = useDebouncedValue(query, 280)
-  const [state, setState] = useState<CitySearchState>(initialState)
+  const term = useDebouncedValue(query, 280).trim()
+  const enabled = term.length >= MIN_QUERY_LENGTH
 
-  useEffect(() => {
-    if (debouncedQuery.trim().length < 2) {
-      setState(initialState)
-      return
-    }
+  const search = useQuery({
+    queryKey: ['citySearch', term.toLowerCase()],
+    queryFn: ({ signal }) => searchCities(term, signal),
+    enabled,
+    staleTime: STALE_TIME_MS,
+    // Keep the last results visible while the next keystroke's search runs.
+    placeholderData: keepPreviousData,
+  })
 
-    const controller = new AbortController()
-    setState((prev) => ({ ...prev, loading: true, error: null }))
+  if (!enabled) return { results: [], loading: false, error: null }
 
-    searchCities(debouncedQuery, controller.signal)
-      .then((results) => {
-        if (controller.signal.aborted) return
-        setState({ results, loading: false, error: null })
-      })
-      .catch((err: unknown) => {
-        if (controller.signal.aborted) return
-        const message = err instanceof Error ? err.message : 'Search failed'
-        setState({ results: [], loading: false, error: message })
-      })
-
-    return () => controller.abort()
-  }, [debouncedQuery])
-
-  return state
+  return {
+    results: search.data ?? [],
+    loading: search.isFetching,
+    error: search.error ? search.error.message : null,
+  }
 }

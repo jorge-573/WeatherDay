@@ -11,8 +11,7 @@ import { WeatherStats } from '../../components/WeatherStats'
 import { UNIT_CONFIG } from '../../config/units'
 
 export function Home() {
-  const { data, loading, error, units, cityLocation } = useLayoutContext()
-  const temperatureLabel = UNIT_CONFIG[units].temperatureLabel
+  const { data, loading, error, cityLocation } = useLayoutContext()
 
   if (!data) {
     return (
@@ -25,6 +24,8 @@ export function Home() {
       </StatusMessage>
     )
   }
+
+  const temperatureLabel = UNIT_CONFIG[data.units].temperatureLabel
 
   return (
     <>

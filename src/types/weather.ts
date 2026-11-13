@@ -1,3 +1,4 @@
+import type { UnitSystem } from '../config/units'
 import type { TimeOfDay } from './timeOfDay'
 
 export type WeatherGroup = 'clear' | 'cloudy' | 'rain' | 'snow' | 'thunder' | 'fog'
@@ -101,6 +102,8 @@ export type GeocodingResult = {
 
 /** Everything one location's forecast contributes to the UI. */
 export type WeatherData = {
+  /** Units the values were fetched in; label with these, not the live preference. */
+  units: UnitSystem
   current: CurrentWeatherSnapshot
   hourly: HourlyForecastEntry[]
   daily: DailyForecastEntry[]
